@@ -20,12 +20,18 @@ The IoT Smart Home Dashboard is a comprehensive Java-based application designed 
 
 ### Key Features
 - **Multi-User Support**: Secure user registration and authentication system
-- **Device Management**: Control 4 types of smart gadgets (TV, AC, Fan, Robo Vac & Mop)
-- **Room-Based Organization**: Manage devices across multiple rooms (HallWay, BedRoom1, BedRoom2, BedRoom3)
-- **Real-Time Status Control**: Turn devices ON/OFF and monitor their status
+- **Comprehensive Device Management**: Control 18+ categories of smart devices across Indian home environments
+- **Advanced Timer System**: Schedule devices with countdown timers showing time remaining in hours and minutes
+- **Smart Automation**: One-click scene execution for daily routines (Morning, Evening, Night, Movie, Workout, etc.)
+- **Health Monitoring**: Real-time device health analysis with diagnostic insights and maintenance recommendations
+- **Energy Management**: Track power consumption, usage patterns, and efficiency metrics with live session updates
+- **Calendar Integration**: Event-based automation with smart scheduling and reminder system
+- **Weather Intelligence**: Weather-based device control suggestions and automation rules
+- **Room-Based Organization**: Manage devices across 38+ room types including traditional Indian spaces
+- **Real-Time Analytics**: Live usage tracking with session-based calculations and comprehensive reporting
+- **User-Friendly Interface**: Number-based selection system for consistent user experience (no more typing device names)
 - **Data Persistence**: Integration with AWS DynamoDB for reliable data storage
 - **Offline Mode**: Demo mode functionality when database is unavailable
-- **Comprehensive Validation**: Robust input validation and error handling
 
 ### Comprehensive Indian Smart Home Devices
 #### Entertainment & Media Devices
@@ -335,12 +341,32 @@ Smart Home Control Categories:
 - Each user's devices are completely isolated from other users
 
 #### 4. View Gadgets
-- Select option `4. View Gadgets` to see all your connected devices
+- Select option `5. View Device Status & Usage` to see all your connected devices
+- **Enhanced Auto-Aligned Table Display** (v2.1):
+  - **Smart Column Sizing**: Tables automatically adjust column widths based on your device names
+  - **No Truncation**: Full device names are always visible - no more "..." cutoffs
+  - **Professional Formatting**: Clean, well-aligned table with proper borders
+  - **Dynamic Layout**: Accommodates short and long device names intelligently
 - The system displays:
   - Device number for easy reference
-  - Device type and model
+  - Complete device type and model (no truncation)
   - Room location
-  - Current status (ON/OFF)
+  - Power rating (Watts)
+  - Current status (RUNNING/OFF)
+  - Usage time (hours and minutes format)
+  - Energy consumption (kWh with 3 decimal precision)
+  - Current session information for running devices
+  - Timer information when scheduled
+- Example display:
+```
++----+------------------------------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                                               | Power    | Status    | Usage Time  | Energy(kWh) |
++----+------------------------------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung 65" QLED Smart TV 4K Ultra HD (Living Room) |     150W | RUNNING   |      1h 30m |       0.112 |
+|    |   Current Session:                                   |          |           | 0.8h        |             |
+| 2  | AC LG Dual Inverter 1.5 Ton (Master Bedroom)        |    1500W | OFF       |      2h 00m |       0.000 |
++----+------------------------------------------------------+----------+-----------+-------------+-------------+
+```
 - You can select a specific gadget number to check detailed status
 
 #### 5. Change Gadget Status
@@ -387,6 +413,115 @@ The system prevents use of common weak passwords including:
 - Standard weak passwords: password, 123456, admin, qwerty
 - Indian context passwords: india123, mumbai, delhi, bangalore, cricket, bollywood
 - Generic patterns: password1, admin123, welcome, letmein
+
+### Advanced Smart Home Features
+
+#### 7-10. Timer Management System
+**Schedule Device Timer (Option 7)**: Set future ON/OFF times for devices
+**Set Device Timer (Option 8)**: Create immediate countdown timers  
+**Cancel Device Timer (Option 9)**: Remove scheduled timers
+**View Scheduled Timers (Option 10)**: Display all timers with countdown
+
+**Timer Display Format:**
+```
+=== Scheduled Timers ===
+1. TV LG in Living Room
+   - Turn OFF at: 08-09-2025 16:37 [2h 15m remaining]
+2. AC Samsung in Living Room  
+   - Turn ON at: 09-09-2025 07:00 [14h 38m remaining]
+```
+
+**Timer Features:**
+- Real-time countdown display (hours and minutes)
+- Automatic execution at scheduled time
+- User-friendly number selection for cancellation
+- [OVERDUE] indicators for missed timers
+
+#### 11. Calendar Events & Automation
+Create smart events that automatically control devices:
+
+**Event Types:**
+1. MEETING/CONFERENCE - Study room automation
+2. MOVIE/ENTERTAINMENT - Living room cinema setup  
+3. SLEEP/BEDTIME - Bedroom nighttime routine
+4. COOKING/MEAL - Kitchen preparation
+5. WORKOUT/EXERCISE - Exercise environment
+6. ARRIVAL/HOME - Welcome home setup
+7. DEPARTURE/LEAVING - Energy saving mode
+
+**Example Automation:**
+- Movie event: Dims lights, turns on TV, adjusts AC 15 minutes before
+- Sleep event: Turns off all lights, activates security, sets bedroom AC
+
+#### 12. Weather-Based Suggestions
+Intelligent device control recommendations based on weather:
+
+**Weather Triggers:**
+- **Hot Weather (>30°C)**: Suggests AC ON, fan speed increase
+- **Cold Weather (<18°C)**: Recommends heater activation
+- **High Humidity (>70%)**: Air purifier and dehumidifier suggestions
+- **Poor Air Quality (AQI >150)**: Air purification recommendations
+- **Rainy Weather**: Indoor climate optimization
+- **Stormy Conditions**: Safety device activation
+
+#### 13. Smart Scenes (One-Click Automation)
+Pre-configured device combinations for common activities:
+
+**Available Scenes:**
+1. **MORNING** - Start your day right
+2. **EVENING** - Relax after work  
+3. **NIGHT** - Prepare for sleep
+4. **AWAY** - Secure and save energy
+5. **ENERGY_SAVING** - Minimize consumption
+6. **MOVIE** - Perfect cinema experience
+7. **WORKOUT** - Exercise environment
+8. **COOKING** - Kitchen preparation
+
+**Scene Selection:** Choose by number (1-8) instead of typing scene names
+
+#### 14. Device Health Monitoring
+Comprehensive health analysis for all connected devices:
+
+**Health Metrics:**
+- **Health Score**: 0-100% with status (EXCELLENT/GOOD/WARNING/CRITICAL)
+- **Energy Efficiency**: Actual vs expected power consumption
+- **Usage Analysis**: Runtime hours and patterns
+- **Performance Indicators**: Device-specific diagnostics
+
+**Low Health Diagnostics:**
+- **Below 40%**: Critical failures, immediate inspection needed
+- **40-50%**: Significant degradation, professional maintenance required
+- **50-60%**: Performance issues detected, maintenance recommended
+
+**Device-Specific Insights:**
+- **AC**: Filter status, refrigerant leak detection
+- **Refrigerator**: Seal integrity, coil efficiency
+- **Geyser**: Sediment buildup indicators
+- **TV**: Overheating prevention, ventilation checks
+
+#### 15. Usage Analytics & Insights
+Comprehensive energy and usage tracking:
+
+**Analytics Features:**
+1. **Energy Consumption Analysis** - Track power usage patterns
+2. **Device Usage Patterns** - Monitor runtime statistics  
+3. **Cost Analysis & Projections** - Electricity cost calculations
+4. **Efficiency Recommendations** - Optimization suggestions
+5. **Peak Usage Times** - Identify high-consumption periods
+
+**Real-Time Tracking:**
+- Live session usage updates
+- Current power consumption display
+- Energy efficiency percentages (≤100%)
+- Cumulative usage across all sessions
+
+**Usage Display Format:**
+```
+1. AC Samsung (Living Room) [ON]
+   [Power] 1500.0W | [Usage] 47h 23m | [Energy] 71.345 kWh
+   [Current session: 2.3 hours]
+   [Timer: OFF at 08-09 22:30 (4h 28m)]
+```
 
 ### Session Management
 - **Logout**: The system automatically logs out when you exit the application
@@ -1091,7 +1226,9 @@ If DynamoDB is unavailable, the application automatically switches to demo mode:
 ### Version History
 | Version | Release Date | Key Features | Developer Notes |
 |---------|--------------|--------------|-----------------|
-| 1.0.0   | [Date]      | Initial release with full functionality | [Notes] |
+| 2.1     | September 2025 | **Auto-Aligned Tables**, Code Optimization, Input Handling Fixes | Enhanced table display with intelligent column sizing, performance improvements, resolved infinite loop issues |
+| 2.0     | September 2025 | Timer System, Smart Scenes, Health Monitoring, Energy Analytics, Calendar Events, Weather Intelligence | Major feature release with comprehensive automation |
+| 1.0.0   | Initial      | Core functionality with device management and authentication | Initial release with full functionality |
 
 ### Maintenance Schedule
 **Regular Updates**: [To be filled]
@@ -1113,9 +1250,10 @@ If DynamoDB is unavailable, the application automatically switches to demo mode:
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: [Date to be filled]
-**Prepared by**: Claude Code Assistant & Development Team
+**Document Version**: 2.1
+**Last Updated**: September 2025
+**Latest Update**: Auto-Aligned Table Display & Performance Optimization 
+**Prepared by**: Sushma Mainampati
 
 ---
 
@@ -1139,7 +1277,17 @@ If DynamoDB is unavailable, the application automatically switches to demo mode:
 | 4 | Control Gadgets | ✅ Yes |
 | 5 | View Gadgets | ✅ Yes |
 | 6 | Change Gadget Status | ✅ Yes |
-| 7 | Exit | ❌ No |
+| 7 | Schedule Device Timer | ✅ Yes |
+| 8 | Set Device Timer | ✅ Yes |
+| 9 | Cancel Device Timer | ✅ Yes |
+| 10 | View Scheduled Timers | ✅ Yes |
+| 11 | Calendar Events & Automation | ✅ Yes |
+| 12 | Weather-Based Suggestions | ✅ Yes |
+| 13 | Smart Scenes (One-Click Automation) | ✅ Yes |
+| 14 | Device Health Monitoring | ✅ Yes |
+| 15 | Usage Analytics & Insights | ✅ Yes |
+| 16 | Logout | ✅ Yes |
+| 17 | Exit | ❌ No |
 
 ### 🔐 **Password Requirements Checklist**
 - ☑️ 8-128 characters long
@@ -1152,9 +1300,14 @@ If DynamoDB is unavailable, the application automatically switches to demo mode:
 
 ### ⚡ **Quick Actions**
 - **Forgot Password**: Option 3 → Email → New Password → Confirm
-- **Add Device**: Option 4 → Category → Brand → Room
-- **Toggle Device**: Option 6 → Enter device type (TV, AC, FAN, etc.)
-- **Check Status**: Option 5 → Select device number
+- **Add Device**: Option 4 → Select category number → Select brand number → Select room number
+- **Toggle Device**: Option 6 → Select device number from list
+- **Check Status**: Option 5 → Select device number for details
+- **Set Timer**: Option 8 → Select device → Enter duration → Confirm
+- **View Timers**: Option 10 → See all scheduled timers with countdown
+- **Execute Scene**: Option 13 → Choose scene number (1-8) → Automatic execution
+- **Health Check**: Option 14 → Select device → View diagnostic report
+- **Energy Report**: Option 15 → Choose analysis type → View consumption data
 
 ### 🏠 **Popular Room + Device Combinations**
 - **Living Room**: TV (Samsung/LG), AC (Voltas/Daikin), Smart Light (Philips)
@@ -1224,6 +1377,32 @@ A: Change it if you suspect it's compromised. The app doesn't enforce password e
 
 **Q: Can multiple people use the same account?**
 A: Each person should have their own account for security and personalization. Device lists are user-specific.
+
+### 🆕 **New Features FAQ**
+
+**Q: How do I set up a timer for my devices?**
+A: Use Option 8 "Set Device Timer" from main menu. Select your device, enter duration, and confirm. You'll see a countdown showing time remaining.
+
+**Q: What are Smart Scenes and how do I use them?**
+A: Smart Scenes are pre-configured automation setups. Use Option 13, then choose a scene number (1-8) like Morning, Evening, or Movie. All associated devices activate automatically.
+
+**Q: My device health shows 45% - what does this mean?**
+A: Health scores below 60% indicate performance issues. Check Option 14 for detailed diagnostics and maintenance recommendations specific to your device type.
+
+**Q: How do I cancel a scheduled timer?**
+A: Use Option 9 "Cancel Device Timer", then select the timer number from the displayed list. Much easier than typing device names!
+
+**Q: What's the difference between Calendar Events and Smart Scenes?**
+A: Calendar Events (Option 11) are scheduled for specific dates/times with automatic device control. Smart Scenes (Option 13) are manual one-click automation you trigger yourself.
+
+**Q: Why does my energy efficiency show over 100%?**
+A: Energy efficiency is now capped at 100% maximum. If you see this, your device is performing at optimal efficiency levels.
+
+**Q: How do I see real-time power consumption?**
+A: Option 5 "View Gadgets" shows live power usage, including current session runtime and total energy consumption that updates in real-time.
+
+**Q: Can I get weather-based device recommendations?**
+A: Yes! Option 12 "Weather-Based Suggestions" provides intelligent recommendations like turning on AC during hot weather or air purifiers during poor air quality.
 
 ---
 

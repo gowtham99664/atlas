@@ -89,13 +89,13 @@ public class CustomerService {
             Customer customer = findCustomerByEmail(email);
             
             if (customer == null) {
-                System.out.println("❌ Invalid email or password!");
+                System.out.println("[ERROR] Invalid email or password!");
                 return null;
             }
             
             if (customer.isAccountLocked()) {
                 LocalDateTime lockUntil = customer.getAccountLockedUntil();
-                System.out.println("🔒 Account is locked until: " + 
+                System.out.println("[LOCKED] Account is locked until: " + 
                     lockUntil.toString().replace("T", " ") + 
                     ". Please try again later.");
                 return null;
@@ -105,9 +105,9 @@ public class CustomerService {
                 if (customer.getFailedLoginAttempts() > 0) {
                     customer.resetFailedAttempts();
                     updateCustomer(customer);
-                    System.out.println("✅ Login successful! Previous failed attempts have been cleared.");
+                    System.out.println("[SUCCESS] Login successful! Previous failed attempts have been cleared.");
                 } else {
-                    System.out.println("✅ Login successful! Welcome back, " + customer.getFullName() + "!");
+                    System.out.println("[SUCCESS] Login successful! Welcome back, " + customer.getFullName() + "!");
                 }
                 return customer;
             } else {
@@ -129,12 +129,21 @@ public class CustomerService {
             
             email = email.trim().toLowerCase();
             
+            Customer customer = null;
             if (isDemoMode) {
-                return demoCustomers.get(email);
+                customer = demoCustomers.get(email);
             } else {
                 Key key = Key.builder().partitionValue(email).build();
-                return customerTable.getItem(key);
+                customer = customerTable.getItem(key);
             }
+            
+            if (customer != null && customer.getGadgets() != null) {
+                for (com.smarthome.model.Gadget gadget : customer.getGadgets()) {
+                    gadget.ensurePowerRating();
+                }
+            }
+            
+            return customer;
             
         } catch (Exception e) {
             System.err.println("Error finding customer: " + e.getMessage());
@@ -207,12 +216,12 @@ public class CustomerService {
     
     public String getPasswordRequirements() {
         return "Password must be 8-128 characters long and contain:\n" +
-               "• At least one uppercase letter (A-Z)\n" +
-               "• At least one lowercase letter (a-z)\n" +
-               "• At least one number (0-9)\n" +
-               "• At least one special character (!@#$%^&*)\n" +
-               "• Cannot be a common password\n" +
-               "• Cannot have more than 2 repeating characters";
+               "- At least one uppercase letter (A-Z)\n" +
+               "- At least one lowercase letter (a-z)\n" +
+               "- At least one number (0-9)\n" +
+               "- At least one special character (!@#$%^&*)\n" +
+               "- Cannot be a common password\n" +
+               "- Cannot have more than 2 repeating characters";
     }
     
     private int calculateLockoutMinutes(int failedAttempts) {
@@ -232,10 +241,10 @@ public class CustomerService {
         int lockoutMinutes = calculateLockoutMinutes(customer.getFailedLoginAttempts());
         if (lockoutMinutes > 0) {
             customer.lockAccount(lockoutMinutes);
-            System.out.println("🔒 Account locked for " + lockoutMinutes + " minutes due to " + 
+            System.out.println("[LOCKED] Account locked for " + lockoutMinutes + " minutes due to " + 
                              customer.getFailedLoginAttempts() + " failed login attempts.");
         } else {
-            System.out.println("⚠️  Invalid credentials. Failed attempts: " + 
+            System.out.println("[WARNING] Invalid credentials. Failed attempts: " + 
                              customer.getFailedLoginAttempts() + "/3 before lockout.");
         }
         
@@ -258,11 +267,11 @@ public class CustomerService {
         try {
             Customer customer = findCustomerByEmail(email);
             if (customer == null) {
-                System.out.println("❌ No account found with this email address.");
+                System.out.println("[ERROR] No account found with this email address.");
                 return false;
             }
             
-            System.out.println("✅ Account found! You can now reset your password.");
+            System.out.println("[SUCCESS] Account found! You can now reset your password.");
             return true;
             
         } catch (Exception e) {
@@ -275,13 +284,13 @@ public class CustomerService {
         try {
             Customer customer = findCustomerByEmail(email);
             if (customer == null) {
-                System.out.println("❌ Account not found.");
+                System.out.println("[ERROR] Account not found.");
                 return false;
             }
             
             // Validate new password
             if (!isValidPassword(newPassword)) {
-                System.out.println("❌ New password does not meet security requirements:");
+                System.out.println("[ERROR] New password does not meet security requirements:");
                 System.out.println(getPasswordRequirements());
                 return false;
             }
@@ -296,9 +305,9 @@ public class CustomerService {
             // Update customer record
             boolean updated = updateCustomer(customer);
             if (updated) {
-                System.out.println("✅ Password reset successful! You can now login with your new password.");
+                System.out.println("[SUCCESS] Password reset successful! You can now login with your new password.");
             } else {
-                System.out.println("❌ Failed to update password. Please try again.");
+                System.out.println("[ERROR] Failed to update password. Please try again.");
             }
             
             return updated;

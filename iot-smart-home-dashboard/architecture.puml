@@ -1,0 +1,378 @@
+@startuml IoT_Smart_Home_Dashboard_Architecture
+
+!define RECTANGLE class
+
+title IoT Smart Home Dashboard - System Architecture
+
+package "Main Application Layer" {
+    class SmartHomeDashboard {
+        +main(args: String[])
+        +showMainMenu()
+        +registerCustomer()
+        +loginCustomer()
+        +forgotPassword()
+        +controlGadgets()
+        +setDeviceTimer()
+        +showScheduledTimers()
+        +executeSmartScene()
+        +showDeviceHealthMenu()
+        +showUsageAnalytics()
+        +showCalendarEventsMenu()
+        +showWeatherSuggestions()
+        -getValidatedInput()
+        -getValidatedGadgetInput()
+        -getValidatedIntInput()
+        -scanner: Scanner
+    }
+}
+
+package "Service Layer" {
+    class SmartHomeService {
+        -customerService: CustomerService
+        -gadgetService: GadgetService
+        -timerService: TimerService
+        -deviceHealthService: DeviceHealthService
+        -smartScenesService: SmartScenesService
+        -energyService: EnergyManagementService
+        -calendarService: CalendarEventService
+        -weatherService: WeatherService
+        
+        +registerCustomer(name, email, password, confirmPassword): boolean
+        +loginCustomer(email, password): boolean
+        +connectToGadget(type, model, room): boolean
+        +viewGadgets(): List<Gadget>
+        +changeGadgetStatus(gadgetType): boolean
+        +getCurrentUser(): Customer
+        +isLoggedIn(): boolean
+        +logout()
+        
+        ' Auto-Aligned Table System (v2.1)
+        -displayAutoAlignedTable(allGadgets: List<Gadget>)
+        -calculateTableDimensions(allGadgets): TableDimensions
+        -createTableFormatStrings(dimensions): TableFormatStrings
+        -displayTableRows(allGadgets, formats): void
+        -displayDeviceRow(gadget, rowNumber, format): void
+        -buildTimerInfo(gadget, now, formatter): String
+        
+        ' Helper Classes for Table System
+        -TableDimensions {
+            +numWidth: int
+            +deviceWidth: int
+            +powerWidth: int
+            +statusWidth: int
+            +usageWidth: int
+            +energyWidth: int
+        }
+        
+        -TableFormatStrings {
+            +borderFormat: String
+            +headerFormat: String
+            +rowFormat: String
+            +emptyRowFormat: String
+        }
+    }
+    
+    class CustomerService {
+        -customerTable: DynamoDbTable<Customer>
+        +registerCustomer(customer: Customer): boolean
+        +loginCustomer(email, password): Customer
+        +resetPassword(email, newPassword): boolean
+        +isValidEmail(email: String): boolean
+        +isValidPassword(password: String): boolean
+        +isValidName(name: String): boolean
+        +handleFailedLogin(customer: Customer): void
+        +isAccountLocked(customer: Customer): boolean
+        -calculateLockoutMinutes(attempts: int): int
+        -isCommonPassword(password: String): boolean
+    }
+    
+    class GadgetService {
+        +createGadget(type, model, room): Gadget
+        +isValidGadgetType(type: String): boolean
+        +isValidModel(type, model: String): boolean
+        +isValidRoom(room: String): boolean
+        +getDefaultPowerRating(type: String): double
+        +canAddGadgetToRoom(customer, type, room): boolean
+        -VALID_GADGET_TYPES: String[]
+        -VALID_ROOMS: String[]
+    }
+    
+    class TimerService {
+        +scheduleTimer(gadget: Gadget, action: String, dateTime: LocalDateTime): boolean
+        +cancelTimer(gadget: Gadget): boolean
+        +getTimerCountdown(target: LocalDateTime): String
+        +executeScheduledTimers(): void
+        +getAllScheduledTimers(customer: Customer): List<Gadget>
+        +getTimerHelp(): String
+        -isValidDateTime(dateTime: String): boolean
+        -parseDateTime(input: String): LocalDateTime
+    }
+    
+    class DeviceHealthService {
+        +generateHealthReport(customer: Customer): SystemHealthReport
+        +analyzeDeviceHealth(gadget: Gadget): DeviceHealth
+        +getHealthRecommendations(gadget: Gadget): List<String>
+        -calculateHealthScore(gadget: Gadget): double
+        -getDeviceSpecificDiagnostics(gadget: Gadget): String
+        
+        +SystemHealthReport {
+            +overallSystemHealth: double
+            +healthyDevices: int
+            +warningDevices: int
+            +criticalDevices: int
+            +deviceHealthList: List<DeviceHealth>
+        }
+        
+        +DeviceHealth {
+            +gadget: Gadget
+            +healthScore: double
+            +healthStatus: String
+            +diagnosticMessage: String
+            +recommendations: List<String>
+        }
+    }
+    
+    class SmartScenesService {
+        +getAvailableSceneNames(): List<String>
+        +executeScene(sceneName: String, customer: Customer): SceneExecutionResult
+        -executeMorningScene(customer): SceneExecutionResult
+        -executeEveningScene(customer): SceneExecutionResult
+        -executeNightScene(customer): SceneExecutionResult
+        -executeAwayScene(customer): SceneExecutionResult
+        -executeMovieScene(customer): SceneExecutionResult
+        -executeWorkoutScene(customer): SceneExecutionResult
+        -executeCookingScene(customer): SceneExecutionResult
+        -executeEnergySavingScene(customer): SceneExecutionResult
+        
+        +SceneExecutionResult {
+            +sceneName: String
+            +success: boolean
+            +actionsPerformed: List<SceneAction>
+            +message: String
+        }
+        
+        +SceneAction {
+            +deviceType: String
+            +action: String
+            +success: boolean
+            +message: String
+        }
+    }
+    
+    class EnergyManagementService {
+        +generateEnergyReport(customer: Customer): EnergyReport
+        +calculateTotalConsumption(gadgets: List<Gadget>): double
+        +calculateMonthlyCost(energyKWh: double): double
+        +getEnergyEfficiencyTips(): List<String>
+        +trackRealTimeUsage(gadget: Gadget): double
+        
+        +EnergyReport {
+            +totalEnergyKWh: double
+            +totalCostRupees: double
+            +avgDailyUsage: double
+            +peakUsageHour: String
+            +efficiencyRating: String
+            +recommendations: List<String>
+        }
+    }
+    
+    class CalendarEventService {
+        +getEventTypes(): List<String>
+        +scheduleEvent(eventType, dateTime, duration): boolean
+        +getUpcomingEvents(): List<CalendarEvent>
+        +executeEventAutomation(event: CalendarEvent, customer: Customer): boolean
+        -createAutomationForEventType(eventType): List<AutomationAction>
+        
+        +CalendarEvent {
+            +eventType: String
+            +dateTime: LocalDateTime
+            +duration: int
+            +automationActions: List<AutomationAction>
+        }
+        
+        +AutomationAction {
+            +deviceType: String
+            +action: String
+            +delayMinutes: int
+        }
+    }
+    
+    class WeatherService {
+        +getCurrentWeather(): WeatherData
+        +getWeatherBasedRecommendations(customer: Customer): List<String>
+        +createWeatherAutomationRule(condition, action): boolean
+        +executeWeatherBasedActions(customer: Customer): void
+        +getWeatherHelp(): String
+        -simulateWeatherConditions(): WeatherData
+        
+        +WeatherData {
+            +temperature: double
+            +humidity: double
+            +airQuality: int
+            +condition: String
+            +forecast: String
+        }
+        
+        +WeatherAutomationRule {
+            +condition: String
+            +deviceType: String
+            +action: String
+            +threshold: double
+        }
+    }
+}
+
+package "Model Layer" {
+    class Customer {
+        -email: String
+        -fullName: String
+        -password: String
+        -gadgets: List<Gadget>
+        -failedLoginAttempts: int
+        -accountLockedUntil: LocalDateTime
+        -lastFailedLoginTime: LocalDateTime
+        
+        +getEmail(): String
+        +getFullName(): String
+        +getPassword(): String
+        +getGadgets(): List<Gadget>
+        +addGadget(gadget: Gadget): void
+        +removeGadget(gadget: Gadget): void
+        +getFailedLoginAttempts(): int
+        +incrementFailedAttempts(): void
+        +resetFailedAttempts(): void
+        +isAccountLocked(): boolean
+        +lockAccount(minutes: int): void
+        +unlockAccount(): void
+    }
+    
+    class Gadget {
+        -type: String
+        -model: String
+        -roomName: String
+        -status: String
+        -powerRatingWatts: double
+        -lastOnTime: LocalDateTime
+        -lastOffTime: LocalDateTime
+        -totalUsageMinutes: long
+        -totalEnergyConsumedKWh: double
+        -scheduledOnTime: LocalDateTime
+        -scheduledOffTime: LocalDateTime
+        -timerEnabled: boolean
+        
+        +getType(): String
+        +getModel(): String
+        +getRoomName(): String
+        +getStatus(): String
+        +isOn(): boolean
+        +turnOn(): void
+        +turnOff(): void
+        +getPowerRatingWatts(): double
+        +setPowerRatingWatts(watts: double): void
+        +getTotalUsageMinutes(): long
+        +setTotalUsageMinutes(minutes: long): void
+        +getTotalEnergyConsumedKWh(): double
+        +getCurrentTotalEnergyConsumedKWh(): double
+        +getUsageTimeFormatted(): String
+        +getCurrentUsageTimeFormatted(): String
+        +getCurrentSessionUsageHours(): double
+        +getScheduledOnTime(): LocalDateTime
+        +getScheduledOffTime(): LocalDateTime
+        +isTimerEnabled(): boolean
+        +enableTimer(): void
+        +disableTimer(): void
+        +ensurePowerRating(): void
+        -updateUsageAndEnergy(): void
+        -getDefaultPowerRating(type: String): double
+        
+        <<enumeration>> GadgetType
+        <<enumeration>> GadgetStatus
+    }
+}
+
+package "Utility Layer" {
+    class SessionManager {
+        -instance: SessionManager
+        -currentUser: Customer
+        
+        +getInstance(): SessionManager
+        +login(customer: Customer): void
+        +logout(): void
+        +isLoggedIn(): boolean
+        +getCurrentUser(): Customer
+        +updateCurrentUser(customer: Customer): void
+    }
+    
+    class DynamoDBConfig {
+        -ENDPOINT: String
+        -REGION: Region
+        -dynamoDbClient: DynamoDbClient
+        -enhancedClient: DynamoDbEnhancedClient
+        
+        +getEnhancedClient(): DynamoDbEnhancedClient
+        +getDynamoDbClient(): DynamoDbClient
+        +isConnectionAvailable(): boolean
+        +shutdown(): void
+        -createClient(): DynamoDbClient
+        -testConnection(): boolean
+    }
+    
+    class PasswordInputUtil {
+        +readPassword(prompt: String): String
+        +readPasswordSecurely(): String
+        -maskInput(): void
+    }
+}
+
+package "External Dependencies" {
+    class DynamoDbEnhancedClient
+    class DynamoDbTable
+    class BCrypt
+    class Scanner
+}
+
+' Relationships
+SmartHomeDashboard --> SmartHomeService : uses
+SmartHomeDashboard --> SessionManager : uses
+
+SmartHomeService --> CustomerService : manages
+SmartHomeService --> GadgetService : manages
+SmartHomeService --> TimerService : manages
+SmartHomeService --> DeviceHealthService : manages
+SmartHomeService --> SmartScenesService : manages
+SmartHomeService --> EnergyManagementService : manages
+SmartHomeService --> CalendarEventService : manages
+SmartHomeService --> WeatherService : manages
+
+CustomerService --> Customer : creates/manages
+CustomerService --> DynamoDBConfig : uses
+CustomerService --> BCrypt : uses
+
+GadgetService --> Gadget : creates/validates
+GadgetService --> Customer : modifies
+
+TimerService --> Gadget : schedules
+DeviceHealthService --> Gadget : analyzes
+SmartScenesService --> Gadget : controls
+EnergyManagementService --> Gadget : monitors
+CalendarEventService --> Gadget : automates
+WeatherService --> Gadget : suggests
+
+Customer --> Gadget : owns *
+SessionManager --> Customer : tracks current
+
+DynamoDBConfig --> DynamoDbEnhancedClient : creates
+CustomerService --> DynamoDbTable : uses
+
+SmartHomeDashboard --> PasswordInputUtil : uses
+SmartHomeDashboard --> Scanner : uses
+
+note top of SmartHomeService : "v2.1 Auto-Aligned Table System\nwith TableDimensions and\nTableFormatStrings helper classes"
+
+note top of SmartHomeDashboard : "Main CLI Interface\nHandles user input and\nnavigation between features"
+
+note top of SessionManager : "Singleton Pattern\nManages user sessions\nand authentication state"
+
+note top of DynamoDBConfig : "Database Configuration\nHandles DynamoDB Local\nconnection management"
+
+@enduml

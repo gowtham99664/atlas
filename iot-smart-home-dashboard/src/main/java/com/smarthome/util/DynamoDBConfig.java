@@ -69,7 +69,7 @@ public class DynamoDBConfig {
                     
         } catch (Exception e) {
             System.err.println("Failed to initialize DynamoDB client: " + e.getMessage());
-            System.err.println("\n⚠️  DynamoDB is not available. Please:");
+            System.err.println("\n[WARNING] DynamoDB is not available. Please:");
             System.err.println("   1. Start DynamoDB Local: java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb");
             System.err.println("   2. Or configure AWS DynamoDB credentials");
             System.err.println("   3. Application will continue in demo mode but data won't persist.\n");

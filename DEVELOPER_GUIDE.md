@@ -17,10 +17,17 @@ The **IoT Smart Home Dashboard** is a Java-based console application that provid
 
 ### Key Features
 - 🔐 **Secure Authentication**: BCrypt password hashing with progressive account lockout
-- 📱 **Device Management**: Control 18 categories of smart devices (350+ models)
+- 📱 **Advanced Device Management**: Control 18+ categories of smart devices with real-time monitoring
+- ⏰ **Smart Timer System**: Schedule devices with countdown timers and automatic execution
+- 🎨 **Scene Automation**: One-click automation for daily routines (Morning, Evening, Movie, etc.)
+- 📊 **Health Monitoring**: Real-time device diagnostics with maintenance recommendations  
+- ⚡ **Energy Analytics**: Live power consumption tracking and efficiency analysis
+- 📅 **Calendar Integration**: Event-based automation with intelligent scheduling
+- 🌦️ **Weather Intelligence**: Weather-based device control suggestions
 - 🏡 **Room Organization**: Support for 38+ room types covering Indian homes
 - 🔄 **Simple Password Reset**: Streamlined password recovery without security questions
 - 💾 **Dual Storage**: DynamoDB Local with automatic fallback to demo mode
+- 🔢 **User-Friendly Interface**: Number-based selection system (no more typing device names)
 
 ---
 
@@ -32,14 +39,21 @@ iot-smart-home-dashboard/
 ├── src/main/java/com/smarthome/
 │   ├── model/                        # Data Models
 │   │   ├── Customer.java            # User entity with authentication fields
-│   │   └── Gadget.java              # Smart device entity
+│   │   └── Gadget.java              # Smart device entity with usage tracking
 │   ├── service/                      # Business Logic Layer
 │   │   ├── CustomerService.java     # User management & authentication
-│   │   ├── GadgetService.java       # Device operations & validation
-│   │   └── SmartHomeService.java    # Main business orchestration
+│   │   ├── GadgetService.java       # Device operations & validation  
+│   │   ├── SmartHomeService.java    # Main business orchestration
+│   │   ├── TimerService.java        # Device scheduling & countdown timers
+│   │   ├── DeviceHealthService.java # Health monitoring & diagnostics
+│   │   ├── SmartScenesService.java  # Scene automation & execution
+│   │   ├── EnergyManagementService.java # Power consumption & analytics
+│   │   ├── CalendarEventService.java # Event-based automation
+│   │   └── WeatherService.java      # Weather-based suggestions
 │   ├── util/                         # Utility Classes
 │   │   ├── DynamoDBConfig.java      # Database connection management
-│   │   └── SessionManager.java      # User session handling
+│   │   ├── SessionManager.java      # User session handling
+│   │   └── PasswordInputUtil.java   # Secure input handling
 │   └── SmartHomeDashboard.java      # Main application & console UI
 └── target/                           # Build output directory
     └── iot-smart-home-dashboard-1.0.0.jar
@@ -53,19 +67,27 @@ iot-smart-home-dashboard/
 **Purpose**: Entry point and user interface controller
 
 **What's Implemented**:
-- Console-based menu system with 7 main options
-- User input validation and sanitization
-- Navigation between registration, login, and device management
+- Console-based menu system with 17 main options
+- Advanced feature navigation (timers, scenes, health monitoring, analytics)
+- User input validation and sanitization with number-based selection
+- Navigation between registration, login, device management, and smart features
 - Error handling for all user interactions
 - Graceful application shutdown with resource cleanup
 
 **Key Methods**:
 - `main()`: Application entry point
-- `showMainMenu()`: Main navigation controller
+- `showMainMenu()`: Main navigation controller with 17 options
 - `registerCustomer()`: User registration flow
 - `loginCustomer()`: Authentication flow
 - `forgotPassword()`: Simplified password reset
 - `controlGadgets()`: Device management interface
+- `setDeviceTimer()`: Timer scheduling system
+- `showScheduledTimers()`: Timer management with countdown display
+- `executeSmartScene()`: Scene automation (number selection)
+- `showDeviceHealthMenu()`: Health monitoring and diagnostics
+- `showUsageAnalytics()`: Energy consumption analysis
+- `showCalendarEventsMenu()`: Event-based automation
+- `showWeatherSuggestions()`: Weather-based recommendations
 
 ---
 
@@ -94,22 +116,38 @@ private LocalDateTime accountLockedUntil; // Lockout expiry
 ```
 
 #### **Gadget.java**
-**Purpose**: Smart device representation
+**Purpose**: Smart device representation with advanced tracking
 
 **What's Implemented**:
 - Device identification (ID, type, model, room)
-- Device status management (ON/OFF)
-- Unique device generation with UUID
+- Device status management (ON/OFF) with usage tracking
+- Timer scheduling (ON/OFF times with countdown)
+- Energy consumption tracking (real-time and cumulative)
+- Power rating management with efficiency calculations
+- Session-based usage monitoring
 - String representation for console display
 
 **Key Fields**:
 ```java
-private String id;          // Unique device identifier
-private String type;        // Device category (TV, AC, FAN, etc.)
-private String model;       // Brand/model name
-private String roomName;    // Location in house
-private String status;      // Current state (ON/OFF)
+private String id;                          // Unique device identifier
+private String type;                        // Device category (TV, AC, FAN, etc.)
+private String model;                       // Brand/model name
+private String roomName;                    // Location in house
+private String status;                      // Current state (ON/OFF)
+private double powerRatingWatts;           // Device power consumption
+private LocalDateTime lastOnTime;          // Last activation time
+private LocalDateTime lastOffTime;         // Last deactivation time  
+private long totalUsageMinutes;            // Cumulative runtime
+private double totalEnergyConsumedKWh;     // Total energy consumption
+private LocalDateTime scheduledOnTime;     // Timer: scheduled activation
+private LocalDateTime scheduledOffTime;    // Timer: scheduled deactivation
+private boolean timerEnabled;              // Timer status flag
 ```
+
+**New Methods**:
+- `getCurrentTotalEnergyConsumedKWh()`: Real-time energy including current session
+- `getCurrentUsageTimeFormatted()`: Live usage display with current session
+- `getCurrentSessionUsageHours()`: Current running session duration
 
 ---
 
@@ -154,10 +192,135 @@ private String status;      // Current state (ON/OFF)
 
 **What's Implemented**:
 - **User Operations**: Registration and login coordination
-- **Device Management**: Connect, view, and control devices
+- **Device Management**: Connect, view, and control devices with real-time updates
+- **Auto-Aligned Tables**: Dynamic table formatting with intelligent column sizing
 - **Session Integration**: User state management
 - **Password Recovery**: Simplified reset workflow
 - **Data Validation**: Input sanitization and business rule enforcement
+- **Service Coordination**: Integration with all specialized services
+
+**Recent Optimizations (v2.1)**:
+- **Refactored Table Display**: `displayAutoAlignedTable()` method now uses helper classes for better organization
+- **Performance Improvements**: Eliminated duplicate calculations and optimized string formatting
+- **Code Modularity**: Split large methods into focused, single-responsibility functions
+- **Memory Efficiency**: Reduced object creation in table rendering loops
+
+#### **TimerService.java**
+**Purpose**: Device scheduling and countdown management
+
+**What's Implemented**:
+- **Timer Scheduling**: Set future ON/OFF times for devices
+- **Countdown Display**: Real-time time remaining in hours and minutes format
+- **Timer Execution**: Automatic device control at scheduled times
+- **Timer Management**: Create, view, and cancel scheduled tasks
+- **Validation**: Date/time format validation and conflict checking
+
+**Key Features**:
+```java
+// Timer display with countdown
+"Turn OFF at: 08-09-2025 16:37 [2h 15m remaining]"
+"Turn ON at: 09-09-2025 07:00 [14h 38m remaining]"
+"[OVERDUE]" // For past-due timers
+```
+
+#### **DeviceHealthService.java**
+**Purpose**: Device health monitoring and diagnostics
+
+**What's Implemented**:
+- **Health Scoring**: 0-100% health calculation with status classification
+- **Energy Efficiency**: Power consumption analysis (capped at ≤100%)
+- **Diagnostic Analysis**: Device-specific health insights and recommendations
+- **Performance Monitoring**: Usage patterns and efficiency tracking
+- **Maintenance Alerts**: Specific recommendations for low health scores
+
+**Health Categories**:
+- **EXCELLENT** (80-100%): Optimal performance
+- **GOOD** (60-79%): Normal operation
+- **WARNING** (40-59%): Maintenance recommended
+- **CRITICAL** (<40%): Immediate attention required
+
+**Device-Specific Diagnostics**:
+```java
+// AC diagnostics: Filter status, refrigerant leak detection
+// Refrigerator: Seal integrity, coil efficiency  
+// Geyser: Sediment buildup indicators
+// TV: Overheating prevention, ventilation checks
+```
+
+#### **SmartScenesService.java**
+**Purpose**: Scene automation and execution
+
+**What's Implemented**:
+- **Scene Management**: 8 pre-configured automation scenarios
+- **Device Coordination**: Multi-device control with single command
+- **Execution Logic**: Intelligent device state management
+- **Scene Validation**: Ensure devices are available before execution
+- **Result Reporting**: Success/failure feedback with detailed logs
+
+**Available Scenes**:
+1. **MORNING** - Start your day (lights + TV + geyser)
+2. **EVENING** - Relax after work (ambient lighting + entertainment)
+3. **NIGHT** - Sleep preparation (security + bedroom climate)
+4. **AWAY** - Energy saving + security activation
+5. **MOVIE** - Cinema experience (lighting + entertainment + climate)
+6. **WORKOUT** - Exercise environment (ventilation + music)
+7. **COOKING** - Kitchen optimization (lighting + ventilation + appliances)
+8. **ENERGY_SAVING** - Minimize consumption
+
+#### **EnergyManagementService.java**
+**Purpose**: Power consumption and efficiency analysis
+
+**What's Implemented**:
+- **Real-Time Tracking**: Live power consumption with session updates
+- **Usage Analytics**: Historical consumption patterns and trends
+- **Efficiency Monitoring**: Device performance vs expected ratings
+- **Cost Analysis**: Electricity cost calculations and projections
+- **Peak Usage Detection**: High consumption period identification
+- **Recommendations**: Energy saving suggestions based on usage patterns
+
+**Analytics Features**:
+```java
+// Real-time display format
+"[Power] 1500.0W | [Usage] 47h 23m | [Energy] 71.345 kWh"
+"[Current session: 2.3 hours]"
+"Energy efficiency: 85.2% (≤100%)"
+```
+
+#### **CalendarEventService.java**
+**Purpose**: Event-based device automation
+
+**What's Implemented**:
+- **Event Scheduling**: Create automation events with specific date/time
+- **Smart Triggers**: Automatic device control based on event types
+- **Event Types**: 7 predefined automation scenarios
+- **Timeline Management**: Pre-event and post-event device control
+- **Automation Rules**: Intelligent device coordination for each event type
+
+**Event Automation Examples**:
+```java
+// MOVIE event: TV ON (2min before), Lights OFF (at start), AC ON (15min before)
+// SLEEP event: All lights OFF, TV OFF, AC ON (5min before)
+// MEETING event: Study room lights ON (5min before), AC ON (10min before)
+```
+
+#### **WeatherService.java**
+**Purpose**: Weather-based device control suggestions
+
+**What's Implemented**:
+- **Weather Simulation**: Current conditions and forecasting
+- **Smart Recommendations**: Device control suggestions based on weather
+- **Automation Rules**: Configurable weather-triggered actions
+- **Environmental Monitoring**: Temperature, humidity, air quality tracking
+- **Seasonal Adaptation**: Context-aware suggestions for Indian climate
+
+**Weather Triggers**:
+```java
+// Hot Weather (>30°C): AC activation, fan speed increase
+// Cold Weather (<18°C): Heater recommendations  
+// High Humidity (>70%): Dehumidifier and air purifier suggestions
+// Poor Air Quality (AQI >150): Air purification activation
+// Storm Conditions: Safety device activation
+```
 
 ---
 
@@ -181,6 +344,77 @@ private String status;      // Current state (ON/OFF)
 - Login/logout state management
 - Session data updates (when user data changes)
 - Memory-based session storage (resets on app restart)
+
+---
+
+## 📊 Auto-Aligned Table System (v2.1)
+
+### Overview
+The application features an intelligent table formatting system that automatically adjusts column widths based on content, providing optimal readability without truncation.
+
+### Implementation Details
+
+#### **TableDimensions Helper Class**
+```java
+private static class TableDimensions {
+    final int numWidth, deviceWidth, powerWidth, statusWidth, usageWidth, energyWidth;
+    // Immutable container for calculated column widths
+}
+```
+
+#### **TableFormatStrings Helper Class**
+```java
+private static class TableFormatStrings {
+    final String borderFormat, headerFormat, rowFormat, emptyRowFormat;
+    // Pre-calculated format strings for consistent table rendering
+}
+```
+
+#### **Key Methods**
+
+**`calculateTableDimensions(List<Gadget> allGadgets)`**:
+- Analyzes all device names, power ratings, status values, and usage data
+- Calculates optimal width for each column based on actual content
+- Considers session info and timer data for accurate sizing
+- Applies minimum width constraints for readability
+
+**`createTableFormatStrings(TableDimensions dim)`**:
+- Generates dynamic format strings based on calculated dimensions
+- Creates border patterns using calculated widths
+- Configures alignment (left-aligned text, right-aligned numbers)
+
+**`displayTableRows(List<Gadget> allGadgets, TableFormatStrings formats)`**:
+- Renders device rows with proper formatting
+- Handles current session information display
+- Shows timer information when applicable
+
+### Benefits
+- **No Truncation**: Full device names always visible
+- **Dynamic Sizing**: Columns adapt to content automatically
+- **Professional Appearance**: Consistent alignment and spacing
+- **Performance Optimized**: Minimal string operations and object creation
+
+### Before vs After Optimization
+
+**Before (v2.0)**:
+```java
+// Single large method with repetitive calculations
+private void displayAutoAlignedTable(List<Gadget> allGadgets) {
+    // 120+ lines of mixed responsibility code
+    // Duplicate calculations for dimensions
+    // Inline string formatting
+}
+```
+
+**After (v2.1)**:
+```java
+// Modular design with focused responsibilities
+private void displayAutoAlignedTable(List<Gadget> allGadgets) {
+    TableDimensions dimensions = calculateTableDimensions(allGadgets);
+    TableFormatStrings formats = createTableFormatStrings(dimensions);
+    displayTableRows(allGadgets, formats);
+}
+```
 
 ---
 
@@ -488,18 +722,60 @@ public Object getUserPreference(String key) {
 - [ ] Password reset flow
 
 **Device Management Flow**:
-- [ ] Connect new device
+- [ ] Connect new device with number selection
 - [ ] Try duplicate device in same room
 - [ ] Connect same device type in different room
-- [ ] View all devices
-- [ ] Change device status
+- [ ] View all devices with real-time usage data
+- [ ] Change device status using device number selection
 - [ ] Test with invalid device types
+- [ ] Verify power consumption updates in real-time
+- [ ] Check energy efficiency calculations (≤100%)
 
 **Security Testing**:
 - [ ] Test account lockout (3, 5, 7 failed attempts)
 - [ ] Test lockout expiry
 - [ ] Test password strength validation
 - [ ] Test session management
+
+**Timer System Testing**:
+- [ ] Schedule device timer with valid date/time
+- [ ] Test countdown display accuracy (hours and minutes)
+- [ ] Cancel scheduled timer using number selection
+- [ ] Test [OVERDUE] display for past-due timers
+- [ ] Verify automatic device execution at scheduled time
+
+**Smart Scenes Testing**:
+- [ ] Execute scenes using number selection (1-8)
+- [ ] Test scene automation with multiple devices
+- [ ] Verify scene execution results and feedback
+- [ ] Test scene execution with missing devices
+- [ ] Check device state coordination in scenes
+
+**Health Monitoring Testing**:
+- [ ] Generate health reports for different device types
+- [ ] Test health score calculations (0-100%)
+- [ ] Verify energy efficiency calculations (≤100%)
+- [ ] Test device-specific diagnostic messages
+- [ ] Check maintenance recommendations for low health scores
+
+**Energy Analytics Testing**:
+- [ ] Verify real-time power consumption updates
+- [ ] Test usage time tracking (current session + total)
+- [ ] Check energy consumption calculations (kWh)
+- [ ] Test analytics report generation
+- [ ] Verify cost analysis and projections
+
+**Calendar Events Testing**:
+- [ ] Create events using number selection for types
+- [ ] Test event automation triggers
+- [ ] Verify pre-event and post-event device control
+- [ ] Test event scheduling and timeline management
+
+**Weather Integration Testing**:
+- [ ] Test weather-based device recommendations
+- [ ] Verify weather condition simulations
+- [ ] Check automation rule suggestions
+- [ ] Test environmental monitoring features
 
 ### Automated Testing Setup
 
@@ -687,4 +963,30 @@ docs(guide): update developer documentation
 
 ---
 
-*Developer Guide v1.1 - Last Updated: September 2025*
+## 🔄 Version History
+
+### v2.1 (September 2025) - Performance & Code Quality Update
+**Optimizations**:
+- ✅ **Code Refactoring**: Broke down large methods into focused, single-responsibility functions
+- ✅ **Table System Enhancement**: Implemented helper classes for better organization
+- ✅ **Performance Improvements**: Reduced duplicate calculations and memory usage
+- ✅ **Input Handling Fix**: Resolved infinite loop issue in main menu
+- ✅ **Project Cleanup**: Removed temporary test files and optimized codebase
+
+**Technical Improvements**:
+- Refactored `displayAutoAlignedTable()` into modular components
+- Added `TableDimensions` and `TableFormatStrings` helper classes
+- Optimized string formatting operations
+- Enhanced code readability and maintainability
+- Fixed scanner input handling for better stability
+
+### v2.0 (September 2025) - Major Feature Release  
+**Features Added**:
+- Voice Command Removal, Timer System, Smart Scenes
+- Health Monitoring, Energy Analytics, Calendar Events, Weather Integration
+
+---
+
+*Developer Guide v2.1 - Last Updated: September 2025*
+*Latest Update: Performance Optimization & Code Quality Enhancement*
+*Prepared by: Sushma Mainampati*

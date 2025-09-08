@@ -14,6 +14,7 @@ public class Customer {
     private String fullName;
     private String password;
     private List<Gadget> gadgets;
+    private List<String> groupMembers;
     
     private int failedLoginAttempts;
     private LocalDateTime accountLockedUntil;
@@ -22,6 +23,7 @@ public class Customer {
     
     public Customer() {
         this.gadgets = new ArrayList<>();
+        this.groupMembers = new ArrayList<>();
         this.failedLoginAttempts = 0;
         this.accountLockedUntil = null;
         this.lastFailedLoginTime = null;
@@ -32,6 +34,7 @@ public class Customer {
         this.fullName = fullName;
         this.password = password;
         this.gadgets = new ArrayList<>();
+        this.groupMembers = new ArrayList<>();
         this.failedLoginAttempts = 0;
         this.accountLockedUntil = null;
         this.lastFailedLoginTime = null;
@@ -139,7 +142,37 @@ public class Customer {
         this.accountLockedUntil = LocalDateTime.now().plusMinutes(minutes);
     }
     
+    public List<String> getGroupMembers() {
+        return groupMembers;
+    }
     
+    public void setGroupMembers(List<String> groupMembers) {
+        this.groupMembers = groupMembers != null ? groupMembers : new ArrayList<>();
+    }
+    
+    public void addGroupMember(String memberEmail) {
+        if (this.groupMembers == null) {
+            this.groupMembers = new ArrayList<>();
+        }
+        
+        if (!this.groupMembers.contains(memberEmail.toLowerCase().trim())) {
+            this.groupMembers.add(memberEmail.toLowerCase().trim());
+        }
+    }
+    
+    public void removeGroupMember(String memberEmail) {
+        if (this.groupMembers != null) {
+            this.groupMembers.remove(memberEmail.toLowerCase().trim());
+        }
+    }
+    
+    public boolean isPartOfGroup() {
+        return this.groupMembers != null && !this.groupMembers.isEmpty();
+    }
+    
+    public boolean isGroupMember(String memberEmail) {
+        return this.groupMembers != null && this.groupMembers.contains(memberEmail.toLowerCase().trim());
+    }
     
     @Override
     public String toString() {

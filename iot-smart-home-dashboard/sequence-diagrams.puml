@@ -1,0 +1,179 @@
+@startuml IoT_Smart_Home_Dashboard_Sequences
+
+title IoT Smart Home Dashboard - Key Process Flows
+
+!theme plain
+
+' User Registration Sequence
+group User Registration Flow
+    actor User
+    participant "SmartHomeDashboard" as UI
+    participant "SmartHomeService" as SHS
+    participant "CustomerService" as CS
+    participant "DynamoDBConfig" as DB
+    participant "BCrypt" as BC
+    
+    User -> UI: 1. Register New Account
+    UI -> User: Request Full Name
+    User -> UI: Provide Name
+    UI -> User: Request Email
+    User -> UI: Provide Email
+    UI -> User: Request Password
+    User -> UI: Provide Password
+    UI -> User: Request Password Confirmation
+    User -> UI: Confirm Password
+    
+    UI -> SHS: registerCustomer(name, email, password, confirmPassword)
+    SHS -> CS: registerCustomer(customer)
+    CS -> CS: isValidEmail(email)
+    CS -> CS: isValidPassword(password)
+    CS -> CS: isValidName(name)
+    CS -> BC: hashpw(password, salt)
+    BC -> CS: hashedPassword
+    CS -> DB: save(customer)
+    DB -> CS: success/failure
+    CS -> SHS: registration result
+    SHS -> UI: registration result
+    UI -> User: Registration Success/Failure
+end
+
+' Device Management Sequence
+group Device Management Flow
+    User -> UI: 4. Add/Manage Devices
+    UI -> SHS: isLoggedIn()
+    SHS -> UI: authenticated
+    
+    UI -> User: Select Device Type
+    User -> UI: TV
+    UI -> User: Enter Model
+    User -> UI: Samsung Smart TV
+    UI -> User: Enter Room
+    User -> UI: Living Room
+    
+    UI -> SHS: connectToGadget("TV", "Samsung Smart TV", "Living Room")
+    SHS -> "GadgetService" as GS: createGadget(type, model, room)
+    GS -> GS: isValidGadgetType("TV")
+    GS -> GS: isValidModel("TV", "Samsung Smart TV")
+    GS -> GS: isValidRoom("Living Room")
+    GS -> GS: getDefaultPowerRating("TV")
+    GS -> SHS: new Gadget
+    SHS -> "SessionManager" as SM: getCurrentUser()
+    SM -> SHS: customer
+    SHS -> SHS: customer.addGadget(gadget)
+    SHS -> CS: updateCustomer(customer)
+    CS -> DB: save(customer)
+    DB -> CS: success
+    CS -> SHS: success
+    SHS -> UI: Device Added Successfully
+    UI -> User: Success Message
+end
+
+' Auto-Aligned Table Display Sequence (v2.1)
+group Auto-Aligned Table Display Flow
+    User -> UI: 5. View Device Status & Usage
+    UI -> SHS: viewGadgets()
+    SHS -> SM: getCurrentUser()
+    SM -> SHS: customer
+    SHS -> SHS: allGadgets = customer.getGadgets()
+    
+    ' Enhanced Table System (v2.1)
+    SHS -> SHS: displayAutoAlignedTable(allGadgets)
+    SHS -> SHS: dimensions = calculateTableDimensions(allGadgets)
+    note right: Analyzes device names, power ratings,\nstatus values, usage data for optimal sizing
+    SHS -> SHS: formats = createTableFormatStrings(dimensions)
+    note right: Generates dynamic format strings\nwith proper alignment
+    SHS -> SHS: displayTableRows(allGadgets, formats)
+    note right: Renders each device row with\ncurrent session and timer info
+    
+    loop for each gadget
+        SHS -> SHS: displayDeviceRow(gadget, rowNumber, formats.rowFormat)
+        alt gadget is ON and has session info
+            SHS -> SHS: display current session info
+        end
+        alt gadget has timers enabled
+            SHS -> SHS: buildTimerInfo(gadget, now, formatter)
+            SHS -> SHS: display timer information
+        end
+    end
+    
+    SHS -> UI: formatted table display
+    UI -> User: Auto-Aligned Device Table
+    note right of UI: No truncation, perfect alignment,\ndynamic column widths
+end
+
+' Smart Scene Execution Sequence
+group Smart Scene Execution Flow
+    User -> UI: 13. Smart Scenes (One-Click Automation)
+    UI -> SHS: getSmartScenesService()
+    SHS -> "SmartScenesService" as SSS: getAvailableSceneNames()
+    SSS -> UI: scene list
+    UI -> User: Display Scene Options (1-8)
+    User -> UI: Select Scene (e.g., 1. MORNING)
+    
+    UI -> SHS: executeSmartScene("MORNING")
+    SHS -> SSS: executeScene("MORNING", customer)
+    SSS -> SM: getCurrentUser()
+    SM -> SSS: customer
+    SSS -> SSS: executeMorningScene(customer)
+    
+    loop for each device action in scene
+        SSS -> SSS: find target device
+        alt device found
+            SSS -> SSS: perform action (ON/OFF)
+            SSS -> SSS: record success
+        else device not found
+            SSS -> SSS: record skip
+        end
+    end
+    
+    SSS -> SHS: SceneExecutionResult
+    SHS -> UI: execution result
+    UI -> User: Scene Execution Report
+end
+
+' Timer Management Sequence
+group Timer Management Flow
+    User -> UI: 9. Schedule Device Timers
+    UI -> SHS: getTimerService()
+    SHS -> "TimerService" as TS: instance
+    UI -> User: Select Device Number
+    User -> UI: device selection
+    UI -> User: Enter Schedule Time
+    User -> UI: date and time
+    UI -> User: Select Action (ON/OFF)
+    User -> UI: action selection
+    
+    UI -> SHS: scheduleTimer(gadget, action, dateTime)
+    SHS -> TS: scheduleTimer(gadget, action, dateTime)
+    TS -> TS: isValidDateTime(dateTime)
+    TS -> TS: parseDateTime(input)
+    TS -> TS: set gadget timer properties
+    TS -> SHS: success
+    SHS -> CS: updateCustomer(customer)
+    CS -> DB: save(customer)
+    SHS -> UI: Timer Scheduled
+    UI -> User: Timer Confirmation with Countdown
+end
+
+' Health Monitoring Sequence
+group Device Health Monitoring Flow
+    User -> UI: 14. Device Health Monitoring
+    UI -> SHS: getDeviceHealthService()
+    SHS -> "DeviceHealthService" as DHS: instance
+    SHS -> DHS: generateHealthReport(customer)
+    DHS -> SM: getCurrentUser()
+    SM -> DHS: customer
+    
+    loop for each gadget
+        DHS -> DHS: analyzeDeviceHealth(gadget)
+        DHS -> DHS: calculateHealthScore(gadget)
+        DHS -> DHS: getDeviceSpecificDiagnostics(gadget)
+        DHS -> DHS: getHealthRecommendations(gadget)
+    end
+    
+    DHS -> SHS: SystemHealthReport
+    SHS -> UI: health report
+    UI -> User: Device Health Dashboard
+end
+
+@enduml

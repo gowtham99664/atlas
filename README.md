@@ -15,11 +15,20 @@ A comprehensive Java-based console application for managing smart home devices w
 - Simplified password reset (no security questions)
 - Comprehensive password strength validation
 
-### 📱 **Smart Device Management**
-- **18 Device Categories**: TV, AC, Fan, Lights, Security, Kitchen appliances, etc.
+### 📱 **Advanced Device Management**
+- **18+ Device Categories**: TV, AC, Fan, Lights, Security, Kitchen appliances, etc.
 - **350+ Device Models**: Focus on Indian market brands
 - **38+ Room Types**: Complete coverage of Indian home layouts
 - **Real-time Control**: Turn devices ON/OFF with instant status updates
+- **Live Usage Tracking**: Real-time power consumption and session monitoring
+- **Health Monitoring**: Device diagnostics with maintenance recommendations
+
+### ⏰ **Smart Automation Features**
+- **Timer System**: Schedule devices with countdown display (hours and minutes)
+- **Smart Scenes**: One-click automation for daily routines (8 pre-configured scenes)
+- **Calendar Events**: Event-based automation with intelligent scheduling
+- **Weather Integration**: Weather-based device control recommendations
+- **Energy Analytics**: Comprehensive power consumption analysis and insights
 
 ### 💾 **Flexible Data Storage**
 - **DynamoDB Local**: Full persistence with local database
@@ -73,7 +82,17 @@ java -jar target/iot-smart-home-dashboard-1.0.0.jar
 | 4 | Control Gadgets | ✅ |
 | 5 | View Gadgets | ✅ |
 | 6 | Change Gadget Status | ✅ |
-| 7 | Exit | ❌ |
+| 7 | Schedule Device Timer | ✅ |
+| 8 | Set Device Timer | ✅ |
+| 9 | Cancel Device Timer | ✅ |
+| 10 | View Scheduled Timers | ✅ |
+| 11 | Calendar Events & Automation | ✅ |
+| 12 | Weather-Based Suggestions | ✅ |
+| 13 | Smart Scenes (One-Click Automation) | ✅ |
+| 14 | Device Health Monitoring | ✅ |
+| 15 | Usage Analytics & Insights | ✅ |
+| 16 | Logout | ✅ |
+| 17 | Exit | ❌ |
 
 ### Device Categories
 ```
@@ -106,15 +125,22 @@ iot-smart-home-dashboard/
 ├── 📁 src/main/java/com/smarthome/
 │   ├── 📁 model/                       # Data models
 │   │   ├── Customer.java              # User entity
-│   │   └── Gadget.java                # Device entity  
+│   │   └── Gadget.java                # Device entity with usage tracking
 │   ├── 📁 service/                     # Business logic
 │   │   ├── CustomerService.java       # User management
 │   │   ├── GadgetService.java         # Device operations
-│   │   └── SmartHomeService.java      # Main orchestration
+│   │   ├── SmartHomeService.java      # Main orchestration
+│   │   ├── TimerService.java          # Device scheduling & countdown
+│   │   ├── DeviceHealthService.java   # Health monitoring & diagnostics
+│   │   ├── SmartScenesService.java    # Scene automation
+│   │   ├── EnergyManagementService.java # Power consumption analytics
+│   │   ├── CalendarEventService.java  # Event-based automation
+│   │   └── WeatherService.java        # Weather-based suggestions
 │   ├── 📁 util/                        # Utilities
 │   │   ├── DynamoDBConfig.java        # Database connection
-│   │   └── SessionManager.java        # Session management
-│   └── SmartHomeDashboard.java        # Main application
+│   │   ├── SessionManager.java        # Session management
+│   │   └── PasswordInputUtil.java     # Secure input handling
+│   └── SmartHomeDashboard.java        # Main application (17 menu options)
 ├── 📁 dynamodb-local/                  # Local database
 └── 📁 target/                          # Build output
     └── iot-smart-home-dashboard-1.0.0.jar
@@ -194,6 +220,7 @@ mvn compile package
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.0.0 | Sep 2025 | Major feature update: Timer System, Smart Scenes, Health Monitoring, Energy Analytics, Calendar Events, Weather Integration. Removed Voice Command Simulation. Updated to 17 menu options. |
 | 1.0.0 | Sep 2025 | Initial release with full functionality |
 
 ## 🤝 Contributing
@@ -241,4 +268,5 @@ This project is proprietary software. All rights reserved.
 
 ---
 
-*Last updated: September 2025*
+*Last updated: September 2025*  
+*Developed by: Sushma Mainampati*
