@@ -5,6 +5,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +53,7 @@ public class DynamoDBConfig {
                 dynamoDbClient = DynamoDbClient.builder()
                         .endpointOverride(URI.create(endpoint))
                         .region(Region.of(region))
-                        .credentialsProvider(DefaultCredentialsProvider.create())
+                        .credentialsProvider(AnonymousCredentialsProvider.create())
                         .build();
                 System.out.println("Connected to local DynamoDB at: " + endpoint);
             } else {
