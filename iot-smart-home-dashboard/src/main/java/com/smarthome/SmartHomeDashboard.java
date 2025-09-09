@@ -17,6 +17,21 @@ public class SmartHomeDashboard {
     public static void main(String[] args) {
         System.out.println("=== Welcome to IoT Smart Home Dashboard ===\n");
         
+        // Add shutdown hook for graceful cleanup
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\n[SYSTEM] Graceful shutdown initiated...");
+            try {
+                if (smartHomeService.isLoggedIn()) {
+                    smartHomeService.logout();
+                    System.out.println("[SYSTEM] User session closed.");
+                }
+                smartHomeService.getTimerService().shutdown();
+                System.out.println("[SYSTEM] Timer service shutdown completed.");
+            } catch (Exception e) {
+                System.err.println("[SYSTEM] Warning during shutdown: " + e.getMessage());
+            }
+        }));
+        
         try {
             showMainMenu();
         } catch (Exception e) {
@@ -38,7 +53,7 @@ public class SmartHomeDashboard {
             System.out.println("4. Add/Manage Devices");
             System.out.println("5. View Device Status & Usage");
             System.out.println("6. Control Device Operations");
-            System.out.println("7. Add People to Group");
+            System.out.println("7. Group Management");
             System.out.println();
             System.out.println("[ENERGY & AUTOMATION]:");
             System.out.println("8. Energy Management Report");
@@ -72,8 +87,7 @@ public class SmartHomeDashboard {
                 switch (choice) {
                     case 1:
                         if (smartHomeService.isLoggedIn()) {
-                            System.out.println("[ERROR] Please logout first before registering a new account!");
-                            System.out.println("[INFO] Use option 16 to logout from current session.");
+                            handleRegistrationWhileLoggedIn();
                         } else {
                             registerCustomer();
                         }
@@ -101,7 +115,7 @@ public class SmartHomeDashboard {
                         break;
                     case 7:
                         if (checkLoginStatus()) {
-                            addPeople();
+                            showGroupManagementMenu();
                         }
                         break;
                     case 8:
@@ -148,13 +162,49 @@ public class SmartHomeDashboard {
                         }
                         break;
                     case 17:
-                        System.out.println("Thank you for using IoT Smart Home Enterprise Dashboard!");
+                        handleApplicationExit();
                         return;
                     default:
                         System.out.println("Invalid option! Please choose between 1-17.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input! Please enter a number between 1-17.");
+            }
+        }
+    }
+    
+    private static void handleRegistrationWhileLoggedIn() {
+        while (true) {
+            System.out.println("\n=== Account Registration ===");
+            System.out.println("You are currently logged in to an account.");
+            System.out.println("To register a new account, you need to logout first.");
+            System.out.println();
+            System.out.println("What would you like to do?");
+            System.out.println("1. Yes, logout and register new account");
+            System.out.println("2. No, keep current session and return to menu");
+            System.out.print("Choose an option (1-2): ");
+            
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                
+                switch (choice) {
+                    case 1:
+                        System.out.println("\n[INFO] Logging out from current session...");
+                        smartHomeService.logout();
+                        System.out.println("[SUCCESS] Logged out successfully!");
+                        System.out.println("\nNow let's register your new account:");
+                        registerCustomer();
+                        return;
+                        
+                    case 2:
+                        System.out.println("\nReturning to main menu with current session active.");
+                        return;
+                        
+                    default:
+                        System.out.println("Invalid option! Please choose 1 or 2.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter 1 or 2.");
             }
         }
     }
@@ -215,12 +265,163 @@ public class SmartHomeDashboard {
         }
     }
     
+    private static void handleApplicationExit() {
+        System.out.println("\n=== Application Exit ===");
+        
+        // Check if user is logged in and logout if necessary
+        if (smartHomeService.isLoggedIn()) {
+            System.out.println("Logging out current session...");
+            smartHomeService.logout();
+            System.out.println("Session ended successfully.");
+        }
+        
+        // Shutdown timer service properly
+        try {
+            smartHomeService.getTimerService().shutdown();
+            System.out.println("Timer service shutdown completed.");
+        } catch (Exception e) {
+            System.err.println("Warning: Error shutting down timer service: " + e.getMessage());
+        }
+        
+        System.out.println("\nThank you for using IoT Smart Home Enterprise Dashboard!");
+        System.out.println("Application closed safely.");
+    }
+    
     private static boolean checkLoginStatus() {
         if (!smartHomeService.isLoggedIn()) {
-            System.out.println("Please login first!");
-            return false;
+            return handleLoginFlow();
         }
         return true;
+    }
+    
+    private static boolean handleLoginFlow() {
+        while (true) {
+            System.out.println("\n=== Authentication Required ===");
+            System.out.println("You need to be logged in to access this feature.");
+            System.out.println();
+            System.out.println("Do you have an account with us?");
+            System.out.println("1. Yes, I have an account (Login)");
+            System.out.println("2. No, I'm new here (Register)");
+            System.out.println("3. Cancel and return to main menu");
+            System.out.print("Choose an option (1-3): ");
+            
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                
+                switch (choice) {
+                    case 1:
+                        System.out.println("\n=== Login ===");
+                        boolean loginSuccess = attemptLogin();
+                        if (loginSuccess) {
+                            System.out.println("[SUCCESS] Welcome back! You can now access all features.");
+                            return true;
+                        } else {
+                            System.out.println("Would you like to try again?");
+                            System.out.println("1. Yes, try login again");
+                            System.out.println("2. No, return to main menu");
+                            System.out.print("Choose (1-2): ");
+                            try {
+                                int retryChoice = Integer.parseInt(scanner.nextLine().trim());
+                                if (retryChoice != 1) {
+                                    return false;
+                                }
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                        }
+                        break;
+                        
+                    case 2:
+                        System.out.println("\n=== Register New Account ===");
+                        System.out.println("Great! Let's create your account.");
+                        boolean registerSuccess = attemptRegistration();
+                        if (registerSuccess) {
+                            System.out.println("\n[INFO] Registration successful! Now please login with your credentials.");
+                            boolean autoLoginSuccess = attemptLogin();
+                            if (autoLoginSuccess) {
+                                System.out.println("[SUCCESS] Welcome to IoT Smart Home Dashboard! You can now access all features.");
+                                return true;
+                            } else {
+                                System.out.println("[INFO] Please try logging in from the main menu.");
+                                return false;
+                            }
+                        } else {
+                            System.out.println("Would you like to try registration again?");
+                            System.out.println("1. Yes, try register again");
+                            System.out.println("2. No, return to main menu");
+                            System.out.print("Choose (1-2): ");
+                            try {
+                                int retryChoice = Integer.parseInt(scanner.nextLine().trim());
+                                if (retryChoice != 1) {
+                                    return false;
+                                }
+                            } catch (NumberFormatException e) {
+                                return false;
+                            }
+                        }
+                        break;
+                        
+                    case 3:
+                        System.out.println("Returning to main menu...");
+                        return false;
+                        
+                    default:
+                        System.out.println("Invalid option! Please choose 1, 2, or 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number between 1-3.");
+            }
+        }
+    }
+    
+    private static boolean attemptLogin() {
+        try {
+            System.out.print("Email: ");
+            String email = getValidatedInput("Email");
+            if (email == null) return false;
+            
+            System.out.print("Password: ");
+            String password = getValidatedInput("Password");
+            if (password == null) return false;
+            
+            return smartHomeService.loginCustomer(email, password);
+        } catch (Exception e) {
+            System.out.println("[ERROR] Login failed due to input error. Please try again.");
+            return false;
+        }
+    }
+    
+    private static boolean attemptRegistration() {
+        try {
+            System.out.print("Enter your full Name: ");
+            String fullName = getValidatedInput("Full Name");
+            if (fullName == null) return false;
+            
+            System.out.print("Enter your email: ");
+            String email = getValidatedInput("Email");
+            if (email == null) return false;
+            
+            System.out.println("\n[Password Requirements]:");
+            System.out.println("- 8-128 characters long");
+            System.out.println("- At least one uppercase letter (A-Z)");
+            System.out.println("- At least one lowercase letter (a-z)");
+            System.out.println("- At least one number (0-9)");
+            System.out.println("- At least one special character (!@#$%^&*)");
+            System.out.println("- Cannot be a common password");
+            System.out.println("- Cannot have more than 2 repeating characters");
+            System.out.print("\nChoose Your password: ");
+            String password = getValidatedInput("Password");
+            if (password == null) return false;
+            
+            System.out.print("Choose Your password again: ");
+            String confirmPassword = getValidatedInput("Confirm Password");
+            if (confirmPassword == null) return false;
+            
+            return smartHomeService.registerCustomer(fullName, email, password, confirmPassword);
+        } catch (Exception e) {
+            System.out.println("[ERROR] Registration failed due to input error. Please try again.");
+            return false;
+        }
     }
     
     private static void showGadgetControlMenu() {
@@ -772,8 +973,46 @@ public class SmartHomeDashboard {
         }
     }
     
-    private static void addPeople() {
-        System.out.println("\n=== Add People to Group ===");
+    private static void showGroupManagementMenu() {
+        while (true) {
+            System.out.println("\n=== Group Management ===");
+            System.out.println("1. View Group Information");
+            System.out.println("2. Add Person to Group");
+            System.out.println("3. Remove Person from Group (Admin Only)");
+            System.out.println("4. Return to Main Menu");
+            
+            System.out.print("Choose an option (1-4): ");
+            
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                
+                switch (choice) {
+                    case 1:
+                        viewGroupInformation();
+                        break;
+                    case 2:
+                        addPersonToGroup();
+                        break;
+                    case 3:
+                        removePersonFromGroup();
+                        break;
+                    case 4:
+                        return;
+                    default:
+                        System.out.println("Invalid option! Please choose between 1-4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number between 1-4.");
+            }
+        }
+    }
+    
+    private static void viewGroupInformation() {
+        smartHomeService.showGroupInfo();
+    }
+    
+    private static void addPersonToGroup() {
+        System.out.println("\n=== Add Person to Group ===");
         
         try {
             System.out.print("Enter email address to add to your group: ");
@@ -783,6 +1022,41 @@ public class SmartHomeDashboard {
             smartHomeService.addPersonToGroup(memberEmail);
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to add person to group. Please try again.");
+        }
+    }
+    
+    private static void removePersonFromGroup() {
+        System.out.println("\n=== Remove Person from Group ===");
+        
+        // First show group info
+        smartHomeService.showGroupInfo();
+        
+        try {
+            System.out.print("\nEnter email address to remove from your group: ");
+            String memberEmail = getValidatedInput("Email");
+            if (memberEmail == null) return;
+            
+            System.out.println("\n[!] CONFIRMATION [!]");
+            System.out.println("Are you sure you want to remove " + memberEmail + " from the group?");
+            System.out.println("1. Yes, Remove Member");
+            System.out.println("2. No, Cancel");
+            
+            System.out.print("Choose option (1-2): ");
+            int confirmation = Integer.parseInt(scanner.nextLine().trim());
+            
+            if (confirmation == 1) {
+                boolean success = smartHomeService.removePersonFromGroup(memberEmail);
+                if (success) {
+                    System.out.println("[*] Member removed successfully!");
+                }
+            } else {
+                System.out.println("Remove operation cancelled.");
+            }
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Remove operation cancelled.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to remove person from group. Please try again.");
         }
     }
     

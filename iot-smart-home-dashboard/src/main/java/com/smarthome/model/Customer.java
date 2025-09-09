@@ -15,6 +15,7 @@ public class Customer {
     private String password;
     private List<Gadget> gadgets;
     private List<String> groupMembers;
+    private String groupCreator; // Email of the person who created the group (admin)
     
     private int failedLoginAttempts;
     private LocalDateTime accountLockedUntil;
@@ -24,6 +25,7 @@ public class Customer {
     public Customer() {
         this.gadgets = new ArrayList<>();
         this.groupMembers = new ArrayList<>();
+        this.groupCreator = null;
         this.failedLoginAttempts = 0;
         this.accountLockedUntil = null;
         this.lastFailedLoginTime = null;
@@ -35,6 +37,7 @@ public class Customer {
         this.password = password;
         this.gadgets = new ArrayList<>();
         this.groupMembers = new ArrayList<>();
+        this.groupCreator = null;
         this.failedLoginAttempts = 0;
         this.accountLockedUntil = null;
         this.lastFailedLoginTime = null;
@@ -79,8 +82,8 @@ public class Customer {
         }
         
         boolean exists = this.gadgets.stream()
-                .anyMatch(g -> g.getType().equals(gadget.getType()) && 
-                              g.getRoomName().equals(gadget.getRoomName()));
+                .anyMatch(g -> g.getType().equalsIgnoreCase(gadget.getType()) && 
+                              g.getRoomName().equalsIgnoreCase(gadget.getRoomName()));
         
         if (!exists) {
             this.gadgets.add(gadget);
@@ -172,6 +175,30 @@ public class Customer {
     
     public boolean isGroupMember(String memberEmail) {
         return this.groupMembers != null && this.groupMembers.contains(memberEmail.toLowerCase().trim());
+    }
+    
+    public String getGroupCreator() {
+        return groupCreator;
+    }
+    
+    public void setGroupCreator(String groupCreator) {
+        this.groupCreator = groupCreator;
+    }
+    
+    public boolean isGroupAdmin() {
+        return this.groupCreator != null && this.groupCreator.equalsIgnoreCase(this.email);
+    }
+    
+    public boolean isGroupAdmin(String email) {
+        return this.groupCreator != null && this.groupCreator.equalsIgnoreCase(email);
+    }
+    
+    public int getGroupSize() {
+        int size = 0;
+        if (this.groupMembers != null) {
+            size += this.groupMembers.size();
+        }
+        return size + 1; // +1 for the current user
     }
     
     @Override

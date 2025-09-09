@@ -94,16 +94,18 @@ iot-smart-home-dashboard/
 ### 2. **Data Models**
 
 #### **Customer.java**
-**Purpose**: User entity with authentication and security features
+**Purpose**: User entity with authentication, security, and group management features
 
 **What's Implemented**:
 - User profile data (email, name, password hash)
 - Device ownership tracking (list of gadgets)
+- **Group Management System**: Collaborative device sharing functionality
 - Security features for account protection:
   - Failed login attempt counter
   - Account lockout timestamp
   - Last failed login time
 - Helper methods for account security management
+- Group administration and member management
 
 **Key Fields**:
 ```java
@@ -113,6 +115,33 @@ private String password;                 // BCrypt hashed password
 private List<Gadget> gadgets;           // User's connected devices
 private int failedLoginAttempts;        // Security counter
 private LocalDateTime accountLockedUntil; // Lockout expiry
+
+// Group Management Fields
+private Set<String> groupMembers;       // Email addresses of group members
+private String groupCreator;            // Email of group admin (who created the group)
+```
+
+**Group Management Methods**:
+```java
+public boolean isGroupAdmin() {
+    return this.groupCreator != null && this.groupCreator.equalsIgnoreCase(this.email);
+}
+
+public boolean isPartOfGroup() {
+    return groupMembers != null && !groupMembers.isEmpty();
+}
+
+public int getGroupSize() {
+    return groupMembers != null ? groupMembers.size() : 0;
+}
+
+public void addGroupMember(String memberEmail) {
+    // Adds member and auto-assigns admin if first member
+}
+
+public boolean removeGroupMember(String memberEmail) {
+    // Admin-only removal with validation
+}
 ```
 
 #### **Gadget.java**
@@ -188,16 +217,49 @@ private boolean timerEnabled;              // Timer status flag
 - Cleaning: Robotic Vacuum
 
 #### **SmartHomeService.java**
-**Purpose**: Main business logic orchestration
+**Purpose**: Main business logic orchestration and group management
 
 **What's Implemented**:
 - **User Operations**: Registration and login coordination
 - **Device Management**: Connect, view, and control devices with real-time updates
+- **Group Management**: Collaborative device sharing and administration
 - **Auto-Aligned Tables**: Dynamic table formatting with intelligent column sizing
 - **Session Integration**: User state management
 - **Password Recovery**: Simplified reset workflow
 - **Data Validation**: Input sanitization and business rule enforcement
 - **Service Coordination**: Integration with all specialized services
+
+**Group Management Features**:
+```java
+// Core group management methods
+public void addPersonToGroup(String memberEmail) {
+    // Validates email exists, adds to group, auto-assigns admin
+}
+
+public boolean removePersonFromGroup(String memberEmail) {
+    // Admin-only removal with security validation
+}
+
+public void showGroupInfo() {
+    // Displays group size, admin status, member list
+}
+
+// Device control with group awareness
+public void changeSpecificGadgetStatus(String deviceType, String roomName) {
+    // Updates device for actual owner, not current user
+}
+
+// Group-aware device listing
+public List<Gadget> viewGadgets() {
+    // Returns devices from user + all group members
+}
+```
+
+**Group Security & Validation**:
+- **Email Verification**: Only existing registered users can be added to groups
+- **Admin Controls**: Only group creators can remove members
+- **Auto-Repair**: Broken group states are automatically fixed
+- **Device Ownership**: Status changes update the actual device owner's record
 
 **Recent Optimizations (v2.1)**:
 - **Refactored Table Display**: `displayAutoAlignedTable()` method now uses helper classes for better organization
@@ -344,6 +406,180 @@ private boolean timerEnabled;              // Timer status flag
 - Login/logout state management
 - Session data updates (when user data changes)
 - Memory-based session storage (resets on app restart)
+
+---
+
+## 👥 Group Management System (v2.1)
+
+### Overview
+The Group Management System enables collaborative smart home control by allowing users to share their devices with family members, friends, or roommates. This feature maintains security and administrative controls while enabling seamless device sharing.
+
+### Architecture Components
+
+#### **Group Roles & Permissions**
+- **Group Admin**: The first person to add someone to their group becomes the admin
+- **Group Members**: All users in the group can view and control each other's devices
+- **Admin Privileges**: Only the group admin can remove members from the group
+
+#### **Key Features**
+- **Shared Device Control**: All group members can view and control each other's devices
+- **Real-Time Synchronization**: Device status changes are immediately visible to all group members  
+- **Admin Controls**: Only group admin can manage membership
+- **Auto-Repair**: Broken group states are automatically detected and repaired
+- **Device Ownership Preservation**: Devices remain owned by their original user
+
+### Implementation Details
+
+#### **Customer.java Enhancements**
+```java
+// New fields for group management
+private Set<String> groupMembers = new HashSet<>();
+private String groupCreator; // Email of admin user
+
+// Core group methods
+public boolean isGroupAdmin() {
+    return this.groupCreator != null && this.groupCreator.equalsIgnoreCase(this.email);
+}
+
+public void addGroupMember(String memberEmail) {
+    if (groupMembers == null) {
+        groupMembers = new HashSet<>();
+    }
+    
+    // Auto-assign admin if first member being added
+    if (groupMembers.isEmpty()) {
+        this.groupCreator = this.email;
+    }
+    
+    groupMembers.add(memberEmail.toLowerCase());
+}
+
+public boolean removeGroupMember(String memberEmail) {
+    if (groupMembers != null) {
+        boolean removed = groupMembers.remove(memberEmail.toLowerCase());
+        
+        // Reset group if no members left
+        if (groupMembers.isEmpty()) {
+            this.groupCreator = null;
+        }
+        
+        return removed;
+    }
+    return false;
+}
+```
+
+#### **SmartHomeService.java Group Logic**
+```java
+public void addPersonToGroup(String memberEmail) {
+    // 1. Validate email exists in system
+    Customer member = customerService.findCustomerByEmail(memberEmail);
+    if (member == null) {
+        System.out.println("[ERROR] No account found with email: " + memberEmail);
+        return;
+    }
+    
+    // 2. Prevent self-addition
+    if (currentUser.getEmail().equalsIgnoreCase(memberEmail)) {
+        System.out.println("[ERROR] Cannot add yourself to your own group!");
+        return;
+    }
+    
+    // 3. Add member and update both users' records
+    currentUser.addGroupMember(memberEmail);
+    member.addGroupMember(currentUser.getEmail());
+    
+    // 4. Update database for both users
+    customerService.updateCustomer(currentUser);
+    customerService.updateCustomer(member);
+}
+
+public List<Gadget> viewGadgets() {
+    List<Gadget> allGadgets = new ArrayList<>();
+    
+    // Add current user's devices
+    allGadgets.addAll(currentUser.getGadgets());
+    
+    // Add group members' devices if part of group
+    if (currentUser.isPartOfGroup()) {
+        for (String memberEmail : currentUser.getGroupMembers()) {
+            Customer member = customerService.findCustomerByEmail(memberEmail);
+            if (member != null) {
+                allGadgets.addAll(member.getGadgets());
+            }
+        }
+    }
+    
+    return allGadgets;
+}
+```
+
+#### **UI Integration (SmartHomeDashboard.java)**
+```java
+// New menu option 7: Group Management
+case 7:
+    if (checkLoginStatus()) {
+        showGroupManagementMenu();
+    }
+    break;
+
+private static void showGroupManagementMenu() {
+    System.out.println("=== Group Management ===");
+    System.out.println("1. View Group Information");
+    System.out.println("2. Add Person to Group");
+    System.out.println("3. Remove Person from Group (Admin Only)");
+    System.out.println("4. Return to Main Menu");
+}
+```
+
+### Security & Data Integrity
+
+#### **Validation Rules**
+- Email addresses must exist in the system before being added to groups
+- Only group admins can remove members (enforced at service level)
+- Group admins cannot remove themselves (prevents group destruction)
+- All group operations validate user authentication status
+
+#### **Auto-Repair Functionality**
+```java
+// Detects and repairs inconsistent group states
+private void repairBrokenGroupState(Customer currentUser, Customer member) {
+    if (!member.getGroupMembers().contains(currentUser.getEmail())) {
+        member.addGroupMember(currentUser.getEmail());
+        customerService.updateCustomer(member);
+        System.out.println("[AUTO-REPAIR] Fixed broken group relationship");
+    }
+}
+```
+
+#### **Device Control Security**
+- Device status changes update the actual device owner's database record
+- Group members can control devices but cannot modify device ownership
+- All device operations maintain audit trail of who made changes
+
+### Usage Examples
+
+#### **Adding Members to Group**
+```java
+// User A adds User B to group
+smartHomeService.addPersonToGroup("userB@example.com");
+// Result: User A becomes admin, both users can see each other's devices
+```
+
+#### **Group Device Control**
+```java
+// Any group member can control any device in the group
+smartHomeService.changeSpecificGadgetStatus("TV", "Living Room");
+// Updates device owner's record, visible to all group members
+```
+
+#### **Admin Member Management**
+```java
+// Only admin can remove members
+if (currentUser.isGroupAdmin()) {
+    smartHomeService.removePersonFromGroup("member@example.com");
+}
+```
 
 ---
 

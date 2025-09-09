@@ -19,9 +19,10 @@
 The IoT Smart Home Dashboard is a comprehensive Java-based application designed to provide centralized control and management of smart home devices. This console-based application enables users to register, authenticate, and manage various IoT gadgets across different rooms in their home environment.
 
 ### Key Features
-- **Multi-User Support**: Secure user registration and authentication system
+- **Multi-User Support**: Secure user registration and authentication system with interactive flows
+- **Group Management**: Share devices across users, admin controls, member management
 - **Comprehensive Device Management**: Control 18+ categories of smart devices across Indian home environments
-- **Advanced Timer System**: Schedule devices with countdown timers showing time remaining in hours and minutes
+- **Advanced Timer System**: Schedule devices with automatic cleanup of overdue timers and status verification
 - **Smart Automation**: One-click scene execution for daily routines (Morning, Evening, Night, Movie, Workout, etc.)
 - **Health Monitoring**: Real-time device health analysis with diagnostic insights and maintenance recommendations
 - **Energy Management**: Track power consumption, usage patterns, and efficiency metrics with live session updates
@@ -29,9 +30,9 @@ The IoT Smart Home Dashboard is a comprehensive Java-based application designed 
 - **Weather Intelligence**: Weather-based device control suggestions and automation rules
 - **Room-Based Organization**: Manage devices across 38+ room types including traditional Indian spaces
 - **Real-Time Analytics**: Live usage tracking with session-based calculations and comprehensive reporting
-- **User-Friendly Interface**: Number-based selection system for consistent user experience (no more typing device names)
+- **Enhanced User Experience**: Interactive authentication, graceful exit handling, and improved error recovery
 - **Data Persistence**: Integration with AWS DynamoDB for reliable data storage
-- **Offline Mode**: Demo mode functionality when database is unavailable
+- **Production Ready**: Automatic session cleanup, resource management, and graceful shutdown handling
 
 ### Comprehensive Indian Smart Home Devices
 #### Entertainment & Media Devices
@@ -1269,25 +1270,129 @@ If DynamoDB is unavailable, the application automatically switches to demo mode:
 ```
 
 ### 📱 **Main Menu Options**
-| Option | Action | Requires Login |
-|--------|--------|-----------------|
-| 1 | Customer Register | ❌ No |
-| 2 | Customer Login | ❌ No |
-| 3 | Forgot Password | ❌ No |
-| 4 | Control Gadgets | ✅ Yes |
-| 5 | View Gadgets | ✅ Yes |
-| 6 | Change Gadget Status | ✅ Yes |
-| 7 | Schedule Device Timer | ✅ Yes |
-| 8 | Set Device Timer | ✅ Yes |
-| 9 | Cancel Device Timer | ✅ Yes |
-| 10 | View Scheduled Timers | ✅ Yes |
-| 11 | Calendar Events & Automation | ✅ Yes |
-| 12 | Weather-Based Suggestions | ✅ Yes |
-| 13 | Smart Scenes (One-Click Automation) | ✅ Yes |
-| 14 | Device Health Monitoring | ✅ Yes |
-| 15 | Usage Analytics & Insights | ✅ Yes |
-| 16 | Logout | ✅ Yes |
-| 17 | Exit | ❌ No |
+
+#### 🏠 **Device Management**
+| Option | Action | Requires Login | Description |
+|--------|--------|----------------|-------------|
+| 1 | Register New Account | ❌ No | Create new user account with interactive flow |
+| 2 | Login | ❌ No | Login to existing account |
+| 3 | Forgot Password | ❌ No | Password recovery assistance |
+| 4 | Add/Manage Devices | ✅ Yes | Add, edit, or remove smart devices |
+| 5 | View Device Status & Usage | ✅ Yes | Display all devices with real-time status |
+| 6 | Control Device Operations | ✅ Yes | Turn devices ON/OFF with status verification |
+| 7 | Group Management | ✅ Yes | **NEW**: Manage device sharing groups |
+
+#### ⚡ **Energy & Automation**  
+| Option | Action | Requires Login | Description |
+|--------|--------|----------------|-------------|
+| 8 | Energy Management Report | ✅ Yes | View consumption and cost analysis |
+| 9 | Schedule Device Timers | ✅ Yes | Set future device automation |
+| 10 | View Scheduled Timers | ✅ Yes | Display active timers with countdown |
+| 11 | Calendar Events & Automation | ✅ Yes | Event-based device automation |
+| 12 | Weather-Based Suggestions | ✅ Yes | Smart device recommendations |
+
+#### 🔮 **Smart IoT Features**
+| Option | Action | Requires Login | Description |
+|--------|--------|----------------|-------------|
+| 13 | Smart Scenes (One-Click Automation) | ✅ Yes | Execute predefined automation scenes |
+| 14 | Device Health Monitoring | ✅ Yes | System health and maintenance insights |
+| 15 | Usage Analytics & Insights | ✅ Yes | Comprehensive usage patterns analysis |
+
+#### 🔧 **System**
+| Option | Action | Requires Login | Description |
+|--------|--------|----------------|-------------|
+| 16 | Logout | ✅ Yes | Secure logout with session cleanup |
+| 17 | Exit | ❌ No | **ENHANCED**: Graceful shutdown with auto-logout |
+
+---
+
+## 👥 **Group Management Feature Guide**
+
+### Overview
+The Group Management feature allows users to share their smart devices with family members, friends, or roommates. This enables collaborative control of home automation while maintaining security and administrative controls.
+
+### How Group Management Works
+- **Group Creator**: The first person to add someone to their group becomes the **Group Admin**
+- **Shared Device Control**: All group members can view and control each other's devices
+- **Admin Privileges**: Only the group admin can remove members from the group
+- **Real-Time Synchronization**: Device status changes are immediately visible to all group members
+
+### Group Management Menu (Option 7)
+```
+=== Group Management ===
+1. View Group Information      - See group size, members, and admin status
+2. Add Person to Group         - Add new members by email address  
+3. Remove Person from Group    - Admin-only: Remove members with confirmation
+4. Return to Main Menu         - Go back to main dashboard
+```
+
+### Step-by-Step Group Setup
+
+#### Creating Your First Group
+1. **Login** to your account
+2. **Add devices** to your account (if not already done)
+3. Select **Option 7** (Group Management)
+4. Select **Option 2** (Add Person to Group)
+5. Enter the **email address** of the person you want to add
+6. **You automatically become the Group Admin**
+
+#### Adding Additional Members  
+1. From Group Management menu, select **Option 2**
+2. Enter **new member's email address**
+3. System validates the user exists
+4. Member is added and can immediately access shared devices
+
+#### Viewing Group Information
+Select **Option 1** in Group Management to see:
+- **Group Size**: Total number of members
+- **Group Admin**: Email of the admin user
+- **Your Role**: Admin or Member status
+- **Member List**: All group participants with names
+- **Device Summary**: Device counts from all members
+
+#### Removing Group Members (Admin Only)
+1. Select **Option 3** (Remove Person from Group)
+2. System displays current group information
+3. Enter **email address** of member to remove
+4. **Confirmation prompt** appears for security
+5. Member loses access to shared devices immediately
+
+### Group Management Rules
+- ✅ **One Admin Per Group**: Only the group creator is admin
+- ✅ **Admin Cannot Remove Self**: Prevents accidental group destruction
+- ✅ **Mutual Device Access**: All members see all devices
+- ✅ **Real-Time Updates**: Status changes sync across all members
+- ✅ **Automatic Cleanup**: Broken group states are auto-repaired
+
+### Group Device Control
+- **View All Devices**: Personal + group members' devices in one list
+- **Control Any Device**: Turn ON/OFF devices owned by any group member  
+- **Status Persistence**: Changes are saved to the actual device owner's account
+- **Owner Identification**: Device listings show which member owns each device
+
+### Security & Privacy
+- **Email Validation**: Only existing users can be added to groups
+- **Admin Controls**: Only group admin can manage membership
+- **Secure Sessions**: Proper logout and session management
+- **Data Integrity**: Device ownership remains with original user
+
+---
+
+## 🕐 **Enhanced Timer Management**
+
+### Automatic Timer Cleanup
+- **Execution Window**: Timers execute within 2-minute grace period
+- **Automatic Deletion**: Overdue timers (5+ minutes old) are automatically removed  
+- **Status Verification**: Timer execution logs show before/after device status
+- **Clean Interface**: No more confusing "[OVERDUE]" timer entries
+
+### Timer Status Verification
+```
+[TIMER EXECUTED] TV in Living Room turned ON automatically
+  Status changed from OFF to ON
+```
+
+---
 
 ### 🔐 **Password Requirements Checklist**
 - ☑️ 8-128 characters long

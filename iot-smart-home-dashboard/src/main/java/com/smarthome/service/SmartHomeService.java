@@ -150,6 +150,8 @@ public class SmartHomeService {
             }
             
             System.out.println("\n=== Group Gadgets ===");
+            System.out.println("[INFO] Group size: " + currentUser.getGroupSize() + " member(s) | Admin: " + currentUser.getGroupCreator());
+            System.out.println("[INFO] Your role: " + (currentUser.isGroupAdmin() ? "Admin" : "Member"));
             System.out.println("[INFO] Showing your devices + " + currentUser.getGroupMembers().size() + " group member(s)' devices");
             if (groupDeviceCount > 0) {
                 System.out.println("[INFO] Group members contributed " + groupDeviceCount + " additional devices");
@@ -158,7 +160,7 @@ public class SmartHomeService {
             allGadgets = currentUser.getGadgets();
             System.out.println("\n=== Your Gadgets ===");
             System.out.println("[INFO] Showing only your personal devices (not part of any group)");
-            System.out.println("[INFO] Use 'Add People to Group' to share devices with others");
+            System.out.println("[INFO] Use 'Group Management' to create a group and share devices with others");
         }
         
         if (allGadgets == null || allGadgets.isEmpty()) {
@@ -214,10 +216,33 @@ public class SmartHomeService {
             }
             
             Gadget targetGadget = null;
-            for (Gadget gadget : gadgets) {
-                if (gadget.getType().equalsIgnoreCase(gadgetType)) {
-                    targetGadget = gadget;
-                    break;
+            Customer gadgetOwner = null;
+            
+            // First check current user's gadgets
+            if (currentUser.getGadgets() != null) {
+                for (Gadget gadget : currentUser.getGadgets()) {
+                    if (gadget.getType().equalsIgnoreCase(gadgetType)) {
+                        targetGadget = gadget;
+                        gadgetOwner = currentUser;
+                        break;
+                    }
+                }
+            }
+            
+            // If not found, check group members' gadgets
+            if (targetGadget == null && currentUser.isPartOfGroup()) {
+                for (String memberEmail : currentUser.getGroupMembers()) {
+                    Customer member = customerService.findCustomerByEmail(memberEmail);
+                    if (member != null && member.getGadgets() != null) {
+                        for (Gadget gadget : member.getGadgets()) {
+                            if (gadget.getType().equalsIgnoreCase(gadgetType)) {
+                                targetGadget = gadget;
+                                gadgetOwner = member;
+                                break;
+                            }
+                        }
+                        if (targetGadget != null) break;
+                    }
                 }
             }
             
@@ -236,11 +261,15 @@ public class SmartHomeService {
             targetGadget.toggleStatus();
             String newStatus = targetGadget.getStatus();
             
-            boolean updated = customerService.updateCustomer(currentUser);
+            // Update the actual owner of the gadget
+            boolean updated = customerService.updateCustomer(gadgetOwner);
+            
+            // If the gadget belongs to current user, also update session
+            if (gadgetOwner.getEmail().equals(currentUser.getEmail())) {
+                sessionManager.updateCurrentUser(gadgetOwner);
+            }
             
             if (updated) {
-                sessionManager.updateCurrentUser(currentUser);
-                
                 if ("ON".equals(newStatus)) {
                     System.out.println("[SUCCESS] Switched on successful");
                 } else {
@@ -291,11 +320,35 @@ public class SmartHomeService {
             }
             
             Gadget targetGadget = null;
-            for (Gadget gadget : gadgets) {
-                if (gadget.getType().equalsIgnoreCase(gadgetType) && 
-                    gadget.getRoomName().equalsIgnoreCase(roomName)) {
-                    targetGadget = gadget;
-                    break;
+            Customer gadgetOwner = null;
+            
+            // First check current user's gadgets
+            if (currentUser.getGadgets() != null) {
+                for (Gadget gadget : currentUser.getGadgets()) {
+                    if (gadget.getType().equalsIgnoreCase(gadgetType) && 
+                        gadget.getRoomName().equalsIgnoreCase(roomName)) {
+                        targetGadget = gadget;
+                        gadgetOwner = currentUser;
+                        break;
+                    }
+                }
+            }
+            
+            // If not found, check group members' gadgets
+            if (targetGadget == null && currentUser.isPartOfGroup()) {
+                for (String memberEmail : currentUser.getGroupMembers()) {
+                    Customer member = customerService.findCustomerByEmail(memberEmail);
+                    if (member != null && member.getGadgets() != null) {
+                        for (Gadget gadget : member.getGadgets()) {
+                            if (gadget.getType().equalsIgnoreCase(gadgetType) && 
+                                gadget.getRoomName().equalsIgnoreCase(roomName)) {
+                                targetGadget = gadget;
+                                gadgetOwner = member;
+                                break;
+                            }
+                        }
+                        if (targetGadget != null) break;
+                    }
                 }
             }
             
@@ -309,10 +362,15 @@ public class SmartHomeService {
             targetGadget.toggleStatus();
             String newStatus = targetGadget.getStatus();
             
-            boolean updated = customerService.updateCustomer(currentUser);
+            // Update the actual owner of the gadget
+            boolean updated = customerService.updateCustomer(gadgetOwner);
+            
+            // If the gadget belongs to current user, also update session
+            if (gadgetOwner.getEmail().equals(currentUser.getEmail())) {
+                sessionManager.updateCurrentUser(gadgetOwner);
+            }
             
             if (updated) {
-                sessionManager.updateCurrentUser(currentUser);
                 
                 if ("ON".equals(newStatus)) {
                     System.out.println("[SUCCESS] " + targetGadget.getType() + " " + targetGadget.getModel() + 
@@ -384,6 +442,15 @@ public class SmartHomeService {
                 return false;
             }
             
+            // Set group creator - the person who adds someone becomes admin if no admin exists
+            if (currentUser.getGroupCreator() == null) {
+                currentUser.setGroupCreator(currentUserEmail);
+            }
+            // Set the same admin for the target user if they don't have one
+            if (targetUser.getGroupCreator() == null) {
+                targetUser.setGroupCreator(currentUserEmail);
+            }
+            
             currentUser.addGroupMember(memberEmail);
             targetUser.addGroupMember(currentUserEmail);
             
@@ -395,6 +462,7 @@ public class SmartHomeService {
                 System.out.println("[SUCCESS] " + memberEmail + " has been added to your group!");
                 System.out.println("[INFO] Both you and " + memberEmail + " can now see each other's devices.");
                 System.out.println("[INFO] " + memberEmail + " can also see your devices when they login.");
+                System.out.println("[INFO] Group size is now: " + currentUser.getGroupSize() + " member(s)");
                 return true;
             } else {
                 System.out.println("[ERROR] Failed to update group membership in database!");
@@ -759,6 +827,170 @@ public class SmartHomeService {
     
     public DeviceHealthService getDeviceHealthService() {
         return deviceHealthService;
+    }
+    
+    public boolean removePersonFromGroup(String memberEmail) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+        
+        try {
+            Customer currentUser = sessionManager.getCurrentUser();
+            String currentUserEmail = currentUser.getEmail();
+            
+            // Check if user is admin
+            if (!currentUser.isGroupAdmin()) {
+                System.out.println("[ERROR] Only the group admin can remove members from the group!");
+                System.out.println("[INFO] Group admin is: " + currentUser.getGroupCreator());
+                return false;
+            }
+            
+            // Check if trying to remove themselves
+            if (memberEmail.toLowerCase().trim().equals(currentUserEmail.toLowerCase().trim())) {
+                System.out.println("[ERROR] You cannot remove yourself from the group!");
+                System.out.println("[INFO] To leave the group, use a different feature or delete the group.");
+                return false;
+            }
+            
+            // Check if member exists in group
+            if (!currentUser.isGroupMember(memberEmail)) {
+                System.out.println("[ERROR] " + memberEmail + " is not in your group!");
+                return false;
+            }
+            
+            Customer targetUser = customerService.findCustomerByEmail(memberEmail);
+            if (targetUser == null) {
+                System.out.println("[ERROR] User not found: " + memberEmail);
+                return false;
+            }
+            
+            // Remove from both users' group lists
+            currentUser.removeGroupMember(memberEmail);
+            targetUser.removeGroupMember(currentUserEmail);
+            
+            // If target user has no more group members, clear their group creator
+            if (!targetUser.isPartOfGroup()) {
+                targetUser.setGroupCreator(null);
+            }
+            
+            boolean currentUserUpdated = customerService.updateCustomer(currentUser);
+            boolean targetUserUpdated = customerService.updateCustomer(targetUser);
+            
+            if (currentUserUpdated && targetUserUpdated) {
+                sessionManager.updateCurrentUser(currentUser);
+                System.out.println("[SUCCESS] " + memberEmail + " has been removed from the group!");
+                System.out.println("[INFO] " + memberEmail + " can no longer see your devices.");
+                System.out.println("[INFO] Group size is now: " + currentUser.getGroupSize() + " member(s)");
+                return true;
+            } else {
+                System.out.println("[ERROR] Failed to update group membership in database!");
+                // Rollback changes if only one update succeeded
+                if (currentUserUpdated && !targetUserUpdated) {
+                    currentUser.addGroupMember(memberEmail);
+                    customerService.updateCustomer(currentUser);
+                }
+                if (!currentUserUpdated && targetUserUpdated) {
+                    targetUser.addGroupMember(currentUserEmail);
+                    customerService.updateCustomer(targetUser);
+                }
+                return false;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error removing person from group: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public void showGroupInfo() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return;
+        }
+        
+        Customer currentUser = sessionManager.getCurrentUser();
+        
+        // Auto-fix groups that don't have an admin (for existing groups)
+        if (currentUser.isPartOfGroup() && currentUser.getGroupCreator() == null) {
+            fixGroupAdmin(currentUser);
+        }
+        
+        if (!currentUser.isPartOfGroup()) {
+            System.out.println("\n=== Group Information ===");
+            System.out.println("[INFO] You are not part of any group.");
+            System.out.println("[INFO] Use 'Group Management' to create a group and share devices.");
+            return;
+        }
+        
+        System.out.println("\n=== Group Information ===");
+        System.out.println("Group Size: " + currentUser.getGroupSize() + " member(s)");
+        System.out.println("Group Admin: " + currentUser.getGroupCreator());
+        System.out.println("Your Role: " + (currentUser.isGroupAdmin() ? "Admin" : "Member"));
+        
+        System.out.println("\n[GROUP MEMBERS]:");
+        System.out.println("1. " + currentUser.getEmail() + " (You)" + (currentUser.isGroupAdmin() ? " - Admin" : ""));
+        
+        int memberCount = 2;
+        for (String memberEmail : currentUser.getGroupMembers()) {
+            Customer member = customerService.findCustomerByEmail(memberEmail);
+            String memberName = member != null ? member.getFullName() : "Unknown";
+            System.out.println(memberCount + ". " + memberEmail + " (" + memberName + ")");
+            memberCount++;
+        }
+        
+        // Show device count information
+        int totalDevices = 0;
+        int yourDevices = currentUser.getGadgets() != null ? currentUser.getGadgets().size() : 0;
+        totalDevices += yourDevices;
+        
+        int groupDevices = 0;
+        for (String memberEmail : currentUser.getGroupMembers()) {
+            Customer member = customerService.findCustomerByEmail(memberEmail);
+            if (member != null && member.getGadgets() != null) {
+                groupDevices += member.getGadgets().size();
+            }
+        }
+        totalDevices += groupDevices;
+        
+        System.out.println("\n[DEVICE INFORMATION]:");
+        System.out.println("Your devices: " + yourDevices);
+        System.out.println("Group members' devices: " + groupDevices);
+        System.out.println("Total accessible devices: " + totalDevices);
+        
+        if (currentUser.isGroupAdmin()) {
+            System.out.println("\n[ADMIN OPTIONS]:");
+            System.out.println("- You can remove members from the group");
+            System.out.println("- Use 'Group Management' menu to manage members");
+        }
+    }
+    
+    private void fixGroupAdmin(Customer currentUser) {
+        try {
+            String currentUserEmail = currentUser.getEmail();
+            
+            // Set current user as group admin
+            currentUser.setGroupCreator(currentUserEmail);
+            
+            // Update all group members to have this admin
+            for (String memberEmail : currentUser.getGroupMembers()) {
+                Customer member = customerService.findCustomerByEmail(memberEmail);
+                if (member != null && member.getGroupCreator() == null) {
+                    member.setGroupCreator(currentUserEmail);
+                    customerService.updateCustomer(member);
+                }
+            }
+            
+            // Update current user
+            boolean updated = customerService.updateCustomer(currentUser);
+            if (updated) {
+                sessionManager.updateCurrentUser(currentUser);
+                System.out.println("[INFO] Group admin has been automatically assigned to: " + currentUserEmail);
+            }
+            
+        } catch (Exception e) {
+            System.out.println("[WARNING] Could not fix group admin assignment: " + e.getMessage());
+        }
     }
     
     private void displayAutoAlignedTable(List<Gadget> allGadgets) {

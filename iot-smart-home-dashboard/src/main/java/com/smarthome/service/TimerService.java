@@ -234,40 +234,83 @@ public class TimerService {
             List<Customer> allCustomers = getAllCustomersWithTimers();
             
             for (Customer customer : allCustomers) {
+                boolean customerUpdated = false;
+                
                 for (Gadget device : customer.getGadgets()) {
                     if (!device.isTimerEnabled()) continue;
                     
-                    if (device.getScheduledOnTime() != null && 
-                        now.isAfter(device.getScheduledOnTime()) && 
-                        now.isBefore(device.getScheduledOnTime().plusMinutes(2))) {
-                        
-                        device.turnOn();
-                        device.setScheduledOnTime(null);
-                        
-                        if (device.getScheduledOffTime() == null) {
-                            device.setTimerEnabled(false);
+                    // Check and execute ON timers
+                    if (device.getScheduledOnTime() != null) {
+                        if (now.isAfter(device.getScheduledOnTime()) && 
+                            now.isBefore(device.getScheduledOnTime().plusMinutes(2))) {
+                            
+                            // Execute timer within 2-minute window
+                            String previousStatus = device.getStatus();
+                            device.turnOn();
+                            String newStatus = device.getStatus();
+                            device.setScheduledOnTime(null);
+                            customerUpdated = true;
+                            
+                            if (device.getScheduledOffTime() == null) {
+                                device.setTimerEnabled(false);
+                            }
+                            
+                            System.out.println("[TIMER EXECUTED] " + device.getType() + " in " + 
+                                             device.getRoomName() + " turned ON automatically");
+                            System.out.println("  Status changed from " + previousStatus + " to " + newStatus);
+                                             
+                        } else if (now.isAfter(device.getScheduledOnTime().plusMinutes(5))) {
+                            // Delete overdue timers (older than 5 minutes)
+                            device.setScheduledOnTime(null);
+                            customerUpdated = true;
+                            
+                            if (device.getScheduledOffTime() == null) {
+                                device.setTimerEnabled(false);
+                            }
+                            
+                            System.out.println("[TIMER DELETED] Overdue ON timer removed for " + 
+                                             device.getType() + " in " + device.getRoomName());
                         }
-                        
-                        customerService.updateCustomer(customer);
-                        System.out.println("[TIMER EXECUTED] " + device.getType() + " in " + 
-                                         device.getRoomName() + " turned ON automatically");
                     }
                     
-                    if (device.getScheduledOffTime() != null && 
-                        now.isAfter(device.getScheduledOffTime()) && 
-                        now.isBefore(device.getScheduledOffTime().plusMinutes(2))) {
-                        
-                        device.turnOff();
-                        device.setScheduledOffTime(null);
-                        
-                        if (device.getScheduledOnTime() == null) {
-                            device.setTimerEnabled(false);
+                    // Check and execute OFF timers
+                    if (device.getScheduledOffTime() != null) {
+                        if (now.isAfter(device.getScheduledOffTime()) && 
+                            now.isBefore(device.getScheduledOffTime().plusMinutes(2))) {
+                            
+                            // Execute timer within 2-minute window
+                            String previousStatus = device.getStatus();
+                            device.turnOff();
+                            String newStatus = device.getStatus();
+                            device.setScheduledOffTime(null);
+                            customerUpdated = true;
+                            
+                            if (device.getScheduledOnTime() == null) {
+                                device.setTimerEnabled(false);
+                            }
+                            
+                            System.out.println("[TIMER EXECUTED] " + device.getType() + " in " + 
+                                             device.getRoomName() + " turned OFF automatically");
+                            System.out.println("  Status changed from " + previousStatus + " to " + newStatus);
+                                             
+                        } else if (now.isAfter(device.getScheduledOffTime().plusMinutes(5))) {
+                            // Delete overdue timers (older than 5 minutes)
+                            device.setScheduledOffTime(null);
+                            customerUpdated = true;
+                            
+                            if (device.getScheduledOnTime() == null) {
+                                device.setTimerEnabled(false);
+                            }
+                            
+                            System.out.println("[TIMER DELETED] Overdue OFF timer removed for " + 
+                                             device.getType() + " in " + device.getRoomName());
                         }
-                        
-                        customerService.updateCustomer(customer);
-                        System.out.println("[TIMER EXECUTED] " + device.getType() + " in " + 
-                                         device.getRoomName() + " turned OFF automatically");
                     }
+                }
+                
+                // Update customer only once if any changes were made
+                if (customerUpdated) {
+                    customerService.updateCustomer(customer);
                 }
             }
         } catch (Exception e) {
