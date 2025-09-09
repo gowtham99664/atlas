@@ -4,7 +4,8 @@ echo    IoT Smart Home Dashboard - Quick Start
 echo ====================================================
 echo.
 echo This script will build and run your application.
-echo Make sure DynamoDB Local is running first!
+echo Make sure DynamoDB Local is running on port 8002 first!
+echo (Use: start-dynamodb.bat or java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8002)
 echo.
 pause
 echo.

@@ -6,6 +6,8 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +32,7 @@ public class DynamoDBConfig {
             if (input == null) {
                 System.out.println("Unable to find application.properties, using defaults");
                 properties.setProperty("dynamodb.local", "true");
-                properties.setProperty("dynamodb.local.endpoint", "http://localhost:8000");
+                properties.setProperty("dynamodb.local.endpoint", "http://localhost:8002");
                 properties.setProperty("dynamodb.region", "us-east-1");
             } else {
                 properties.load(input);
@@ -38,7 +40,7 @@ public class DynamoDBConfig {
         } catch (IOException e) {
             System.err.println("Error loading properties: " + e.getMessage());
             properties.setProperty("dynamodb.local", "true");
-            properties.setProperty("dynamodb.local.endpoint", "http://localhost:8000");
+            properties.setProperty("dynamodb.local.endpoint", "http://localhost:8002");
             properties.setProperty("dynamodb.region", "us-east-1");
         }
     }
@@ -49,11 +51,13 @@ public class DynamoDBConfig {
             String region = properties.getProperty("dynamodb.region", "us-east-1");
             
             if (isLocal) {
-                String endpoint = properties.getProperty("dynamodb.local.endpoint", "http://localhost:8000");
+                String endpoint = properties.getProperty("dynamodb.local.endpoint", "http://localhost:8002");
+                // Use dummy credentials for local DynamoDB
+                AwsBasicCredentials localCredentials = AwsBasicCredentials.create("local", "local");
                 dynamoDbClient = DynamoDbClient.builder()
                         .endpointOverride(URI.create(endpoint))
                         .region(Region.of(region))
-                        .credentialsProvider(AnonymousCredentialsProvider.create())
+                        .credentialsProvider(StaticCredentialsProvider.create(localCredentials))
                         .build();
                 System.out.println("Connected to local DynamoDB at: " + endpoint);
             } else {
@@ -71,7 +75,7 @@ public class DynamoDBConfig {
         } catch (Exception e) {
             System.err.println("Failed to initialize DynamoDB client: " + e.getMessage());
             System.err.println("\n[WARNING] DynamoDB is not available. Please:");
-            System.err.println("   1. Start DynamoDB Local: java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb");
+            System.err.println("   1. Start DynamoDB Local: java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8002");
             System.err.println("   2. Or configure AWS DynamoDB credentials");
             System.err.println("   3. Application will continue in demo mode but data won't persist.\n");
             
