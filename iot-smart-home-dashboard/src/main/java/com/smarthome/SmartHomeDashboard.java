@@ -447,17 +447,27 @@ public class SmartHomeDashboard {
                             System.out.println("[SUCCESS] Welcome back! You can now access all features.");
                             return true;
                         } else {
-                            System.out.println("Would you like to try again?");
-                            System.out.println("1. Yes, try login again");
-                            System.out.println("2. No, return to main menu");
-                            System.out.print("Choose (1-2): ");
-                            try {
-                                int retryChoice = Integer.parseInt(scanner.nextLine().trim());
-                                if (retryChoice != 1) {
-                                    return false;
+                            while (true) {
+                                System.out.println("Would you like to try again?");
+                                System.out.println("1. Yes, try login again");
+                                System.out.println("2. No, return to main menu");
+                                System.out.print("Choose (1-2): ");
+                                try {
+                                    int retryChoice = Integer.parseInt(scanner.nextLine().trim());
+
+                                    switch (retryChoice) {
+                                        case 1:
+                                            break; // Continue with retry
+                                        case 2:
+                                            return false;
+                                        default:
+                                            System.out.println("Invalid option! Please choose 1 or 2.");
+                                            continue;
+                                    }
+                                    break; // Exit the retry loop
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid input! Please enter a number (1 or 2).");
                                 }
-                            } catch (NumberFormatException e) {
-                                return false;
                             }
                         }
                         break;
@@ -477,17 +487,27 @@ public class SmartHomeDashboard {
                                 return false;
                             }
                         } else {
-                            System.out.println("Would you like to try registration again?");
-                            System.out.println("1. Yes, try register again");
-                            System.out.println("2. No, return to main menu");
-                            System.out.print("Choose (1-2): ");
-                            try {
-                                int retryChoice = Integer.parseInt(scanner.nextLine().trim());
-                                if (retryChoice != 1) {
-                                    return false;
+                            while (true) {
+                                System.out.println("Would you like to try registration again?");
+                                System.out.println("1. Yes, try register again");
+                                System.out.println("2. No, return to main menu");
+                                System.out.print("Choose (1-2): ");
+                                try {
+                                    int retryChoice = Integer.parseInt(scanner.nextLine().trim());
+
+                                    switch (retryChoice) {
+                                        case 1:
+                                            break; // Continue with retry
+                                        case 2:
+                                            return false;
+                                        default:
+                                            System.out.println("Invalid option! Please choose 1 or 2.");
+                                            continue;
+                                    }
+                                    break; // Exit the retry loop
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid input! Please enter a number (1 or 2).");
                                 }
-                            } catch (NumberFormatException e) {
-                                return false;
                             }
                         }
                         break;
@@ -1214,9 +1234,21 @@ public class SmartHomeDashboard {
             System.out.println("1. Yes, Remove Member");
             System.out.println("2. No, Cancel");
             
-            System.out.print("Choose option (1-2): ");
-            int confirmation = Integer.parseInt(scanner.nextLine().trim());
-            
+            int confirmation;
+            while (true) {
+                System.out.print("Choose option (1-2): ");
+                try {
+                    confirmation = Integer.parseInt(scanner.nextLine().trim());
+                    if (confirmation == 1 || confirmation == 2) {
+                        break; // Valid choice
+                    } else {
+                        System.out.println("[ERROR] Invalid option! Please choose 1 or 2.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("[ERROR] Invalid input! Please enter 1 or 2.");
+                }
+            }
+
             if (confirmation == 1) {
                 boolean success = smartHomeService.removePersonFromGroup(memberEmail);
                 if (success) {
@@ -1288,12 +1320,19 @@ public class SmartHomeDashboard {
                 System.out.println((i + 1) + ". " + member.getFullName() + " (" + member.getEmail() + ")");
             }
 
-            System.out.print("Choose member number (1-" + groupMembers.size() + "): ");
-            int memberChoice = Integer.parseInt(scanner.nextLine().trim());
-
-            if (memberChoice < 1 || memberChoice > groupMembers.size()) {
-                System.out.println("[ERROR] Invalid member number!");
-                return;
+            int memberChoice;
+            while (true) {
+                System.out.print("Choose member number (1-" + groupMembers.size() + "): ");
+                try {
+                    memberChoice = Integer.parseInt(scanner.nextLine().trim());
+                    if (memberChoice >= 1 && memberChoice <= groupMembers.size()) {
+                        break; // Valid choice
+                    } else {
+                        System.out.println("[ERROR] Invalid member number! Please choose between 1-" + groupMembers.size() + ".");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("[ERROR] Invalid input! Please enter a valid number between 1-" + groupMembers.size() + ".");
+                }
             }
 
             Customer selectedMember = groupMembers.get(memberChoice - 1);
@@ -1305,9 +1344,22 @@ public class SmartHomeDashboard {
             System.out.println();
             System.out.println("1. Yes, Grant Access");
             System.out.println("2. No, Cancel");
-            System.out.print("Choose (1-2): ");
 
-            int confirmation = Integer.parseInt(scanner.nextLine().trim());
+            int confirmation;
+            while (true) {
+                System.out.print("Choose (1-2): ");
+                try {
+                    confirmation = Integer.parseInt(scanner.nextLine().trim());
+                    if (confirmation == 1 || confirmation == 2) {
+                        break; // Valid choice
+                    } else {
+                        System.out.println("[ERROR] Invalid option! Please choose 1 or 2.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("[ERROR] Invalid input! Please enter 1 or 2.");
+                }
+            }
+
             if (confirmation == 1) {
                 boolean success = smartHomeService.grantDevicePermission(
                     selectedMember.getEmail(),
@@ -1361,9 +1413,21 @@ public class SmartHomeDashboard {
             System.out.println("Revoke access for " + memberEmail + " to " + deviceType + " in " + roomName + "?");
             System.out.println("1. Yes, Revoke Access");
             System.out.println("2. No, Cancel");
-            System.out.print("Choose (1-2): ");
+            int confirmation;
+            while (true) {
+                System.out.print("Choose (1-2): ");
+                try {
+                    confirmation = Integer.parseInt(scanner.nextLine().trim());
+                    if (confirmation == 1 || confirmation == 2) {
+                        break; // Valid choice
+                    } else {
+                        System.out.println("[ERROR] Invalid option! Please choose 1 or 2.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("[ERROR] Invalid input! Please enter 1 or 2.");
+                }
+            }
 
-            int confirmation = Integer.parseInt(scanner.nextLine().trim());
             if (confirmation == 1) {
                 boolean success = smartHomeService.revokeDevicePermission(memberEmail, deviceType, roomName);
 
@@ -2027,10 +2091,22 @@ public class SmartHomeDashboard {
             return;
         }
         
-        System.out.print("Enter device number to delete: ");
+        int deviceIndex;
+        while (true) {
+            System.out.print("Enter device number to delete: ");
+            try {
+                deviceIndex = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (deviceIndex >= 0 && deviceIndex < devices.size()) {
+                    break; // Valid choice
+                } else {
+                    System.out.println("[ERROR] Invalid device number! Please choose between 1-" + devices.size() + ".");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("[ERROR] Invalid input! Please enter a valid number between 1-" + devices.size() + ".");
+            }
+        }
+
         try {
-            int deviceIndex = Integer.parseInt(scanner.nextLine().trim()) - 1;
-            
             if (deviceIndex >= 0 && deviceIndex < devices.size()) {
                 com.smarthome.model.Gadget device = devices.get(deviceIndex);
                 
@@ -2047,10 +2123,21 @@ public class SmartHomeDashboard {
                 System.out.println("1. Yes, Delete Device");
                 System.out.println("2. No, Cancel Delete");
                 
-                System.out.print("Choose option (1-2): ");
-                
-                int confirmation = Integer.parseInt(scanner.nextLine().trim());
-                
+                int confirmation;
+                while (true) {
+                    System.out.print("Choose option (1-2): ");
+                    try {
+                        confirmation = Integer.parseInt(scanner.nextLine().trim());
+                        if (confirmation == 1 || confirmation == 2) {
+                            break; // Valid choice
+                        } else {
+                            System.out.println("[ERROR] Invalid option! Please choose 1 or 2.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("[ERROR] Invalid input! Please enter 1 or 2.");
+                    }
+                }
+
                 if (confirmation == 1) {
                     boolean success = smartHomeService.deleteDevice(device.getType(), device.getRoomName());
                     if (success) {
