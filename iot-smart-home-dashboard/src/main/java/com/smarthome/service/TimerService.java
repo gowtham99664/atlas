@@ -107,21 +107,24 @@ public class TimerService {
     }
     
     public void displayScheduledTimers(Customer customer) {
+        // Force immediate check for due timers before displaying
+        forceTimerCheck();
+
         System.out.println("\n=== Scheduled Timers ===");
-        
+
         List<Gadget> devicesWithTimers = new ArrayList<>();
         for (Gadget device : customer.getGadgets()) {
-            if (device.isTimerEnabled() && 
+            if (device.isTimerEnabled() &&
                 (device.getScheduledOnTime() != null || device.getScheduledOffTime() != null)) {
                 devicesWithTimers.add(device);
             }
         }
-        
+
         if (devicesWithTimers.isEmpty()) {
             System.out.println("No timers scheduled.");
             return;
         }
-        
+
         LocalDateTime now = LocalDateTime.now();
         
         System.out.println("+----+-------------------------+--------+-------------------+----------------------+");
@@ -163,15 +166,27 @@ public class TimerService {
     
     private String getCountdownString(LocalDateTime now, LocalDateTime scheduledTime) {
         if (scheduledTime.isBefore(now)) {
-            return "[OVERDUE]";
+            long minutesOverdue = ChronoUnit.MINUTES.between(scheduledTime, now);
+            if (minutesOverdue <= 10) {
+                return "[EXECUTING/DUE]";
+            } else {
+                return "[EXPIRED]";
+            }
         }
-        
-        long totalMinutes = ChronoUnit.MINUTES.between(now, scheduledTime);
+
+        long totalSeconds = ChronoUnit.SECONDS.between(now, scheduledTime);
+        long totalMinutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
         long days = totalMinutes / (24 * 60);
         long hours = (totalMinutes % (24 * 60)) / 60;
         long minutes = totalMinutes % 60;
-        
-        if (days > 0) {
+
+        // Show seconds for timers due within 2 minutes for more precision
+        if (totalMinutes == 0 && seconds <= 60) {
+            return String.format("[%ds remaining]", seconds);
+        } else if (totalMinutes < 2) {
+            return String.format("[%dm %ds remaining]", minutes, seconds);
+        } else if (days > 0) {
             return String.format("[%dd %dh %dm remaining]", days, hours, minutes);
         } else if (hours > 0) {
             return String.format("[%dh %dm remaining]", hours, minutes);
@@ -218,103 +233,126 @@ public class TimerService {
     }
     
     private void startTimerMonitoring() {
+        // Check every 10 seconds for precise timer execution
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 checkAndExecuteScheduledTasks();
             } catch (Exception e) {
                 System.err.println("Error in timer monitoring: " + e.getMessage());
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 0, 10, TimeUnit.SECONDS);
     }
     
     private void checkAndExecuteScheduledTasks() {
         LocalDateTime now = LocalDateTime.now();
-        
+
         try {
             List<Customer> allCustomers = getAllCustomersWithTimers();
-            
+
             for (Customer customer : allCustomers) {
                 boolean customerUpdated = false;
-                
+
                 for (Gadget device : customer.getGadgets()) {
                     if (!device.isTimerEnabled()) continue;
-                    
-                    // Check and execute ON timers
+
+                    // Check and execute ON timers - Execute immediately when due
                     if (device.getScheduledOnTime() != null) {
-                        if (now.isAfter(device.getScheduledOnTime()) && 
-                            now.isBefore(device.getScheduledOnTime().plusMinutes(2))) {
-                            
-                            // Execute timer within 2-minute window
-                            String previousStatus = device.getStatus();
-                            device.turnOn();
-                            String newStatus = device.getStatus();
-                            device.setScheduledOnTime(null);
-                            customerUpdated = true;
-                            
-                            if (device.getScheduledOffTime() == null) {
-                                device.setTimerEnabled(false);
+                        LocalDateTime scheduledOnTime = device.getScheduledOnTime();
+
+                        // Execute timer if current time has reached or passed the scheduled time
+                        if (now.isAfter(scheduledOnTime) || now.isEqual(scheduledOnTime)) {
+                            // Check if this timer hasn't been executed recently (within last minute)
+                            long minutesSinceScheduled = ChronoUnit.MINUTES.between(scheduledOnTime, now);
+
+                            if (minutesSinceScheduled <= 10) { // Execute within 10 minutes of scheduled time
+                                String previousStatus = device.getStatus();
+                                device.turnOn();
+                                String newStatus = device.getStatus();
+
+                                // Clear the timer immediately after execution
+                                device.setScheduledOnTime(null);
+                                customerUpdated = true;
+
+                                if (device.getScheduledOffTime() == null) {
+                                    device.setTimerEnabled(false);
+                                }
+
+                                System.out.println("\n[TIMER EXECUTED] " + device.getType() + " " + device.getModel() +
+                                                 " in " + device.getRoomName() + " turned ON automatically");
+                                System.out.println("  Scheduled: " + scheduledOnTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+                                System.out.println("  Executed: " + now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                                System.out.println("  Status: " + previousStatus + " → " + newStatus);
+
+                            } else {
+                                // Remove very old timers (older than 10 minutes)
+                                device.setScheduledOnTime(null);
+                                customerUpdated = true;
+
+                                if (device.getScheduledOffTime() == null) {
+                                    device.setTimerEnabled(false);
+                                }
+
+                                System.out.println("[TIMER EXPIRED] Old ON timer removed for " +
+                                                 device.getType() + " in " + device.getRoomName());
                             }
-                            
-                            System.out.println("[TIMER EXECUTED] " + device.getType() + " in " + 
-                                             device.getRoomName() + " turned ON automatically");
-                            System.out.println("  Status changed from " + previousStatus + " to " + newStatus);
-                                             
-                        } else if (now.isAfter(device.getScheduledOnTime().plusMinutes(5))) {
-                            // Delete overdue timers (older than 5 minutes)
-                            device.setScheduledOnTime(null);
-                            customerUpdated = true;
-                            
-                            if (device.getScheduledOffTime() == null) {
-                                device.setTimerEnabled(false);
-                            }
-                            
-                            System.out.println("[TIMER DELETED] Overdue ON timer removed for " + 
-                                             device.getType() + " in " + device.getRoomName());
                         }
                     }
-                    
-                    // Check and execute OFF timers
+
+                    // Check and execute OFF timers - Execute immediately when due
                     if (device.getScheduledOffTime() != null) {
-                        if (now.isAfter(device.getScheduledOffTime()) && 
-                            now.isBefore(device.getScheduledOffTime().plusMinutes(2))) {
-                            
-                            // Execute timer within 2-minute window
-                            String previousStatus = device.getStatus();
-                            device.turnOff();
-                            String newStatus = device.getStatus();
-                            device.setScheduledOffTime(null);
-                            customerUpdated = true;
-                            
-                            if (device.getScheduledOnTime() == null) {
-                                device.setTimerEnabled(false);
+                        LocalDateTime scheduledOffTime = device.getScheduledOffTime();
+
+                        // Execute timer if current time has reached or passed the scheduled time
+                        if (now.isAfter(scheduledOffTime) || now.isEqual(scheduledOffTime)) {
+                            // Check if this timer hasn't been executed recently (within last minute)
+                            long minutesSinceScheduled = ChronoUnit.MINUTES.between(scheduledOffTime, now);
+
+                            if (minutesSinceScheduled <= 10) { // Execute within 10 minutes of scheduled time
+                                String previousStatus = device.getStatus();
+                                device.turnOff();
+                                String newStatus = device.getStatus();
+
+                                // Clear the timer immediately after execution
+                                device.setScheduledOffTime(null);
+                                customerUpdated = true;
+
+                                if (device.getScheduledOnTime() == null) {
+                                    device.setTimerEnabled(false);
+                                }
+
+                                System.out.println("\n[TIMER EXECUTED] " + device.getType() + " " + device.getModel() +
+                                                 " in " + device.getRoomName() + " turned OFF automatically");
+                                System.out.println("  Scheduled: " + scheduledOffTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+                                System.out.println("  Executed: " + now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                                System.out.println("  Status: " + previousStatus + " → " + newStatus);
+
+                            } else {
+                                // Remove very old timers (older than 10 minutes)
+                                device.setScheduledOffTime(null);
+                                customerUpdated = true;
+
+                                if (device.getScheduledOnTime() == null) {
+                                    device.setTimerEnabled(false);
+                                }
+
+                                System.out.println("[TIMER EXPIRED] Old OFF timer removed for " +
+                                                 device.getType() + " in " + device.getRoomName());
                             }
-                            
-                            System.out.println("[TIMER EXECUTED] " + device.getType() + " in " + 
-                                             device.getRoomName() + " turned OFF automatically");
-                            System.out.println("  Status changed from " + previousStatus + " to " + newStatus);
-                                             
-                        } else if (now.isAfter(device.getScheduledOffTime().plusMinutes(5))) {
-                            // Delete overdue timers (older than 5 minutes)
-                            device.setScheduledOffTime(null);
-                            customerUpdated = true;
-                            
-                            if (device.getScheduledOnTime() == null) {
-                                device.setTimerEnabled(false);
-                            }
-                            
-                            System.out.println("[TIMER DELETED] Overdue OFF timer removed for " + 
-                                             device.getType() + " in " + device.getRoomName());
                         }
                     }
                 }
-                
-                // Update customer only once if any changes were made
+
+                // Update customer immediately after any changes to ensure device states are persisted
                 if (customerUpdated) {
-                    customerService.updateCustomer(customer);
+                    boolean saveSuccess = customerService.updateCustomer(customer);
+                    if (!saveSuccess) {
+                        System.err.println("[ERROR] Failed to save device state changes after timer execution");
+                    }
                 }
             }
         } catch (Exception e) {
             System.err.println("Error checking scheduled tasks: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -350,7 +388,19 @@ public class TimerService {
         
         return help.toString();
     }
-    
+
+    /**
+     * Force an immediate check and execution of all due timers.
+     * This ensures timers execute on-demand without waiting for the next scheduled check.
+     */
+    public void forceTimerCheck() {
+        try {
+            checkAndExecuteScheduledTasks();
+        } catch (Exception e) {
+            System.err.println("Error during forced timer check: " + e.getMessage());
+        }
+    }
+
     public void shutdown() {
         if (scheduler != null && !scheduler.isShutdown()) {
             scheduler.shutdown();

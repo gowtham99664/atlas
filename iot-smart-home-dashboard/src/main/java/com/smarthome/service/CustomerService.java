@@ -287,21 +287,21 @@ public class CustomerService {
                 System.out.println("[ERROR] Account not found.");
                 return false;
             }
-            
+
             // Validate new password
             if (!isValidPassword(newPassword)) {
                 System.out.println("[ERROR] New password does not meet security requirements:");
                 System.out.println(getPasswordRequirements());
                 return false;
             }
-            
+
             // Hash and update password
             String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
             customer.setPassword(hashedPassword);
-            
+
             // Reset failed login attempts on successful password reset
             customer.resetFailedAttempts();
-            
+
             // Update customer record
             boolean updated = updateCustomer(customer);
             if (updated) {
@@ -309,13 +309,104 @@ public class CustomerService {
             } else {
                 System.out.println("[ERROR] Failed to update password. Please try again.");
             }
-            
+
             return updated;
-            
+
         } catch (Exception e) {
             System.err.println("Error resetting password: " + e.getMessage());
             return false;
         }
     }
-    
+
+    public boolean isEmailAvailable(String email) {
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                return false;
+            }
+
+            if (!isValidEmail(email)) {
+                return false;
+            }
+
+            Customer existingCustomer = findCustomerByEmail(email);
+            return existingCustomer == null;
+
+        } catch (Exception e) {
+            System.err.println("Error checking email availability: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean verifyPassword(String email, String password) {
+        try {
+            Customer customer = findCustomerByEmail(email);
+            if (customer == null) {
+                return false;
+            }
+
+            return password != null && BCrypt.checkpw(password, customer.getPassword());
+
+        } catch (Exception e) {
+            System.err.println("Error verifying password: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateCustomerEmail(String oldEmail, Customer customer) {
+        try {
+            if (isDemoMode) {
+                // Remove the old entry and add with new email as key
+                demoCustomers.remove(oldEmail.toLowerCase());
+                demoCustomers.put(customer.getEmail().toLowerCase(), customer);
+            } else {
+                // For DynamoDB, we need to delete the old item and create a new one
+                // since email is the partition key
+                Key oldKey = Key.builder().partitionValue(oldEmail.toLowerCase()).build();
+                customerTable.deleteItem(oldKey);
+                customerTable.putItem(customer);
+            }
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Error updating customer email: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updatePassword(String email, String newPassword) {
+        try {
+            Customer customer = findCustomerByEmail(email);
+            if (customer == null) {
+                System.out.println("[ERROR] Customer not found.");
+                return false;
+            }
+
+            // Validate new password
+            if (!isValidPassword(newPassword)) {
+                System.out.println("[ERROR] New password does not meet security requirements:");
+                System.out.println(getPasswordRequirements());
+                return false;
+            }
+
+            // Hash and update password
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            customer.setPassword(hashedPassword);
+
+            // Reset failed login attempts on successful password update
+            customer.resetFailedAttempts();
+
+            // Update customer record
+            boolean updated = updateCustomer(customer);
+            if (!updated) {
+                System.out.println("[ERROR] Failed to update password in database.");
+            }
+
+            return updated;
+
+        } catch (Exception e) {
+            System.err.println("Error updating password: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

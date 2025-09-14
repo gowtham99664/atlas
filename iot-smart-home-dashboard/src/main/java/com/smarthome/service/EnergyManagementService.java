@@ -2,6 +2,7 @@ package com.smarthome.service;
 
 import com.smarthome.model.Customer;
 import com.smarthome.model.Gadget;
+import com.smarthome.model.DeletedDeviceEnergyRecord;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,40 +32,45 @@ public class EnergyManagementService {
     public EnergyReport generateEnergyReport(Customer customer) {
         List<Gadget> devices = customer.getGadgets();
         double totalEnergyKWh = 0.0;
-        
+
+        // Calculate energy from active devices
         for (Gadget device : devices) {
             double currentSessionEnergy = 0.0;
             if (device.isOn() && device.getLastOnTime() != null) {
                 double currentSessionHours = device.getCurrentSessionUsageHours();
                 currentSessionEnergy = (device.getPowerRatingWatts() / 1000.0) * currentSessionHours;
             }
-            
+
             totalEnergyKWh += device.getTotalEnergyConsumedKWh() + currentSessionEnergy;
         }
-        
+
+        // CRITICAL: Include energy consumption from deleted devices for accurate monthly billing
+        double deletedDeviceEnergy = customer.getTotalDeletedDeviceEnergyForCurrentMonth();
+        totalEnergyKWh += deletedDeviceEnergy;
+
         double totalCost = calculateSlabBasedCost(totalEnergyKWh);
         String reportPeriod = "Monthly Report - " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
-        
+
         return new EnergyReport(totalEnergyKWh, totalCost, reportPeriod, devices);
     }
     
     public double calculateSlabBasedCost(double totalKWh) {
         double totalCost = 0.0;
-        
+
         if (totalKWh <= 30) {
-            totalCost = totalKWh * 1.0;
+            totalCost = totalKWh * 1.90;
         } else if (totalKWh <= 75) {
-            totalCost = 30 * 1.0 + (totalKWh - 30) * 3.0;
+            totalCost = 30 * 1.90 + (totalKWh - 30) * 3.0;
         } else if (totalKWh <= 125) {
-            totalCost = 30 * 1.0 + 45 * 3.0 + (totalKWh - 75) * 4.50;
+            totalCost = 30 * 1.90 + 45 * 3.0 + (totalKWh - 75) * 4.50;
         } else if (totalKWh <= 225) {
-            totalCost = 30 * 1.0 + 45 * 3.0 + 50 * 4.50 + (totalKWh - 125) * 6.0;
+            totalCost = 30 * 1.90 + 45 * 3.0 + 50 * 4.50 + (totalKWh - 125) * 6.0;
         } else if (totalKWh <= 400) {
-            totalCost = 30 * 1.0 + 45 * 3.0 + 50 * 4.50 + 100 * 6.0 + (totalKWh - 225) * 8.75;
+            totalCost = 30 * 1.90 + 45 * 3.0 + 50 * 4.50 + 100 * 6.0 + (totalKWh - 225) * 8.75;
         } else {
-            totalCost = 30 * 1.0 + 45 * 3.0 + 50 * 4.50 + 100 * 6.0 + 175 * 8.75 + (totalKWh - 400) * 9.75;
+            totalCost = 30 * 1.90 + 45 * 3.0 + 50 * 4.50 + 100 * 6.0 + 175 * 8.75 + (totalKWh - 400) * 9.75;
         }
-        
+
         return Math.round(totalCost * 100.0) / 100.0;
     }
     
@@ -80,9 +86,9 @@ public class EnergyManagementService {
         
         if (remainingKWh > 0) {
             double slab1 = Math.min(remainingKWh, 30);
-            double cost1 = slab1 * 1.0;
+            double cost1 = slab1 * 1.90;
             totalCost += cost1;
-            breakdown.append(String.format("| %-13s | %8.2f | %8.2f | %8.2f |\n", "0-30 kWh", slab1, 1.0, cost1));
+            breakdown.append(String.format("| %-13s | %8.2f | %8.2f | %8.2f |\n", "0-30 kWh", slab1, 1.90, cost1));
             remainingKWh -= slab1;
         }
         
@@ -131,43 +137,98 @@ public class EnergyManagementService {
         return breakdown.toString();
     }
     
-    public void displayDeviceEnergyUsage(List<Gadget> devices) {
+    public void displayDeviceEnergyUsage(Customer customer) {
+        List<Gadget> devices = customer.getGadgets();
+
         System.out.println("\n=== Device Energy Usage Details ===");
         System.out.println("+-------------------------+---------+---------+-------------+-------------+-------------+");
-        System.out.printf("| %-23s | %-7s | %-7s | %-11s | %-11s | %-11s |\n", 
+        System.out.printf("| %-23s | %-7s | %-7s | %-11s | %-11s | %-11s |\n",
                          "Device", "Power", "Status", "Usage Time", "Energy(kWh)", "Cost(Rs.)");
         System.out.println("+-------------------------+---------+---------+-------------+-------------+-------------+");
-        
+
+        // Display active devices
         for (Gadget device : devices) {
             double totalEnergy = device.getTotalEnergyConsumedKWh();
-            
+
             if (device.isOn() && device.getLastOnTime() != null) {
                 double currentSessionHours = device.getCurrentSessionUsageHours();
                 double currentSessionEnergy = (device.getPowerRatingWatts() / 1000.0) * currentSessionHours;
                 totalEnergy += currentSessionEnergy;
             }
-            
+
             double deviceCost = calculateSlabBasedCost(totalEnergy);
             String status = device.isOn() ? "RUNNING" : "OFF";
             String deviceName = String.format("%s %s (%s)", device.getType(), device.getModel(), device.getRoomName());
             if (deviceName.length() > 23) {
                 deviceName = deviceName.substring(0, 20) + "...";
             }
-            
-            System.out.printf("| %-23s | %7.0fW | %-7s | %11s | %11.3f | %11.2f |\n", 
+
+            System.out.printf("| %-23s | %7.0fW | %-7s | %11s | %11.3f | %11.2f |\n",
                              deviceName,
                              device.getPowerRatingWatts(),
                              status,
                              device.getCurrentUsageTimeFormatted(),
                              totalEnergy,
                              deviceCost);
-            
+
             if (device.isOn() && device.getLastOnTime() != null) {
-                System.out.printf("| %-23s | %-7s | %-7s | %-11s | %-11s | %-11s |\n", 
+                System.out.printf("| %-23s | %-7s | %-7s | %-11s | %-11s | %-11s |\n",
                                  "  Current Session:", "", "", String.format("%.2fh", device.getCurrentSessionUsageHours()), "", "");
             }
         }
+
+        // Display deleted devices energy consumption for current month
+        double deletedDeviceEnergy = customer.getTotalDeletedDeviceEnergyForCurrentMonth();
+        if (deletedDeviceEnergy > 0) {
+            System.out.println("+-------------------------+---------+---------+-------------+-------------+-------------+");
+            double deletedDeviceCost = calculateSlabBasedCost(deletedDeviceEnergy);
+            System.out.printf("| %-23s | %-7s | %-7s | %-11s | %11.3f | %11.2f |\n",
+                             "[DELETED DEVICES]", "-", "DELETED", "-", deletedDeviceEnergy, deletedDeviceCost);
+            System.out.printf("| %-23s | %-7s | %-7s | %-11s | %-11s | %-11s |\n",
+                             "  (Historical data)", "", "", "", "", "");
+        }
+
         System.out.println("+-------------------------+---------+---------+-------------+-------------+-------------+");
+
+        // Show detailed breakdown of deleted devices if any exist
+        if (deletedDeviceEnergy > 0) {
+            displayDeletedDeviceBreakdown(customer);
+        }
+    }
+
+    public void displayDeletedDeviceBreakdown(Customer customer) {
+        LocalDateTime now = LocalDateTime.now();
+        String currentMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());
+
+        List<DeletedDeviceEnergyRecord> deletedDevices = customer.getDeletedDeviceEnergyRecords();
+        List<DeletedDeviceEnergyRecord> currentMonthDeleted = deletedDevices.stream()
+                .filter(record -> currentMonth.equals(record.getDeletionMonth()))
+                .toList();
+
+        if (!currentMonthDeleted.isEmpty()) {
+            System.out.println("\n=== Deleted Devices Energy Breakdown (This Month) ===");
+            System.out.println("+-------------------------+---------+-------------+-------------+----------------------+");
+            System.out.printf("| %-23s | %-7s | %-11s | %-11s | %-20s |\n",
+                             "Deleted Device", "Power", "Usage Time", "Energy(kWh)", "Deletion Date");
+            System.out.println("+-------------------------+---------+-------------+-------------+----------------------+");
+
+            for (DeletedDeviceEnergyRecord record : currentMonthDeleted) {
+                String deviceName = String.format("%s %s (%s)", record.getDeviceType(), record.getDeviceModel(), record.getRoomName());
+                if (deviceName.length() > 23) {
+                    deviceName = deviceName.substring(0, 20) + "...";
+                }
+
+                String deletionDate = record.getDeletionTime().format(DateTimeFormatter.ofPattern("dd-MM HH:mm"));
+
+                System.out.printf("| %-23s | %7.0fW | %-11s | %11.3f | %-20s |\n",
+                                 deviceName,
+                                 record.getPowerRatingWatts(),
+                                 record.getFormattedUsageTime(),
+                                 record.getTotalEnergyConsumedKWh(),
+                                 deletionDate);
+            }
+            System.out.println("+-------------------------+---------+-------------+-------------+----------------------+");
+        }
     }
     
     public String getEnergyEfficiencyTips(double totalKWh) {

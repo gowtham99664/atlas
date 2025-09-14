@@ -1,22 +1,134 @@
 package com.smarthome;
 
+import com.smarthome.model.Customer;
 import com.smarthome.model.Gadget;
 import com.smarthome.service.SmartHomeService;
 import com.smarthome.util.DynamoDBConfig;
-import com.smarthome.util.PasswordInputUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class SmartHomeDashboard {
-    
+
     private static final Scanner scanner = new Scanner(System.in);
     private static final SmartHomeService smartHomeService = new SmartHomeService();
+    private static volatile boolean returnToMainMenu = false;
+
+    // Comprehensive Device Lists
+    private static final String[] TV_BRANDS = {
+        "Samsung", "Sony", "LG", "TCL", "Hisense", "Panasonic", "Philips", "MI", "OnePlus",
+        "Xiaomi", "Realme", "Redmi", "Vu", "Thomson", "Kodak", "Motorola", "Nokia",
+        "Toshiba", "Sharp", "Haier", "BPL", "Videocon", "Intex", "Micromax", "Shinco"
+    };
+
+    private static final String[] AC_BRANDS = {
+        "LG", "Voltas", "Blue Star", "Samsung", "Daikin", "Hitachi", "Panasonic", "Carrier",
+        "Godrej", "Haier", "Whirlpool", "Lloyd", "O General", "Mitsubishi", "Toshiba",
+        "Electrolux", "IFB", "Crompton", "Orient", "Bajaj", "Usha", "Havells", "Symphony"
+    };
+
+    private static final String[] FAN_BRANDS = {
+        "Atomberg", "Crompton", "Havells", "Bajaj", "Usha", "Orient", "Luminous", "Polycab",
+        "Anchor", "Khaitan", "Surya", "Almonard", "Activa", "Rico", "V-Guard", "Finolex",
+        "Maharaja Whiteline", "Hindware", "Panasonic", "Philips", "Singer", "Westinghouse"
+    };
+
+    private static final String[] SPEAKER_BRANDS = {
+        "Amazon Echo", "Google Home", "MI", "Realme", "JBL", "Sony", "Boat", "Bose",
+        "Harman Kardon", "Marshall", "Ultimate Ears", "Skullcandy", "Philips", "Samsung",
+        "Apple HomePod", "Alexa", "Portronics", "Zebronics", "F&D", "Creative", "Logitech"
+    };
+
+    private static final String[] AIR_PURIFIER_BRANDS = {
+        "MI", "Realme", "Honeywell", "Philips", "Kent", "Eureka Forbes", "Sharp", "Dyson",
+        "Xiaomi", "Blue Star", "LG", "Samsung", "Panasonic", "Coway", "Atlanta Healthcare",
+        "Pure Air", "Havells", "Crompton", "V-Guard", "Livpure", "Aquaguard"
+    };
+
+    private static final String[] THERMOSTAT_BRANDS = {
+        "Honeywell", "Johnson Controls", "Schneider Electric", "Siemens", "Nest", "Ecobee",
+        "Emerson", "White Rodgers", "Lux", "Venstar", "Trane", "Carrier", "Lennox",
+        "Rheem", "Goodman", "York", "Daikin", "Mitsubishi", "Bosch", "Danfoss"
+    };
+
+    private static final String[] LIGHT_BRANDS = {
+        "Philips Hue", "MI", "Syska", "Havells", "Wipro", "Bajaj", "Orient", "Crompton",
+        "Anchor", "Polycab", "Legrand", "Schneider Electric", "V-Guard", "Finolex",
+        "Khaitan", "Surya", "Luminous", "Panasonic", "Osram", "GE", "Cree", "LIFX"
+    };
+
+    private static final String[] SWITCH_BRANDS = {
+        "Anchor", "Havells", "Legrand", "Schneider Electric", "Wipro", "Polycab", "Crompton",
+        "Syska", "V-Guard", "Finolex", "Goldmedal", "Roma", "GM Modular", "Simon",
+        "MK Electric", "ABB", "Panasonic", "Philips", "Orient", "Bajaj"
+    };
+
+    private static final String[] CAMERA_BRANDS = {
+        "MI", "Realme", "TP-Link", "D-Link", "Hikvision", "CP Plus", "Godrej", "Dahua",
+        "Samsung", "Sony", "Panasonic", "Bosch", "Axis", "Honeywell", "Pelco", "Avigilon",
+        "Reolink", "Arlo", "Ring", "Nest", "Wyze", "Eufy", "Blink", "Lorex"
+    };
+
+    private static final String[] LOCK_BRANDS = {
+        "Godrej", "Yale", "Samsung", "Philips", "MI", "Realme", "Ultraloq", "August",
+        "Schlage", "Kwikset", "Honeywell", "Lockly", "Eufy", "Aqara", "Danalock",
+        "Igloohome", "TTlock", "Kaadas", "Dessmann", "Gateman", "Epic", "Hafele"
+    };
+
+    private static final String[] DOORBELL_BRANDS = {
+        "MI", "Realme", "Godrej", "Yale", "Ring", "Honeywell", "CP Plus", "Nest",
+        "Arlo", "Eufy", "Blink", "SkyBell", "August", "RemoBell", "Zmodo", "Amcrest",
+        "Remo+", "VTech", "Panasonic", "Friedland", "Byron", "Grothe"
+    };
+
+    private static final String[] REFRIGERATOR_BRANDS = {
+        "LG", "Samsung", "Whirlpool", "Godrej", "Haier", "Panasonic", "Bosch", "IFB",
+        "Voltas", "Hitachi", "Sharp", "Electrolux", "Kelvinator", "Videocon", "BPL",
+        "Onida", "Lloyd", "Carrier", "Blue Star", "Liebherr", "Siemens", "Miele"
+    };
+
+    private static final String[] MICROWAVE_BRANDS = {
+        "LG", "Samsung", "IFB", "Panasonic", "Whirlpool", "Godrej", "Bajaj", "Morphy Richards",
+        "Haier", "Bosch", "Sharp", "Electrolux", "Voltas", "Hitachi", "Onida", "BPL",
+        "Kenstar", "Glen", "Prestige", "Pigeon", "Maharaja Whiteline", "Crompton"
+    };
+
+    private static final String[] WASHING_MACHINE_BRANDS = {
+        "LG", "Samsung", "Whirlpool", "IFB", "Bosch", "Godrej", "Haier", "Panasonic",
+        "Voltas", "Hitachi", "Sharp", "Electrolux", "Onida", "BPL", "Videocon",
+        "Lloyd", "Carrier", "Kelvinator", "Intex", "MarQ", "Realme", "MI"
+    };
+
+    private static final String[] GEYSER_BRANDS = {
+        "Bajaj", "Havells", "Crompton", "V-Guard", "Racold", "AO Smith", "Haier", "Orient",
+        "Usha", "Maharaja Whiteline", "Morphy Richards", "Glen", "Kenstar", "Activa",
+        "Hindware", "Jaquar", "Cera", "Polycab", "Anchor", "Syska", "Venus", "Singer"
+    };
+
+    private static final String[] WATER_PURIFIER_BRANDS = {
+        "Kent", "Aquaguard", "Pureit", "LivPure", "Blue Star", "Havells", "Eureka Forbes",
+        "HUL", "Tata Swach", "Voltas", "Panasonic", "Faber", "A.O. Smith", "Zero B",
+        "Nasaka", "Ion Exchange", "Aqua Fresh", "Crystal", "Sure from Aquaguard", "Nova"
+    };
+
+    private static final String[] VACUUM_BRANDS = {
+        "MI Robot", "Realme TechLife", "Eureka Forbes", "Kent", "Black+Decker", "iRobot Roomba",
+        "Shark", "Bissell", "Hoover", "Dyson", "Tineco", "Roborock", "Neato", "Eufy",
+        "ILIFE", "Proscenic", "Coredy", "Tesvor", "Lefant", "Amarey", "GOOVI", "yeedi"
+    };
+
+    private static final String[] ROOM_NAMES = {
+        "Living Room", "Master Bedroom", "Kitchen", "Balcony", "Study Room", "Guest Room",
+        "Dining Room", "Children's Room", "Home Office", "Library", "Den", "Family Room",
+        "Basement", "Attic", "Garage", "Laundry Room", "Bathroom", "Powder Room",
+        "Walk-in Closet", "Pantry", "Utility Room", "Porch", "Patio", "Terrace",
+        "Drawing Room", "Hall", "Foyer", "Entrance", "Corridor", "Staircase"
+    };
     
     public static void main(String[] args) {
         System.out.println("=== Welcome to IoT Smart Home Dashboard ===\n");
-        
+
         // Add shutdown hook for graceful cleanup
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("\n[SYSTEM] Graceful shutdown initiated...");
@@ -31,6 +143,9 @@ public class SmartHomeDashboard {
                 System.err.println("[SYSTEM] Warning during shutdown: " + e.getMessage());
             }
         }));
+
+        // Display navigation help
+        displayNavigationHelp();
         
         try {
             showMainMenu();
@@ -68,9 +183,10 @@ public class SmartHomeDashboard {
             System.out.println("15. Usage Analytics & Insights");
             System.out.println();
             System.out.println("[SYSTEM]:");
-            System.out.println("16. Logout");
-            System.out.println("17. Exit");
-            
+            System.out.println("16. Settings");
+            System.out.println("17. Logout");
+            System.out.println("18. Exit");
+
             System.out.print("Choose an option: ");
             
             try {
@@ -82,8 +198,8 @@ public class SmartHomeDashboard {
                 }
                 
                 int choice = Integer.parseInt(inputLine);
-                int exitOption = 17;
-                
+                int exitOption = 18;
+
                 switch (choice) {
                     case 1:
                         if (smartHomeService.isLoggedIn()) {
@@ -158,17 +274,22 @@ public class SmartHomeDashboard {
                         break;
                     case 16:
                         if (checkLoginStatus()) {
-                            smartHomeService.logout();
+                            showSettingsMenu();
                         }
                         break;
                     case 17:
+                        if (checkLoginStatus()) {
+                            smartHomeService.logout();
+                        }
+                        break;
+                    case 18:
                         handleApplicationExit();
                         return;
                     default:
-                        System.out.println("Invalid option! Please choose between 1-17.");
+                        System.out.println("Invalid option! Please choose between 1-18.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-17.");
+                System.out.println("Invalid input! Please enter a number between 1-18.");
             }
         }
     }
@@ -211,16 +332,26 @@ public class SmartHomeDashboard {
     
     private static void registerCustomer() {
         System.out.println("\n=== Register New Account ===");
-        
+        System.out.println("[Navigation] Enter '0' at any prompt to return to Main Menu");
+
         try {
             System.out.print("Enter your full Name: ");
-            String fullName = getValidatedInput("Full Name");
-            if (fullName == null) return;
-            
+            String fullName = getValidatedInputWithNavigation("Full Name");
+            if (fullName == null || checkReturnToMainMenu()) return;
+
             System.out.print("Enter your email: ");
-            String email = getValidatedInput("Email");
-            if (email == null) return;
-            
+            String email = getValidatedInputWithNavigation("Email");
+            if (email == null || checkReturnToMainMenu()) return;
+
+            // Check email availability immediately after email input
+            if (!smartHomeService.checkEmailAvailability(email)) {
+                System.out.println("\n[ERROR] This email is already registered!");
+                System.out.println("[INFO] Please use a different email address or try logging in if you already have an account.");
+                return;
+            }
+
+            System.out.println("[INFO] Email is available! Continuing with registration...");
+
             System.out.println("\n[Password Requirements]:");
             System.out.println("- 8-128 characters long");
             System.out.println("- At least one uppercase letter (A-Z)");
@@ -230,15 +361,15 @@ public class SmartHomeDashboard {
             System.out.println("- Cannot be a common password");
             System.out.println("- Cannot have more than 2 repeating characters");
             System.out.print("\nChoose Your password: ");
-            String password = getValidatedInput("Password");
-            if (password == null) return;
-            
+            String password = getValidatedInputWithNavigation("Password");
+            if (password == null || checkReturnToMainMenu()) return;
+
             System.out.print("Choose Your password again: ");
-            String confirmPassword = getValidatedInput("Confirm Password");
-            if (confirmPassword == null) return;
-            
+            String confirmPassword = getValidatedInputWithNavigation("Confirm Password");
+            if (confirmPassword == null || checkReturnToMainMenu()) return;
+
             boolean success = smartHomeService.registerCustomer(fullName, email, password, confirmPassword);
-            
+
             if (success) {
                 System.out.println("\n[SUCCESS] Registration successful! You can now login with your credentials.");
             }
@@ -393,14 +524,25 @@ public class SmartHomeDashboard {
     
     private static boolean attemptRegistration() {
         try {
+            System.out.println("[Navigation] Enter '0' at any prompt to return to Main Menu");
+
             System.out.print("Enter your full Name: ");
-            String fullName = getValidatedInput("Full Name");
-            if (fullName == null) return false;
-            
+            String fullName = getValidatedInputWithNavigation("Full Name");
+            if (fullName == null || checkReturnToMainMenu()) return false;
+
             System.out.print("Enter your email: ");
-            String email = getValidatedInput("Email");
-            if (email == null) return false;
-            
+            String email = getValidatedInputWithNavigation("Email");
+            if (email == null || checkReturnToMainMenu()) return false;
+
+            // Check email availability immediately after email input
+            if (!smartHomeService.checkEmailAvailability(email)) {
+                System.out.println("\n[ERROR] This email is already registered!");
+                System.out.println("[INFO] Please use a different email address or try logging in if you already have an account.");
+                return false;
+            }
+
+            System.out.println("[INFO] Email is available! Continuing with registration...");
+
             System.out.println("\n[Password Requirements]:");
             System.out.println("- 8-128 characters long");
             System.out.println("- At least one uppercase letter (A-Z)");
@@ -410,13 +552,13 @@ public class SmartHomeDashboard {
             System.out.println("- Cannot be a common password");
             System.out.println("- Cannot have more than 2 repeating characters");
             System.out.print("\nChoose Your password: ");
-            String password = getValidatedInput("Password");
-            if (password == null) return false;
-            
+            String password = getValidatedInputWithNavigation("Password");
+            if (password == null || checkReturnToMainMenu()) return false;
+
             System.out.print("Choose Your password again: ");
-            String confirmPassword = getValidatedInput("Confirm Password");
-            if (confirmPassword == null) return false;
-            
+            String confirmPassword = getValidatedInputWithNavigation("Confirm Password");
+            if (confirmPassword == null || checkReturnToMainMenu()) return false;
+
             return smartHomeService.registerCustomer(fullName, email, password, confirmPassword);
         } catch (Exception e) {
             System.out.println("[ERROR] Registration failed due to input error. Please try again.");
@@ -426,6 +568,8 @@ public class SmartHomeDashboard {
     
     private static void showGadgetControlMenu() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Device Management Center ===");
             System.out.println("[DEVICE OPERATIONS]:");
             System.out.println("1. Add New Device");
@@ -433,7 +577,7 @@ public class SmartHomeDashboard {
             System.out.println("3. Delete Device");
             System.out.println("4. View All Devices");
             System.out.println();
-            
+
             System.out.println("[ADD DEVICE CATEGORIES]:");
             System.out.println("5. Entertainment (TV, Speaker)");
             System.out.println("6. Climate Control (AC, Fan, Air Purifier, Thermostat)");
@@ -442,20 +586,25 @@ public class SmartHomeDashboard {
             System.out.println("9. Kitchen & Appliances (Refrigerator, Microwave, Washing Machine, Geyser, Water Purifier)");
             System.out.println("10. Cleaning (Robotic Vacuum)");
             System.out.println();
-            System.out.println("11. Return to Main Menu");
-            
-            System.out.print("Choose an option (1-11): ");
-            
+            System.out.println("0. Return to Main Menu");
+
+            System.out.print("Choose an option (0-10): ");
+
             try {
                 String inputLine = scanner.nextLine().trim();
-                
+
                 if (inputLine.isEmpty()) {
                     System.out.println("Please enter a valid option number.");
                     continue;
                 }
-                
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
                 int choice = Integer.parseInt(inputLine);
-                
+
                 switch (choice) {
                     case 1: showAddDeviceSubmenu(); break;
                     case 2: editDevice(); break;
@@ -467,26 +616,26 @@ public class SmartHomeDashboard {
                     case 8: showSecurityDevices(); break;
                     case 9: showKitchenDevices(); break;
                     case 10: showCleaningDevices(); break;
-                    case 11: return;
                     default:
-                        System.out.println("Invalid option! Please choose between 1-11.");
+                        System.out.println("Invalid option! Please choose between 0-10.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-11.");
+                System.out.println("Invalid input! Please enter a number between 0-10.");
             }
         }
     }
     
     private static void controlTV() {
         System.out.println("\n=== Control TV ===");
-        
+        System.out.println("[Navigation] Enter '0' to return to Main Menu");
+
         try {
-            String model = getValidatedGadgetInput("TV Model/Brand", "Samsung, Sony, LG, TCL, Hisense, Panasonic, Philips, MI, OnePlus, etc.");
-            if (model == null) return;
-            
-            String roomName = getValidatedGadgetInput("Room Name", "Living Room, Master Bedroom, Kitchen, Balcony, Study Room, etc.");
-            if (roomName == null) return;
-            
+            String model = getValidatedGadgetInputWithNavigation("TV Model/Brand", "Samsung, Sony, LG, TCL, Hisense, Panasonic, Philips, MI, OnePlus, etc.");
+            if (model == null || checkReturnToMainMenu()) return;
+
+            String roomName = getValidatedGadgetInputWithNavigation("Room Name", "Living Room, Master Bedroom, Kitchen, Balcony, Study Room, etc.");
+            if (roomName == null || checkReturnToMainMenu()) return;
+
             boolean success = smartHomeService.connectToGadget("TV", model, roomName);
             if (success) {
                 handlePostDeviceAdditionFlow();
@@ -889,11 +1038,6 @@ public class SmartHomeDashboard {
         }
     }
     
-    private static String getValidatedGadgetInput(String fieldName, String validOptions) {
-        System.out.println("Valid " + fieldName + "s: " + validOptions);
-        System.out.print("Enter " + fieldName + ": ");
-        return getValidatedInput("");
-    }
     
     private static int getValidatedIntegerInput(String prompt) {
         while (true) {
@@ -975,17 +1119,38 @@ public class SmartHomeDashboard {
     
     private static void showGroupManagementMenu() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Group Management ===");
+            System.out.println("[GROUP OPERATIONS]:");
             System.out.println("1. View Group Information");
             System.out.println("2. Add Person to Group");
             System.out.println("3. Remove Person from Group (Admin Only)");
-            System.out.println("4. Return to Main Menu");
-            
-            System.out.print("Choose an option (1-4): ");
-            
+            System.out.println();
+            System.out.println("[DEVICE PERMISSIONS] (Admin Only):");
+            System.out.println("4. Grant Device Access to Member");
+            System.out.println("5. Revoke Device Access from Member");
+            System.out.println("6. View All Device Permissions");
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+
+            System.out.print("Choose an option (0-6): ");
+
             try {
-                int choice = Integer.parseInt(scanner.nextLine().trim());
-                
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
                 switch (choice) {
                     case 1:
                         viewGroupInformation();
@@ -997,12 +1162,19 @@ public class SmartHomeDashboard {
                         removePersonFromGroup();
                         break;
                     case 4:
-                        return;
+                        grantDeviceAccess();
+                        break;
+                    case 5:
+                        revokeDeviceAccess();
+                        break;
+                    case 6:
+                        viewDevicePermissions();
+                        break;
                     default:
-                        System.out.println("Invalid option! Please choose between 1-4.");
+                        System.out.println("Invalid option! Please choose between 0-6.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-4.");
+                System.out.println("Invalid input! Please enter a number between 0-6.");
             }
         }
     }
@@ -1013,12 +1185,13 @@ public class SmartHomeDashboard {
     
     private static void addPersonToGroup() {
         System.out.println("\n=== Add Person to Group ===");
-        
+        System.out.println("[Navigation] Enter '0' to return to Main Menu");
+
         try {
             System.out.print("Enter email address to add to your group: ");
-            String memberEmail = getValidatedInput("Email");
-            if (memberEmail == null) return;
-            
+            String memberEmail = getValidatedInputWithNavigation("Email");
+            if (memberEmail == null || checkReturnToMainMenu()) return;
+
             smartHomeService.addPersonToGroup(memberEmail);
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to add person to group. Please try again.");
@@ -1059,7 +1232,159 @@ public class SmartHomeDashboard {
             System.out.println("[ERROR] Failed to remove person from group. Please try again.");
         }
     }
-    
+
+    private static void grantDeviceAccess() {
+        System.out.println("\n=== Grant Device Access to Member ===");
+
+        try {
+            // First, show current user's devices to choose from
+            List<Gadget> userDevices = smartHomeService.viewGadgets();
+            if (userDevices == null || userDevices.isEmpty()) {
+                System.out.println("[ERROR] No devices found! Please add some devices first.");
+                return;
+            }
+
+            // Show only devices owned by current user (not shared devices)
+            List<Gadget> ownDevices = new ArrayList<>();
+            String currentUserEmail = smartHomeService.getCurrentUser().getEmail();
+
+            for (Gadget device : userDevices) {
+                // Add devices owned by current user (assuming devices in the list are owned by current user or accessible)
+                // We'll check by looking at the first few devices to see if they belong to current user
+                ownDevices.add(device);
+            }
+
+            if (ownDevices.isEmpty()) {
+                System.out.println("[ERROR] No personal devices found to share!");
+                return;
+            }
+
+            System.out.println("\nSelect device to grant access for:");
+            for (int i = 0; i < ownDevices.size(); i++) {
+                Gadget device = ownDevices.get(i);
+                System.out.println((i + 1) + ". " + device.getType() + " " + device.getModel() + " in " + device.getRoomName());
+            }
+
+            System.out.print("Choose device number (1-" + ownDevices.size() + "): ");
+            int deviceChoice = Integer.parseInt(scanner.nextLine().trim());
+
+            if (deviceChoice < 1 || deviceChoice > ownDevices.size()) {
+                System.out.println("[ERROR] Invalid device number!");
+                return;
+            }
+
+            Gadget selectedDevice = ownDevices.get(deviceChoice - 1);
+
+            // Now show group members to grant access to
+            List<Customer> groupMembers = smartHomeService.getGroupMembersForPermissions();
+            if (groupMembers.isEmpty()) {
+                System.out.println("[ERROR] No group members found or you are not a group admin!");
+                return;
+            }
+
+            System.out.println("\nSelect group member to grant access:");
+            for (int i = 0; i < groupMembers.size(); i++) {
+                Customer member = groupMembers.get(i);
+                System.out.println((i + 1) + ". " + member.getFullName() + " (" + member.getEmail() + ")");
+            }
+
+            System.out.print("Choose member number (1-" + groupMembers.size() + "): ");
+            int memberChoice = Integer.parseInt(scanner.nextLine().trim());
+
+            if (memberChoice < 1 || memberChoice > groupMembers.size()) {
+                System.out.println("[ERROR] Invalid member number!");
+                return;
+            }
+
+            Customer selectedMember = groupMembers.get(memberChoice - 1);
+
+            // Confirmation
+            System.out.println("\n[GRANT PERMISSION]");
+            System.out.println("Device: " + selectedDevice.getType() + " " + selectedDevice.getModel() + " in " + selectedDevice.getRoomName());
+            System.out.println("To: " + selectedMember.getFullName() + " (" + selectedMember.getEmail() + ")");
+            System.out.println();
+            System.out.println("1. Yes, Grant Access");
+            System.out.println("2. No, Cancel");
+            System.out.print("Choose (1-2): ");
+
+            int confirmation = Integer.parseInt(scanner.nextLine().trim());
+            if (confirmation == 1) {
+                boolean success = smartHomeService.grantDevicePermission(
+                    selectedMember.getEmail(),
+                    selectedDevice.getType(),
+                    selectedDevice.getRoomName()
+                );
+
+                if (success) {
+                    System.out.println("\n[SUCCESS] Device access granted successfully!");
+                }
+            } else {
+                System.out.println("Grant operation cancelled.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to grant device access. Please try again.");
+        }
+    }
+
+    private static void revokeDeviceAccess() {
+        System.out.println("\n=== Revoke Device Access from Member ===");
+
+        try {
+            // Show current device permissions
+            smartHomeService.showDevicePermissions();
+
+            System.out.println("\nEnter details to revoke permission:");
+
+            System.out.print("Member email: ");
+            String memberEmail = getValidatedInput("Member Email");
+            if (memberEmail == null) return;
+
+            System.out.print("Device type (e.g., TV, AC, LIGHT): ");
+            String deviceType = getValidatedInput("Device Type");
+            if (deviceType == null) return;
+
+            System.out.print("Room name: ");
+            String roomName = getValidatedInput("Room Name");
+            if (roomName == null) return;
+
+            // Check if permission exists
+            if (!smartHomeService.hasDevicePermission(memberEmail, deviceType, roomName)) {
+                System.out.println("[ERROR] No permission found for " + memberEmail + " to access " + deviceType + " in " + roomName);
+                return;
+            }
+
+            // Confirmation
+            System.out.println("\n[REVOKE PERMISSION]");
+            System.out.println("Revoke access for " + memberEmail + " to " + deviceType + " in " + roomName + "?");
+            System.out.println("1. Yes, Revoke Access");
+            System.out.println("2. No, Cancel");
+            System.out.print("Choose (1-2): ");
+
+            int confirmation = Integer.parseInt(scanner.nextLine().trim());
+            if (confirmation == 1) {
+                boolean success = smartHomeService.revokeDevicePermission(memberEmail, deviceType, roomName);
+
+                if (success) {
+                    System.out.println("\n[SUCCESS] Device access revoked successfully!");
+                }
+            } else {
+                System.out.println("Revoke operation cancelled.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to revoke device access. Please try again.");
+        }
+    }
+
+    private static void viewDevicePermissions() {
+        smartHomeService.showDevicePermissions();
+    }
+
     private static void showEnergyManagementReport() {
         System.out.println("\n=== Energy Management System ===");
         smartHomeService.showEnergyReport();
@@ -1094,9 +1419,37 @@ public class SmartHomeDashboard {
                                  " in " + roomName + " [Current Status: " + currentStatus + "]");
                 System.out.println("Timer will turn device " + action + " (opposite of current status)");
                 
-                System.out.print("Enter date and time (DD-MM-YYYY HH:MM): ");
-                String dateTime = getValidatedInput("Date Time");
-                if (dateTime == null) return;
+                String dateTime = null;
+                while (dateTime == null) {
+                    System.out.print("Enter date and time (DD-MM-YYYY HH:MM): ");
+                    dateTime = getValidatedInput("Date Time");
+                    
+                    if (dateTime == null) {
+                        System.out.println("\n=== Invalid Input ===");
+                        System.out.println("Date Time cannot be empty. Please try again.");
+                        System.out.println();
+                        System.out.println("What would you like to do?");
+                        System.out.println("1. Try entering date and time again");
+                        System.out.println("2. Return to main menu");
+                        System.out.print("Choose an option (1-2): ");
+                        
+                        try {
+                            int userChoice = Integer.parseInt(scanner.nextLine().trim());
+                            
+                            switch (userChoice) {
+                                case 1:
+                                    break;
+                                case 2:
+                                    System.out.println("Returning to main menu...");
+                                    return;
+                                default:
+                                    System.out.println("Invalid option! Trying again...");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input! Trying again...");
+                        }
+                    }
+                }
                 
                 smartHomeService.scheduleDeviceTimer(deviceType, roomName, action, dateTime);
             } else {
@@ -1116,7 +1469,7 @@ public class SmartHomeDashboard {
         
         if (timersWithDevices == null || timersWithDevices.isEmpty()) {
             System.out.println("No timers scheduled.");
-            System.out.println("\n1. Return to Main Menu");
+            System.out.println("\n0. Return to Main Menu");
             System.out.print("Choose an option: ");
             try {
                 scanner.nextLine().trim();
@@ -1125,19 +1478,40 @@ public class SmartHomeDashboard {
             }
             return;
         }
-        
+
         System.out.println("\n=== Timer Actions ===");
         System.out.println("1. Cancel Timer");
-        System.out.println("2. Return to Main Menu");
-        System.out.print("Choose an option: ");
-        
+        System.out.println("2. Force Execute Due Timers");
+        System.out.println();
+        System.out.println("0. Return to Main Menu");
+        System.out.print("Choose an option (0-2): ");
+
         try {
-            int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 1) {
-                cancelTimerBySelection(timersWithDevices);
+            String inputLine = scanner.nextLine().trim();
+
+            if (inputLine.isEmpty()) {
+                System.out.println("Please enter a valid option number.");
+                return;
+            }
+
+            // Check for navigation commands
+            if ("0".equals(inputLine)) {
+                return;
+            }
+
+            int choice = Integer.parseInt(inputLine);
+            switch (choice) {
+                case 1:
+                    cancelTimerBySelection(timersWithDevices);
+                    break;
+                case 2:
+                    smartHomeService.forceTimerCheck();
+                    break;
+                default:
+                    System.out.println("Invalid option! Please choose between 0-2.");
             }
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input! Returning to main menu.");
+            System.out.println("Invalid input! Please enter a number between 0-2.");
         }
     }
     
@@ -1213,27 +1587,41 @@ public class SmartHomeDashboard {
     
     private static void showCalendarEventsMenu() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Calendar Events & Automation ===");
             System.out.println("1. Create New Event");
             System.out.println("2. View Upcoming Events");
             System.out.println("3. View Event Automation Details");
             System.out.println("4. Event Types Help");
-            System.out.println("5. Return to Main Menu");
-            System.out.print("Choose an option: ");
-            
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+            System.out.print("Choose an option (0-4): ");
+
             try {
-                int choice = Integer.parseInt(scanner.nextLine().trim());
-                
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
                 switch (choice) {
                     case 1: createCalendarEvent(); break;
                     case 2: showUpcomingEvents(); break;
                     case 3: showEventAutomationDetails(); break;
                     case 4: showEventTypesHelp(); break;
-                    case 5: return;
-                    default: System.out.println("Invalid option! Please choose between 1-5.");
+                    default: System.out.println("Invalid option! Please choose between 0-4.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-5.");
+                System.out.println("Invalid input! Please enter a number between 0-4.");
             }
         }
     }
@@ -1309,25 +1697,57 @@ public class SmartHomeDashboard {
     
     private static void showWeatherInformation() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Weather-Based Smart Automation ===");
+            System.out.println("[WEATHER DATA]:");
             System.out.println("1. Current Weather & Suggestions");
-            System.out.println("2. 5-Day Weather Forecast");
-            System.out.println("3. Weather Automation Help");
-            System.out.println("4. Return to Main Menu");
-            System.out.print("Choose an option: ");
-            
+            System.out.println("2. Update/Enter Weather Data");
+            System.out.println("3. 5-Day Weather Forecast");
+            System.out.println();
+            System.out.println("[MANAGEMENT]:");
+            System.out.println("4. Clear Weather Data");
+            System.out.println("5. Weather Automation Help");
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+            System.out.print("Choose an option (0-5): ");
+
             try {
-                int choice = Integer.parseInt(scanner.nextLine().trim());
-                
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
                 switch (choice) {
-                    case 1: smartHomeService.showCurrentWeather(); break;
-                    case 2: smartHomeService.showWeatherForecast(); break;
-                    case 3: showWeatherHelp(); break;
-                    case 4: return;
-                    default: System.out.println("Invalid option! Please choose between 1-4.");
+                    case 1:
+                        smartHomeService.showCurrentWeather();
+                        break;
+                    case 2:
+                        smartHomeService.updateWeatherData();
+                        break;
+                    case 3:
+                        smartHomeService.showWeatherForecast();
+                        break;
+                    case 4:
+                        smartHomeService.clearWeatherData();
+                        break;
+                    case 5:
+                        showWeatherHelp();
+                        break;
+                    default:
+                        System.out.println("Invalid option! Please choose between 0-5.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-4.");
+                System.out.println("Invalid input! Please enter a number between 0-5.");
             }
         }
     }
@@ -1654,29 +2074,58 @@ public class SmartHomeDashboard {
     
     private static void showSmartScenesMenu() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Smart Scenes (One-Click Automation) ===");
-            System.out.println("[AVAILABLE SCENES]:");
+            System.out.println("[SCENE OPERATIONS]:");
             System.out.println("1. Execute Scene");
             System.out.println("2. View Available Scenes");
             System.out.println("3. View Scene Details");
-            System.out.println("4. Return to Main Menu");
-            
-            int choice = getValidatedIntegerInput("Choose an option (1-4): ");
-            
-            switch (choice) {
-                case 1:
-                    executeSmartScene();
-                    break;
-                case 2:
-                    smartHomeService.showAvailableScenes();
-                    break;
-                case 3:
-                    viewSceneDetails();
-                    break;
-                case 4:
+            System.out.println();
+            System.out.println("[SCENE CUSTOMIZATION]:");
+            System.out.println("4. Edit Scene Devices");
+            System.out.println("5. Reset Scene to Original");
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+
+            System.out.print("Choose an option (0-5): ");
+
+            try {
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
                     return;
-                default:
-                    System.out.println("Invalid option! Please choose between 1-4.");
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
+                switch (choice) {
+                    case 1:
+                        executeSmartScene();
+                        break;
+                    case 2:
+                        smartHomeService.showAvailableScenes();
+                        break;
+                    case 3:
+                        viewSceneDetails();
+                        break;
+                    case 4:
+                        editSceneDevices();
+                        break;
+                    case 5:
+                        resetSceneToOriginal();
+                        break;
+                    default:
+                        System.out.println("Invalid option! Please choose between 0-5.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number between 0-5.");
             }
         }
     }
@@ -1714,13 +2163,13 @@ public class SmartHomeDashboard {
         try {
             System.out.println("\n=== View Scene Details ===");
             List<String> sceneNames = smartHomeService.getSmartScenesService().getAvailableSceneNames();
-            
+
             for (int i = 0; i < sceneNames.size(); i++) {
                 System.out.println((i + 1) + ". " + sceneNames.get(i));
             }
-            
+
             System.out.print("Choose scene to view details (1-" + sceneNames.size() + "): ");
-            
+
             int choice = Integer.parseInt(scanner.nextLine().trim());
             if (choice >= 1 && choice <= sceneNames.size()) {
                 String sceneName = sceneNames.get(choice - 1);
@@ -1734,21 +2183,320 @@ public class SmartHomeDashboard {
             System.out.println("[ERROR] Failed to show scene details.");
         }
     }
+
+    private static void editSceneDevices() {
+        try {
+            System.out.println("\n=== Edit Scene Devices ===");
+            List<String> sceneNames = smartHomeService.getSmartScenesService().getAvailableSceneNames();
+
+            System.out.println("Available scenes to edit:");
+            for (int i = 0; i < sceneNames.size(); i++) {
+                System.out.println((i + 1) + ". " + sceneNames.get(i));
+            }
+
+            System.out.print("Choose scene to edit (1-" + sceneNames.size() + "): ");
+
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            if (choice >= 1 && choice <= sceneNames.size()) {
+                String sceneName = sceneNames.get(choice - 1);
+                showSceneEditingMenu(sceneName);
+            } else {
+                System.out.println("Invalid choice! Please choose between 1-" + sceneNames.size());
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to access scene editing.");
+        }
+    }
+
+    private static void showSceneEditingMenu(String sceneName) {
+        while (true) {
+            System.out.println("\n=== Editing Scene: " + sceneName.toUpperCase() + " ===");
+
+            // Show current scene details
+            smartHomeService.showEditableSceneDetails(sceneName);
+
+            System.out.println("\n[EDIT OPTIONS]:");
+            System.out.println("1. Add Device to Scene");
+            System.out.println("2. Remove Device from Scene");
+            System.out.println("3. Change Device Action (ON ↔ OFF)");
+            System.out.println("4. View Current Scene Configuration");
+            System.out.println();
+            System.out.println("0. Return to Smart Scenes Menu");
+
+            System.out.print("Choose editing option (0-4): ");
+
+            try {
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
+                switch (choice) {
+                    case 1:
+                        addDeviceToScene(sceneName);
+                        break;
+                    case 2:
+                        removeDeviceFromScene(sceneName);
+                        break;
+                    case 3:
+                        changeDeviceActionInScene(sceneName);
+                        break;
+                    case 4:
+                        smartHomeService.showEditableSceneDetails(sceneName);
+                        break;
+                    default:
+                        System.out.println("Invalid option! Please choose between 0-4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number between 0-4.");
+            }
+        }
+    }
+
+    private static void addDeviceToScene(String sceneName) {
+        System.out.println("\n=== Add Device to Scene: " + sceneName.toUpperCase() + " ===");
+
+        // First show user's available devices
+        List<Gadget> userDevices = smartHomeService.viewGadgets();
+        if (userDevices == null || userDevices.isEmpty()) {
+            System.out.println("[ERROR] No devices found! Please add some devices first.");
+            return;
+        }
+
+        System.out.println("\nSelect device to add to scene:");
+        System.out.print("Enter device number: ");
+
+        try {
+            int deviceChoice = Integer.parseInt(scanner.nextLine().trim());
+
+            if (deviceChoice >= 1 && deviceChoice <= userDevices.size()) {
+                Gadget selectedDevice = userDevices.get(deviceChoice - 1);
+                String deviceType = selectedDevice.getType();
+                String roomName = selectedDevice.getRoomName();
+
+                System.out.println("\nSelected: " + deviceType + " " + selectedDevice.getModel() + " in " + roomName);
+                System.out.println("Choose action for this device in the scene:");
+                System.out.println("1. Turn ON");
+                System.out.println("2. Turn OFF");
+                System.out.print("Choose action (1-2): ");
+
+                int actionChoice = Integer.parseInt(scanner.nextLine().trim());
+                String action = (actionChoice == 1) ? "ON" : "OFF";
+
+                if (actionChoice == 1 || actionChoice == 2) {
+                    boolean success = smartHomeService.addDeviceToScene(sceneName, deviceType, roomName, action);
+                    if (success) {
+                        System.out.println("\n[SUCCESS] Device added to scene successfully!");
+                        System.out.println("[INFO] " + deviceType + " in " + roomName + " will be turned " + action + " when scene executes.");
+                    } else {
+                        System.out.println("\n[ERROR] Failed to add device to scene. Device may already exist in this scene.");
+                    }
+                } else {
+                    System.out.println("[ERROR] Invalid action choice!");
+                }
+            } else {
+                System.out.println("[ERROR] Invalid device number!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to add device to scene.");
+        }
+    }
+
+    private static void removeDeviceFromScene(String sceneName) {
+        System.out.println("\n=== Remove Device from Scene: " + sceneName.toUpperCase() + " ===");
+
+        // Get current scene actions
+        var sceneActions = smartHomeService.getSceneActions(sceneName);
+        if (sceneActions == null || sceneActions.isEmpty()) {
+            System.out.println("[ERROR] No devices found in this scene.");
+            return;
+        }
+
+        System.out.println("Devices currently in scene:");
+        for (int i = 0; i < sceneActions.size(); i++) {
+            var action = sceneActions.get(i);
+            System.out.println((i + 1) + ". " + action.getDeviceType() + " in " + action.getRoomName() + " → " + action.getAction());
+        }
+
+        System.out.print("Choose device to remove (1-" + sceneActions.size() + "): ");
+
+        try {
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+
+            if (choice >= 1 && choice <= sceneActions.size()) {
+                var selectedAction = sceneActions.get(choice - 1);
+                String deviceType = selectedAction.getDeviceType();
+                String roomName = selectedAction.getRoomName();
+
+                System.out.println("\n[!] CONFIRMATION [!]");
+                System.out.println("Remove " + deviceType + " in " + roomName + " from scene " + sceneName.toUpperCase() + "?");
+                System.out.println("1. Yes, Remove Device");
+                System.out.println("2. No, Cancel");
+                System.out.print("Choose (1-2): ");
+
+                int confirmation = Integer.parseInt(scanner.nextLine().trim());
+                if (confirmation == 1) {
+                    boolean success = smartHomeService.removeDeviceFromScene(sceneName, deviceType, roomName);
+                    if (success) {
+                        System.out.println("\n[SUCCESS] Device removed from scene successfully!");
+                    }
+                } else {
+                    System.out.println("Remove operation cancelled.");
+                }
+            } else {
+                System.out.println("[ERROR] Invalid device number!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to remove device from scene.");
+        }
+    }
+
+    private static void changeDeviceActionInScene(String sceneName) {
+        System.out.println("\n=== Change Device Action in Scene: " + sceneName.toUpperCase() + " ===");
+
+        // Get current scene actions
+        var sceneActions = smartHomeService.getSceneActions(sceneName);
+        if (sceneActions == null || sceneActions.isEmpty()) {
+            System.out.println("[ERROR] No devices found in this scene.");
+            return;
+        }
+
+        System.out.println("Devices currently in scene:");
+        for (int i = 0; i < sceneActions.size(); i++) {
+            var action = sceneActions.get(i);
+            System.out.println((i + 1) + ". " + action.getDeviceType() + " in " + action.getRoomName() + " → " + action.getAction());
+        }
+
+        System.out.print("Choose device to modify action (1-" + sceneActions.size() + "): ");
+
+        try {
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+
+            if (choice >= 1 && choice <= sceneActions.size()) {
+                var selectedAction = sceneActions.get(choice - 1);
+                String deviceType = selectedAction.getDeviceType();
+                String roomName = selectedAction.getRoomName();
+                String currentAction = selectedAction.getAction();
+                String newAction = currentAction.equals("ON") ? "OFF" : "ON";
+
+                System.out.println("\nDevice: " + deviceType + " in " + roomName);
+                System.out.println("Current Action: " + currentAction);
+                System.out.println("New Action: " + newAction);
+                System.out.println();
+                System.out.println("1. Confirm Change");
+                System.out.println("2. Cancel");
+                System.out.print("Choose (1-2): ");
+
+                int confirmation = Integer.parseInt(scanner.nextLine().trim());
+                if (confirmation == 1) {
+                    boolean success = smartHomeService.changeDeviceActionInScene(sceneName, deviceType, roomName, newAction);
+                    if (success) {
+                        System.out.println("\n[SUCCESS] Device action changed successfully!");
+                        System.out.println("[INFO] " + deviceType + " in " + roomName + " will now be turned " + newAction + " when scene executes.");
+                    }
+                } else {
+                    System.out.println("Action change cancelled.");
+                }
+            } else {
+                System.out.println("[ERROR] Invalid device number!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to change device action.");
+        }
+    }
+
+    private static void resetSceneToOriginal() {
+        try {
+            System.out.println("\n=== Reset Scene to Original ===");
+            List<String> sceneNames = smartHomeService.getSmartScenesService().getAvailableSceneNames();
+
+            System.out.println("Available scenes:");
+            for (int i = 0; i < sceneNames.size(); i++) {
+                System.out.println((i + 1) + ". " + sceneNames.get(i));
+            }
+
+            System.out.print("Choose scene to reset (1-" + sceneNames.size() + "): ");
+
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            if (choice >= 1 && choice <= sceneNames.size()) {
+                String sceneName = sceneNames.get(choice - 1);
+
+                System.out.println("\n[!] RESET CONFIRMATION [!]");
+                System.out.println("This will reset scene '" + sceneName.toUpperCase() + "' to its original configuration.");
+                System.out.println("All your custom modifications will be lost.");
+                System.out.println();
+                System.out.println("Are you sure you want to continue?");
+                System.out.println("1. Yes, Reset to Original");
+                System.out.println("2. No, Cancel Reset");
+                System.out.print("Choose (1-2): ");
+
+                int confirmation = Integer.parseInt(scanner.nextLine().trim());
+                if (confirmation == 1) {
+                    boolean success = smartHomeService.resetSceneToOriginal(sceneName);
+                    if (success) {
+                        System.out.println("\n[SUCCESS] Scene reset to original configuration successfully!");
+                        System.out.println("[INFO] All custom modifications have been removed.");
+                    } else {
+                        System.out.println("\n[ERROR] Cannot reset this scene. It may be a custom scene or already in original state.");
+                    }
+                } else {
+                    System.out.println("Reset operation cancelled.");
+                }
+            } else {
+                System.out.println("Invalid choice! Please choose between 1-" + sceneNames.size());
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to reset scene.");
+        }
+    }
     
     private static void showDeviceHealthMenu() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Device Health Monitoring ===");
             System.out.println("[HEALTH DASHBOARD]:");
             System.out.println("1. System Health Report");
             System.out.println("2. Device Maintenance Schedule");
             System.out.println("3. Health Summary");
-            System.out.println("4. Return to Main Menu");
-            
-            System.out.print("Choose an option (1-4): ");
-            
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+
+            System.out.print("Choose an option (0-3): ");
+
             try {
-                int choice = Integer.parseInt(scanner.nextLine().trim());
-                
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
                 switch (choice) {
                     case 1:
                         smartHomeService.showDeviceHealthReport();
@@ -1759,13 +2507,11 @@ public class SmartHomeDashboard {
                     case 3:
                         showHealthSummary();
                         break;
-                    case 4:
-                        return;
                     default:
-                        System.out.println("Invalid option! Please choose between 1-4.");
+                        System.out.println("Invalid option! Please choose between 0-3.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-4.");
+                System.out.println("Invalid input! Please enter a number between 0-3.");
             }
         }
     }
@@ -1779,6 +2525,8 @@ public class SmartHomeDashboard {
     
     private static void showUsageAnalytics() {
         while (true) {
+            if (checkReturnToMainMenu()) return;
+
             System.out.println("\n=== Usage Analytics & Insights ===");
             System.out.println("[ANALYTICS DASHBOARD]:");
             System.out.println("1. Energy Consumption Analysis");
@@ -1786,13 +2534,26 @@ public class SmartHomeDashboard {
             System.out.println("3. Cost Analysis & Projections");
             System.out.println("4. Efficiency Recommendations");
             System.out.println("5. Peak Usage Times");
-            System.out.println("6. Return to Main Menu");
-            
-            System.out.print("Choose an option (1-6): ");
-            
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+
+            System.out.print("Choose an option (0-5): ");
+
             try {
-                int choice = Integer.parseInt(scanner.nextLine().trim());
-                
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
                 switch (choice) {
                     case 1:
                         showEnergyAnalysis();
@@ -1809,13 +2570,11 @@ public class SmartHomeDashboard {
                     case 5:
                         showPeakUsageTimes();
                         break;
-                    case 6:
-                        return;
                     default:
-                        System.out.println("Invalid option! Please choose between 1-6.");
+                        System.out.println("Invalid option! Please choose between 0-5.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-6.");
+                System.out.println("Invalid input! Please enter a number between 0-5.");
             }
         }
     }
@@ -1924,25 +2683,446 @@ public class SmartHomeDashboard {
     private static void showPeakUsageTimes() {
         System.out.println("\n=== Peak Usage Time Analysis ===");
         System.out.println("[*] Analyzing your device usage patterns...");
-        
+
         System.out.println("\n[TYPICAL PEAK USAGE PERIODS]:");
         System.out.println("[Morning Peak] (6:00 - 10:00 AM):");
         System.out.println("   - Geyser, Microwave, TV, Lights");
         System.out.println("   - Average consumption: High");
-        
+
         System.out.println("\n[Evening Peak] (6:00 - 10:00 PM):");
         System.out.println("   - AC, TV, Lights, Entertainment systems");
         System.out.println("   - Average consumption: Very High");
-        
+
         System.out.println("\n[Night Period] (10:00 PM - 6:00 AM):");
         System.out.println("   - Refrigerator, Security systems, Bedroom AC");
         System.out.println("   - Average consumption: Low-Medium");
-        
+
         System.out.println("\n[LOAD BALANCING TIPS]:");
         System.out.println("- Schedule washing machine/dishwasher during off-peak hours");
         System.out.println("- Use timers to avoid simultaneous operation of high-power devices");
         System.out.println("- Consider battery storage for peak-hour backup");
         System.out.println("- Smart scenes can automatically manage peak load distribution");
     }
-    
+
+    // Settings Menu
+    private static void showSettingsMenu() {
+        while (true) {
+            if (checkReturnToMainMenu()) return;
+
+            System.out.println("\n=== Settings ===");
+            System.out.println("[ACCOUNT SETTINGS]:");
+            System.out.println("1. Update User Profile");
+            System.out.println("2. Change Password");
+            System.out.println();
+            System.out.println("[SYSTEM SETTINGS]:");
+            System.out.println("3. View Account Information");
+            System.out.println("4. Privacy & Security Info");
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+
+            System.out.print("Choose an option (0-4): ");
+
+            try {
+                String inputLine = scanner.nextLine().trim();
+
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+
+                // Check for navigation commands
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                int choice = Integer.parseInt(inputLine);
+
+                switch (choice) {
+                    case 1:
+                        updateUserProfile();
+                        break;
+                    case 2:
+                        changePassword();
+                        break;
+                    case 3:
+                        viewAccountInformation();
+                        break;
+                    case 4:
+                        showPrivacySecurityInfo();
+                        break;
+                    default:
+                        System.out.println("Invalid option! Please choose between 0-4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number between 0-4.");
+            }
+        }
+    }
+
+    private static void updateUserProfile() {
+        System.out.println("\n=== Update User Profile ===");
+        System.out.println("[Navigation] Enter '0' to return to Main Menu");
+        System.out.println("[Security] Password confirmation required to update profile");
+
+        try {
+            // First, confirm current password for security
+            System.out.print("Enter your current password for confirmation: ");
+            String currentPassword = getValidatedInputWithNavigation("Current Password");
+            if (currentPassword == null || checkReturnToMainMenu()) return;
+
+            // Verify current password
+            if (!smartHomeService.verifyCurrentPassword(currentPassword)) {
+                System.out.println("\n[ERROR] Invalid password! Profile update cancelled for security.");
+                return;
+            }
+
+            System.out.println("\n[SUCCESS] Password confirmed! You can now update your profile.");
+
+            // Show current information
+            smartHomeService.showCurrentUserInfo();
+
+            while (true) {
+                System.out.println("\n=== What would you like to update? ===");
+                System.out.println("1. Update Full Name");
+                System.out.println("2. Update Email Address");
+                System.out.println("3. Update Password");
+                System.out.println();
+                System.out.println("0. Return to Settings Menu");
+
+                System.out.print("Choose an option (0-3): ");
+
+                String inputLine = getValidatedInputWithNavigation("");
+                if (inputLine == null || checkReturnToMainMenu()) return;
+
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+
+                try {
+                    int choice = Integer.parseInt(inputLine);
+
+                    switch (choice) {
+                        case 1:
+                            updateFullName();
+                            break;
+                        case 2:
+                            updateEmailAddress();
+                            break;
+                        case 3:
+                            updatePassword();
+                            break;
+                        default:
+                            System.out.println("Invalid option! Please choose between 0-3.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! Please enter a number between 0-3.");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to update user profile. Please try again.");
+        }
+    }
+
+    private static void updateFullName() {
+        System.out.println("\n=== Update Full Name ===");
+        try {
+            System.out.print("Enter new full name: ");
+            String newName = getValidatedInputWithNavigation("Full Name");
+            if (newName == null || checkReturnToMainMenu()) return;
+
+            boolean success = smartHomeService.updateUserFullName(newName);
+            if (success) {
+                System.out.println("\n[SUCCESS] Full name updated successfully!");
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to update full name. Please try again.");
+        }
+    }
+
+    private static void updateEmailAddress() {
+        System.out.println("\n=== Update Email Address ===");
+        try {
+            System.out.print("Enter new email address: ");
+            String newEmail = getValidatedInputWithNavigation("Email");
+            if (newEmail == null || checkReturnToMainMenu()) return;
+
+            // Check email availability
+            if (!smartHomeService.checkEmailAvailability(newEmail)) {
+                System.out.println("\n[ERROR] This email is already registered!");
+                System.out.println("[INFO] Please use a different email address.");
+                return;
+            }
+
+            System.out.println("[INFO] Email is available! Updating your email address...");
+
+            boolean success = smartHomeService.updateUserEmail(newEmail);
+            if (success) {
+                System.out.println("\n[SUCCESS] Email address updated successfully!");
+                System.out.println("[INFO] Please use your new email address for future logins.");
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to update email address. Please try again.");
+        }
+    }
+
+    private static void updatePassword() {
+        System.out.println("\n=== Update Password ===");
+        try {
+            System.out.println("\n[Password Requirements]:");
+            System.out.println("- 8-128 characters long");
+            System.out.println("- At least one uppercase letter (A-Z)");
+            System.out.println("- At least one lowercase letter (a-z)");
+            System.out.println("- At least one number (0-9)");
+            System.out.println("- At least one special character (!@#$%^&*)");
+            System.out.println("- Cannot be a common password");
+            System.out.println("- Cannot have more than 2 repeating characters");
+
+            System.out.print("\nEnter new password: ");
+            String newPassword = getValidatedInputWithNavigation("New Password");
+            if (newPassword == null || checkReturnToMainMenu()) return;
+
+            System.out.print("Confirm new password: ");
+            String confirmPassword = getValidatedInputWithNavigation("Confirm Password");
+            if (confirmPassword == null || checkReturnToMainMenu()) return;
+
+            boolean success = smartHomeService.updateUserPassword(newPassword, confirmPassword);
+            if (success) {
+                System.out.println("\n[SUCCESS] Password updated successfully!");
+                System.out.println("[INFO] Please use your new password for future logins.");
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to update password. Please try again.");
+        }
+    }
+
+    private static void changePassword() {
+        System.out.println("\n=== Change Password ===");
+        System.out.println("[Navigation] Enter '0' to return to Main Menu");
+
+        try {
+            System.out.print("Enter your current password: ");
+            String currentPassword = getValidatedInputWithNavigation("Current Password");
+            if (currentPassword == null || checkReturnToMainMenu()) return;
+
+            // Verify current password
+            if (!smartHomeService.verifyCurrentPassword(currentPassword)) {
+                System.out.println("\n[ERROR] Invalid current password! Password change cancelled.");
+                return;
+            }
+
+            updatePassword();
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to change password. Please try again.");
+        }
+    }
+
+    private static void viewAccountInformation() {
+        System.out.println("\n=== Account Information ===");
+        smartHomeService.showDetailedUserInfo();
+    }
+
+    private static void showPrivacySecurityInfo() {
+        System.out.println("\n=== Privacy & Security Information ===");
+        System.out.println("[DATA SECURITY]:");
+        System.out.println("• Your passwords are securely encrypted using bcrypt hashing");
+        System.out.println("• Personal data is stored locally in encrypted format");
+        System.out.println("• No data is shared with third parties");
+        System.out.println();
+        System.out.println("[ACCOUNT SECURITY]:");
+        System.out.println("• Failed login attempts are monitored and logged");
+        System.out.println("• Account lockout protection after multiple failed attempts");
+        System.out.println("• Password strength requirements enforced");
+        System.out.println("• Password confirmation required for profile changes");
+        System.out.println();
+        System.out.println("[DATA STORAGE]:");
+        System.out.println("• Device data and usage statistics stored locally");
+        System.out.println("• No cloud data transmission unless explicitly configured");
+        System.out.println("• You have full control over your data");
+        System.out.println();
+        System.out.println("[RECOMMENDATIONS]:");
+        System.out.println("• Use a strong, unique password for your account");
+        System.out.println("• Regularly update your password");
+        System.out.println("• Keep your system software updated");
+        System.out.println("• Log out when using shared computers");
+    }
+
+    // Navigation Helper Methods
+    private static void displayNavigationHelp() {
+        System.out.println("=== Navigation Help ===");
+        System.out.println("[TIP] Press Ctrl+C at any time, then enter '0' and press Enter to return to Main Menu");
+        System.out.println("[TIP] Look for '0 - Return to Main Menu' option in submenus");
+        System.out.println();
+    }
+
+    private static void handleCtrlCNavigation() {
+        System.out.println("\n=== Quick Navigation ===");
+        System.out.println("To return to Main Menu:");
+        System.out.println("Enter '0' and press Enter");
+        System.out.print("Choice: ");
+
+        try {
+            String input = scanner.nextLine().trim();
+            if ("0".equals(input)) {
+                returnToMainMenu = true;
+                System.out.println("Returning to Main Menu...");
+            }
+        } catch (Exception e) {
+            // Handle input errors gracefully
+        }
+    }
+
+    private static boolean checkReturnToMainMenu() {
+        if (returnToMainMenu) {
+            returnToMainMenu = false;
+            return true;
+        }
+        return false;
+    }
+
+    private static String getValidatedInputWithNavigation(String fieldName) {
+        try {
+            String input = scanner.nextLine();
+
+            if (input == null) {
+                if (!fieldName.isEmpty()) {
+                    System.out.println(fieldName + " cannot be null. Please try again.");
+                } else {
+                    System.out.println("Input cannot be null. Please try again.");
+                }
+                return null;
+            }
+
+            input = input.trim();
+
+            // Check for navigation command
+            if ("0".equals(input)) {
+                System.out.println("Returning to Main Menu...");
+                returnToMainMenu = true;
+                return null;
+            }
+
+            if (input.isEmpty()) {
+                if (!fieldName.isEmpty()) {
+                    System.out.println(fieldName + " cannot be empty. Please try again.");
+                } else {
+                    System.out.println("Input cannot be empty. Please try again.");
+                }
+                return null;
+            }
+
+            return input;
+
+        } catch (Exception e) {
+            if (!fieldName.isEmpty()) {
+                System.out.println("Error reading input for " + fieldName + ". Please try again.");
+            } else {
+                System.out.println("Error reading input. Please try again.");
+            }
+            return null;
+        }
+    }
+
+    private static String getValidatedGadgetInputWithNavigation(String fieldName, String validOptions) {
+        System.out.println("Valid " + fieldName + "s: " + validOptions);
+        System.out.println("[TIP] Type 'etc' to see all available " + fieldName.toLowerCase() + "s");
+        System.out.print("Enter " + fieldName + " (or '0' for Main Menu): ");
+
+        String input = getValidatedInputWithNavigation("");
+        if (input != null && "etc".equalsIgnoreCase(input.trim())) {
+            return handleEtcInput(fieldName);
+        }
+        return input;
+    }
+
+    private static String getValidatedGadgetInput(String fieldName, String validOptions) {
+        System.out.println("Valid " + fieldName + "s: " + validOptions);
+        System.out.println("[TIP] Type 'etc' to see all available " + fieldName.toLowerCase() + "s");
+        System.out.print("Enter " + fieldName + ": ");
+
+        String input = getValidatedInput("");
+        if (input != null && "etc".equalsIgnoreCase(input.trim())) {
+            return handleEtcInput(fieldName);
+        }
+        return input;
+    }
+
+    private static String handleEtcInput(String fieldName) {
+        String[] brands = getDeviceBrands(fieldName);
+        if (brands != null) {
+            displayBrandList(fieldName, brands);
+            System.out.print("Now enter your choice from the list above: ");
+            return getValidatedInput(fieldName);
+        }
+        return null;
+    }
+
+    private static String[] getDeviceBrands(String fieldName) {
+        String normalizedField = fieldName.toLowerCase().replace(" ", "");
+
+        switch (normalizedField) {
+            case "tvmodel/brand":
+            case "tvmodel":
+                return TV_BRANDS;
+            case "acmodel":
+                return AC_BRANDS;
+            case "fanmodel":
+                return FAN_BRANDS;
+            case "smartspeakermodel":
+                return SPEAKER_BRANDS;
+            case "airpurifiermodel":
+                return AIR_PURIFIER_BRANDS;
+            case "smartthermostatmodel":
+                return THERMOSTAT_BRANDS;
+            case "smartlightmodel":
+                return LIGHT_BRANDS;
+            case "smartswitchmodel":
+                return SWITCH_BRANDS;
+            case "securitycameramodel":
+                return CAMERA_BRANDS;
+            case "smartlockmodel":
+                return LOCK_BRANDS;
+            case "smartdoorbellmodel":
+                return DOORBELL_BRANDS;
+            case "refrigeratormodel":
+                return REFRIGERATOR_BRANDS;
+            case "microwavemodel":
+                return MICROWAVE_BRANDS;
+            case "washingmachinemodel":
+                return WASHING_MACHINE_BRANDS;
+            case "geysermodel":
+                return GEYSER_BRANDS;
+            case "waterpurifiermodel":
+                return WATER_PURIFIER_BRANDS;
+            case "roboticvacuummodel":
+                return VACUUM_BRANDS;
+            case "roomname":
+                return ROOM_NAMES;
+            default:
+                return null;
+        }
+    }
+
+    private static void displayBrandList(String fieldName, String[] brands) {
+        System.out.println("\n=== Complete List of " + fieldName + "s ===");
+
+        int columns = 3;
+        int rows = (int) Math.ceil((double) brands.length / columns);
+
+        for (int row = 0; row < rows; row++) {
+            StringBuilder line = new StringBuilder();
+            for (int col = 0; col < columns; col++) {
+                int index = row + col * rows;
+                if (index < brands.length) {
+                    line.append(String.format("%-25s", brands[index]));
+                }
+            }
+            System.out.println(line.toString().trim());
+        }
+
+        System.out.println("\n[INFO] Total " + brands.length + " options available");
+        System.out.println("[NOTE] You can enter any brand name, not limited to this list");
+        System.out.println();
+    }
+
 }

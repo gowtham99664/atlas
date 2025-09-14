@@ -2,10 +2,13 @@ package com.smarthome.service;
 
 import com.smarthome.model.Customer;
 import com.smarthome.model.Gadget;
+import com.smarthome.model.DeletedDeviceEnergyRecord;
 import com.smarthome.util.SessionManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -34,35 +37,39 @@ public class SmartHomeService {
         this.deviceHealthService = DeviceHealthService.getInstance();
     }
     
+    public boolean checkEmailAvailability(String email) {
+        return customerService.isEmailAvailable(email);
+    }
+
     public boolean registerCustomer(String fullName, String email, String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
             System.out.println("Passwords do not match!");
             return false;
         }
-        
+
         if (!customerService.isValidName(fullName)) {
             System.out.println("Invalid name! Name should contain only letters and spaces (minimum 2 characters).");
             return false;
         }
-        
+
         if (!customerService.isValidEmail(email)) {
             System.out.println("Invalid email format!");
             return false;
         }
-        
+
         if (!customerService.isValidPassword(password)) {
             System.out.println("[ERROR] Invalid password! Please ensure your password meets all requirements:");
             System.out.println(customerService.getPasswordRequirements());
             return false;
         }
-        
+
         boolean success = customerService.registerCustomer(fullName, email, password);
         if (success) {
             System.out.println("[SUCCESS] Thank you! Customer registration successful.");
         } else {
             System.out.println("[ERROR] Registration failed! Email might already be registered.");
         }
-        
+
         return success;
     }
     
@@ -138,23 +145,31 @@ public class SmartHomeService {
             if (currentUser.getGadgets() != null) {
                 allGadgets.addAll(currentUser.getGadgets());
             }
-            
-            // Add group members' devices
+
+            // Add group members' devices based on permissions
             int groupDeviceCount = 0;
+            List<Customer> groupMemberObjects = new ArrayList<>();
+
             for (String memberEmail : currentUser.getGroupMembers()) {
                 Customer groupMember = customerService.findCustomerByEmail(memberEmail);
-                if (groupMember != null && groupMember.getGadgets() != null) {
-                    allGadgets.addAll(groupMember.getGadgets());
-                    groupDeviceCount += groupMember.getGadgets().size();
+                if (groupMember != null) {
+                    groupMemberObjects.add(groupMember);
                 }
             }
-            
+
+            // Get devices that this user has permission to access
+            List<Gadget> accessibleGroupDevices = currentUser.getAccessibleGroupDevices(groupMemberObjects);
+            allGadgets.addAll(accessibleGroupDevices);
+            groupDeviceCount = accessibleGroupDevices.size();
+
             System.out.println("\n=== Group Gadgets ===");
             System.out.println("[INFO] Group size: " + currentUser.getGroupSize() + " member(s) | Admin: " + currentUser.getGroupCreator());
             System.out.println("[INFO] Your role: " + (currentUser.isGroupAdmin() ? "Admin" : "Member"));
-            System.out.println("[INFO] Showing your devices + " + currentUser.getGroupMembers().size() + " group member(s)' devices");
+            System.out.println("[INFO] Showing your devices + devices you have permission to access");
             if (groupDeviceCount > 0) {
-                System.out.println("[INFO] Group members contributed " + groupDeviceCount + " additional devices");
+                System.out.println("[INFO] You have access to " + groupDeviceCount + " group member devices");
+            } else {
+                System.out.println("[INFO] No group devices shared with you. Ask admin for device access permissions.");
             }
         } else {
             allGadgets = currentUser.getGadgets();
@@ -497,7 +512,7 @@ public class SmartHomeService {
         System.out.printf("Total Energy Consumption: %.2f kWh\n", report.getTotalEnergyKWh());
         System.out.printf("Total Cost: Rs. %.2f\n", report.getTotalCostRupees());
         
-        energyService.displayDeviceEnergyUsage(report.getDevices());
+        energyService.displayDeviceEnergyUsage(currentUser);
         System.out.println(energyService.getSlabBreakdown(report.getTotalEnergyKWh()));
         System.out.println(energyService.getEnergyEfficiencyTips(report.getTotalEnergyKWh()));
     }
@@ -598,13 +613,30 @@ public class SmartHomeService {
     
     public void showCurrentWeather() {
         weatherService.displayCurrentWeather();
-        weatherService.displayWeatherBasedSuggestions();
+        // displayCurrentWeather() now automatically shows suggestions
     }
-    
+
     public void showWeatherForecast() {
         weatherService.displayWeatherForecast();
     }
-    
+
+    public void updateWeatherData() {
+        weatherService.updateWeatherData();
+    }
+
+    public void clearWeatherData() {
+        weatherService.clearWeatherData();
+    }
+
+    public boolean hasUserWeatherData() {
+        return weatherService.hasUserWeatherData();
+    }
+
+    public void forceTimerCheck() {
+        timerService.forceTimerCheck();
+        System.out.println("[INFO] Manual timer check completed. Any due timers have been executed.");
+    }
+
     public TimerService getTimerService() {
         return timerService;
     }
@@ -735,29 +767,44 @@ public class SmartHomeService {
             System.out.println("[ERROR] Please login first!");
             return false;
         }
-        
+
         try {
             Customer currentUser = sessionManager.getCurrentUser();
             Gadget device = currentUser.findGadget(deviceType, roomName);
-            
+
             if (device == null) {
                 System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
                 return false;
             }
-            
-            currentUser.getGadgets().removeIf(gadget -> 
-                gadget.getType().equalsIgnoreCase(deviceType) && 
+
+            // CRITICAL: Preserve energy consumption history before deletion
+            if (device.getTotalEnergyConsumedKWh() > 0 ||
+                (device.isOn() && device.getLastOnTime() != null && device.getCurrentSessionUsageHours() > 0)) {
+
+                // Create historical record of deleted device energy consumption
+                DeletedDeviceEnergyRecord energyRecord = new DeletedDeviceEnergyRecord(device);
+                currentUser.addDeletedDeviceRecord(energyRecord);
+
+                System.out.println("[INFO] Preserving energy history: " + String.format("%.3f kWh", energyRecord.getTotalEnergyConsumedKWh()));
+                System.out.println("[INFO] Device usage time: " + energyRecord.getFormattedUsageTime());
+            }
+
+            // Remove device from active devices list
+            currentUser.getGadgets().removeIf(gadget ->
+                gadget.getType().equalsIgnoreCase(deviceType) &&
                 gadget.getRoomName().equalsIgnoreCase(roomName));
-            
+
             boolean updated = customerService.updateCustomer(currentUser);
             if (updated) {
                 sessionManager.updateCurrentUser(currentUser);
+                System.out.println("[SUCCESS] Device deleted successfully!");
+                System.out.println("[IMPORTANT] Energy consumption history preserved for accurate monthly billing.");
                 return true;
             } else {
                 System.out.println("[ERROR] Failed to delete device from database!");
                 return false;
             }
-            
+
         } catch (Exception e) {
             System.out.println("[ERROR] Error deleting device: " + e.getMessage());
             return false;
@@ -789,6 +836,113 @@ public class SmartHomeService {
     
     public void showSceneDetails(String sceneName) {
         smartScenesService.displaySceneDetails(sceneName);
+    }
+
+    // Scene Editing Methods
+    public void showEditableSceneDetails(String sceneName) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        smartScenesService.displayEditableSceneDetails(currentUser.getEmail(), sceneName);
+    }
+
+    public boolean addDeviceToScene(String sceneName, String deviceType, String roomName, String action) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+
+        // Verify device exists
+        Gadget device = currentUser.findGadget(deviceType, roomName);
+        if (device == null) {
+            System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
+            return false;
+        }
+
+        String description = generateActionDescription(deviceType, roomName, action);
+        SmartScenesService.SceneAction newAction = new SmartScenesService.SceneAction(deviceType, roomName, action, description);
+
+        boolean success = smartScenesService.addDeviceToScene(currentUser.getEmail(), sceneName, newAction);
+        if (success) {
+            System.out.println("[SUCCESS] Device added to scene: " + deviceType + " in " + roomName + " → " + action);
+        } else {
+            System.out.println("[ERROR] Failed to add device to scene. Device may already exist in this scene.");
+        }
+
+        return success;
+    }
+
+    public boolean removeDeviceFromScene(String sceneName, String deviceType, String roomName) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        boolean success = smartScenesService.removeDeviceFromScene(currentUser.getEmail(), sceneName, deviceType, roomName);
+
+        if (success) {
+            System.out.println("[SUCCESS] Device removed from scene: " + deviceType + " in " + roomName);
+        } else {
+            System.out.println("[ERROR] Failed to remove device from scene. Device may not exist in this scene.");
+        }
+
+        return success;
+    }
+
+    public boolean changeDeviceActionInScene(String sceneName, String deviceType, String roomName, String newAction) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        boolean success = smartScenesService.changeDeviceAction(currentUser.getEmail(), sceneName, deviceType, roomName, newAction);
+
+        if (success) {
+            System.out.println("[SUCCESS] Device action changed: " + deviceType + " in " + roomName + " → " + newAction);
+        } else {
+            System.out.println("[ERROR] Failed to change device action. Device may not exist in this scene.");
+        }
+
+        return success;
+    }
+
+    public boolean resetSceneToOriginal(String sceneName) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        boolean success = smartScenesService.resetSceneToOriginal(currentUser.getEmail(), sceneName);
+
+        if (success) {
+            System.out.println("[SUCCESS] Scene reset to original: " + sceneName);
+        } else {
+            System.out.println("[ERROR] Cannot reset this scene. It may be a custom scene or already in original state.");
+        }
+
+        return success;
+    }
+
+    public List<SmartScenesService.SceneAction> getSceneActions(String sceneName) {
+        if (!sessionManager.isLoggedIn()) {
+            return new ArrayList<>();
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        return smartScenesService.getSceneActions(currentUser.getEmail(), sceneName);
+    }
+
+    private String generateActionDescription(String deviceType, String roomName, String action) {
+        String verb = action.equalsIgnoreCase("ON") ? "Turn on" : "Turn off";
+        return String.format("%s %s in %s", verb, deviceType.toLowerCase(), roomName);
     }
     
     public void showDeviceHealthReport() {
@@ -1157,12 +1311,362 @@ public class SmartHomeService {
     
     private static class TableFormatStrings {
         final String borderFormat, headerFormat, rowFormat, emptyRowFormat;
-        
+
         TableFormatStrings(String borderFormat, String headerFormat, String rowFormat, String emptyRowFormat) {
             this.borderFormat = borderFormat;
             this.headerFormat = headerFormat;
             this.rowFormat = rowFormat;
             this.emptyRowFormat = emptyRowFormat;
         }
+    }
+
+    // User Profile Management Methods
+    public boolean verifyCurrentPassword(String password) {
+        if (!sessionManager.isLoggedIn()) {
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        return customerService.verifyPassword(currentUser.getEmail(), password);
+    }
+
+    public void showCurrentUserInfo() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("Please login first!");
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        System.out.println("\n=== Current Profile Information ===");
+        System.out.println("Full Name: " + currentUser.getFullName());
+        System.out.println("Email: " + currentUser.getEmail());
+        System.out.println("Account Status: Active");
+        System.out.println("Total Devices: " + (currentUser.getGadgets() != null ? currentUser.getGadgets().size() : 0));
+        if (currentUser.isPartOfGroup()) {
+            System.out.println("Group Status: Member of group (Admin: " + currentUser.getGroupCreator() + ")");
+        } else {
+            System.out.println("Group Status: Not part of any group");
+        }
+    }
+
+    public void showDetailedUserInfo() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("Please login first!");
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        System.out.println("\n=== Detailed Account Information ===");
+        System.out.println("Full Name: " + currentUser.getFullName());
+        System.out.println("Email: " + currentUser.getEmail());
+        System.out.println("Account Registration: Completed successfully");
+        System.out.println("Failed Login Attempts: " + currentUser.getFailedLoginAttempts());
+        System.out.println("Account Status: " + (currentUser.isAccountLocked() ? "Temporarily Locked" : "Active"));
+
+        System.out.println("\n[DEVICE STATISTICS]:");
+        if (currentUser.getGadgets() != null && !currentUser.getGadgets().isEmpty()) {
+            System.out.println("Total Devices: " + currentUser.getGadgets().size());
+            long activeDevices = currentUser.getGadgets().stream().filter(Gadget::isOn).count();
+            System.out.println("Currently Active: " + activeDevices);
+            System.out.println("Currently Inactive: " + (currentUser.getGadgets().size() - activeDevices));
+        } else {
+            System.out.println("No devices registered");
+        }
+
+        System.out.println("\n[GROUP INFORMATION]:");
+        if (currentUser.isPartOfGroup()) {
+            System.out.println("Group Status: Member");
+            System.out.println("Group Admin: " + currentUser.getGroupCreator());
+            System.out.println("Group Size: " + currentUser.getGroupSize() + " member(s)");
+            System.out.println("Your Role: " + (currentUser.isGroupAdmin() ? "Admin" : "Member"));
+        } else {
+            System.out.println("Group Status: Not part of any group");
+        }
+
+        System.out.println("\n[SECURITY INFORMATION]:");
+        System.out.println("Password: Securely encrypted (last updated information not tracked)");
+        System.out.println("Login Security: " + (currentUser.getFailedLoginAttempts() == 0 ? "Good" : "Warning - recent failed attempts"));
+    }
+
+    public boolean updateUserFullName(String newName) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("Please login first!");
+            return false;
+        }
+
+        if (!customerService.isValidName(newName)) {
+            System.out.println("[ERROR] Invalid name! Name should contain only letters and spaces (minimum 2 characters).");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        String oldName = currentUser.getFullName();
+        currentUser.setFullName(newName);
+
+        boolean success = customerService.updateCustomer(currentUser);
+        if (success) {
+            sessionManager.updateCurrentUser(currentUser);
+            System.out.println("[INFO] Name changed from '" + oldName + "' to '" + newName + "'");
+            return true;
+        } else {
+            System.out.println("[ERROR] Failed to update name in database!");
+            return false;
+        }
+    }
+
+    public boolean updateUserEmail(String newEmail) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("Please login first!");
+            return false;
+        }
+
+        if (!customerService.isValidEmail(newEmail)) {
+            System.out.println("[ERROR] Invalid email format!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        String oldEmail = currentUser.getEmail();
+
+        // Update email in the customer object
+        currentUser.setEmail(newEmail.trim().toLowerCase());
+
+        boolean success = customerService.updateCustomerEmail(oldEmail, currentUser);
+        if (success) {
+            sessionManager.updateCurrentUser(currentUser);
+            System.out.println("[INFO] Email changed from '" + oldEmail + "' to '" + newEmail + "'");
+            return true;
+        } else {
+            // Revert the change if update failed
+            currentUser.setEmail(oldEmail);
+            System.out.println("[ERROR] Failed to update email in database!");
+            return false;
+        }
+    }
+
+    public boolean updateUserPassword(String newPassword, String confirmPassword) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("Please login first!");
+            return false;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            System.out.println("[ERROR] Passwords do not match!");
+            return false;
+        }
+
+        if (!customerService.isValidPassword(newPassword)) {
+            System.out.println("[ERROR] Invalid password! Please ensure your password meets all requirements:");
+            System.out.println(customerService.getPasswordRequirements());
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        boolean success = customerService.updatePassword(currentUser.getEmail(), newPassword);
+        if (success) {
+            System.out.println("[INFO] Password updated successfully for security.");
+            return true;
+        } else {
+            System.out.println("[ERROR] Failed to update password in database!");
+            return false;
+        }
+    }
+
+    // Device Permission Management Methods
+
+    /**
+     * Grant device permission to a group member (Admin only)
+     */
+    public boolean grantDevicePermission(String memberEmail, String deviceType, String roomName) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        try {
+            Customer currentUser = sessionManager.getCurrentUser();
+
+            // Check if user is group admin
+            if (!currentUser.isGroupAdmin()) {
+                System.out.println("[ERROR] Only the group admin can grant device permissions!");
+                System.out.println("[INFO] Group admin is: " + currentUser.getGroupCreator());
+                return false;
+            }
+
+            // Check if member is in the group
+            if (!currentUser.isGroupMember(memberEmail)) {
+                System.out.println("[ERROR] " + memberEmail + " is not in your group!");
+                return false;
+            }
+
+            // Grant permission
+            boolean success = currentUser.grantDevicePermission(memberEmail, deviceType, roomName, currentUser.getEmail());
+
+            if (success) {
+                // Update in database
+                boolean updated = customerService.updateCustomer(currentUser);
+                if (updated) {
+                    sessionManager.updateCurrentUser(currentUser);
+                    System.out.println("[SUCCESS] Permission granted successfully!");
+                    System.out.println("[INFO] " + memberEmail + " can now access " + deviceType + " in " + roomName);
+                    return true;
+                } else {
+                    System.out.println("[ERROR] Failed to save permission to database!");
+                    return false;
+                }
+            } else {
+                System.out.println("[ERROR] Failed to grant permission. Device may not exist or permission already exists.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error granting device permission: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Revoke device permission from a group member (Admin only)
+     */
+    public boolean revokeDevicePermission(String memberEmail, String deviceType, String roomName) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        try {
+            Customer currentUser = sessionManager.getCurrentUser();
+
+            // Check if user is group admin
+            if (!currentUser.isGroupAdmin()) {
+                System.out.println("[ERROR] Only the group admin can revoke device permissions!");
+                System.out.println("[INFO] Group admin is: " + currentUser.getGroupCreator());
+                return false;
+            }
+
+            // Revoke permission
+            boolean success = currentUser.revokeDevicePermission(memberEmail, deviceType, roomName);
+
+            if (success) {
+                // Update in database
+                boolean updated = customerService.updateCustomer(currentUser);
+                if (updated) {
+                    sessionManager.updateCurrentUser(currentUser);
+                    System.out.println("[SUCCESS] Permission revoked successfully!");
+                    System.out.println("[INFO] " + memberEmail + " can no longer access " + deviceType + " in " + roomName);
+                    return true;
+                } else {
+                    System.out.println("[ERROR] Failed to save changes to database!");
+                    return false;
+                }
+            } else {
+                System.out.println("[ERROR] No permission found to revoke.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error revoking device permission: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Display all device permissions granted by the current user (Admin only)
+     */
+    public void showDevicePermissions() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+
+        if (!currentUser.isGroupAdmin()) {
+            System.out.println("[ERROR] Only the group admin can view device permissions!");
+            System.out.println("[INFO] Group admin is: " + currentUser.getGroupCreator());
+            return;
+        }
+
+        System.out.println("\n=== Device Permissions Management ===");
+
+        if (!currentUser.isPartOfGroup()) {
+            System.out.println("[INFO] You are not part of any group.");
+            return;
+        }
+
+        var permissions = currentUser.getDevicePermissions();
+
+        if (permissions.isEmpty()) {
+            System.out.println("[INFO] No device permissions have been granted yet.");
+            System.out.println("[TIP] Use 'Grant Device Access' to share your devices with group members.");
+            return;
+        }
+
+        System.out.println("[INFO] Current device permissions you have granted:");
+        System.out.println();
+
+        // Group permissions by member
+        Map<String, List<com.smarthome.model.DevicePermission>> permissionsByMember = new HashMap<>();
+        for (var permission : permissions) {
+            permissionsByMember.computeIfAbsent(permission.getMemberEmail(), k -> new ArrayList<>()).add(permission);
+        }
+
+        int permissionNumber = 1;
+        for (Map.Entry<String, List<com.smarthome.model.DevicePermission>> entry : permissionsByMember.entrySet()) {
+            String memberEmail = entry.getKey();
+            List<com.smarthome.model.DevicePermission> memberPermissions = entry.getValue();
+
+            Customer member = customerService.findCustomerByEmail(memberEmail);
+            String memberName = member != null ? member.getFullName() : "Unknown";
+
+            System.out.println("[MEMBER] " + memberName + " (" + memberEmail + "):");
+
+            for (var permission : memberPermissions) {
+                System.out.printf("  %d. %s in %s - %s%s%n",
+                    permissionNumber++,
+                    permission.getDeviceType(),
+                    permission.getRoomName(),
+                    permission.isCanView() ? "View" : "",
+                    permission.isCanControl() ? (permission.isCanView() ? " & Control" : "Control") : "");
+            }
+            System.out.println();
+        }
+
+        System.out.println("[INFO] Total permissions granted: " + permissions.size());
+    }
+
+    /**
+     * Get all group members for device permission management
+     */
+    public List<Customer> getGroupMembersForPermissions() {
+        if (!sessionManager.isLoggedIn()) {
+            return new ArrayList<>();
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+
+        if (!currentUser.isGroupAdmin() || !currentUser.isPartOfGroup()) {
+            return new ArrayList<>();
+        }
+
+        List<Customer> members = new ArrayList<>();
+        for (String memberEmail : currentUser.getGroupMembers()) {
+            Customer member = customerService.findCustomerByEmail(memberEmail);
+            if (member != null) {
+                members.add(member);
+            }
+        }
+
+        return members;
+    }
+
+    /**
+     * Check if device permission exists
+     */
+    public boolean hasDevicePermission(String memberEmail, String deviceType, String roomName) {
+        if (!sessionManager.isLoggedIn()) {
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        return currentUser.hasDevicePermission(memberEmail, deviceType, roomName);
     }
 }

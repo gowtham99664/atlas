@@ -43,6 +43,9 @@ public class SmartScenesService {
         public String getRoomName() { return roomName; }
         public String getAction() { return action; }
         public String getDescription() { return description; }
+
+        public void setAction(String action) { this.action = action; }
+        public void setDescription(String description) { this.description = description; }
     }
     
     public static class SceneExecutionResult {
@@ -335,5 +338,172 @@ public class SmartScenesService {
         }
         
         System.out.println("\n[TIP] This scene coordinates " + actions.size() + " devices for optimal automation!");
+    }
+
+    // Scene Editing Methods
+    public List<SceneAction> getSceneActions(String userEmail, String sceneName) {
+        String sceneKey = sceneName.toUpperCase();
+
+        // Check user custom scenes first
+        Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
+        if (userScenes != null && userScenes.containsKey(sceneKey)) {
+            return new ArrayList<>(userScenes.get(sceneKey));
+        }
+
+        // Check predefined scenes
+        List<SceneAction> predefinedActions = predefinedScenes.get(sceneKey);
+        if (predefinedActions != null) {
+            return new ArrayList<>(predefinedActions);
+        }
+
+        return null;
+    }
+
+    public boolean editScene(String userEmail, String sceneName, List<SceneAction> newActions) {
+        try {
+            String sceneKey = sceneName.toUpperCase();
+
+            // Create or update custom scene
+            userCustomScenes.computeIfAbsent(userEmail, k -> new HashMap<>())
+                           .put(sceneKey, new ArrayList<>(newActions));
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean addDeviceToScene(String userEmail, String sceneName, SceneAction newAction) {
+        List<SceneAction> actions = getSceneActions(userEmail, sceneName);
+        if (actions == null) {
+            return false;
+        }
+
+        // Check if device already exists in scene
+        boolean deviceExists = actions.stream()
+                .anyMatch(action -> action.getDeviceType().equals(newAction.getDeviceType()) &&
+                                  action.getRoomName().equals(newAction.getRoomName()));
+
+        if (deviceExists) {
+            return false; // Device already in scene
+        }
+
+        actions.add(newAction);
+        return editScene(userEmail, sceneName, actions);
+    }
+
+    public boolean removeDeviceFromScene(String userEmail, String sceneName, String deviceType, String roomName) {
+        List<SceneAction> actions = getSceneActions(userEmail, sceneName);
+        if (actions == null) {
+            return false;
+        }
+
+        boolean removed = actions.removeIf(action ->
+            action.getDeviceType().equals(deviceType) && action.getRoomName().equals(roomName));
+
+        if (removed) {
+            return editScene(userEmail, sceneName, actions);
+        }
+
+        return false;
+    }
+
+    public boolean changeDeviceAction(String userEmail, String sceneName, String deviceType, String roomName, String newAction) {
+        List<SceneAction> actions = getSceneActions(userEmail, sceneName);
+        if (actions == null) {
+            return false;
+        }
+
+        for (SceneAction action : actions) {
+            if (action.getDeviceType().equals(deviceType) && action.getRoomName().equals(roomName)) {
+                action.setAction(newAction);
+                String newDescription = generateActionDescription(deviceType, roomName, newAction);
+                action.setDescription(newDescription);
+                return editScene(userEmail, sceneName, actions);
+            }
+        }
+
+        return false; // Device not found in scene
+    }
+
+    private String generateActionDescription(String deviceType, String roomName, String action) {
+        String verb = action.equalsIgnoreCase("ON") ? "Turn on" : "Turn off";
+        return String.format("%s %s in %s", verb, deviceType.toLowerCase(), roomName);
+    }
+
+    public void displayEditableSceneDetails(String userEmail, String sceneName) {
+        List<SceneAction> actions = getSceneActions(userEmail, sceneName);
+        if (actions == null) {
+            System.out.println("Scene not found: " + sceneName);
+            return;
+        }
+
+        System.out.println("\n=== " + sceneName.toUpperCase() + " Scene (Editable View) ===");
+
+        // Check if this is a custom scene or modified predefined scene
+        Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
+        boolean isCustom = userScenes != null && userScenes.containsKey(sceneName.toUpperCase());
+
+        if (isCustom) {
+            System.out.println("[STATUS] Custom/Modified Scene");
+        } else {
+            System.out.println("[STATUS] Original Predefined Scene");
+        }
+
+        System.out.println("This scene will perform the following actions:");
+        System.out.println();
+
+        for (int i = 0; i < actions.size(); i++) {
+            SceneAction action = actions.get(i);
+            System.out.printf("%d. %s\n", (i + 1), action.getDescription());
+            System.out.printf("   Device: %s in %s → %s\n",
+                            action.getDeviceType(), action.getRoomName(), action.getAction());
+        }
+
+        System.out.println("\n[EDIT OPTIONS] You can:");
+        System.out.println("• Add new devices to this scene");
+        System.out.println("• Remove existing devices from this scene");
+        System.out.println("• Change device actions (ON ↔ OFF)");
+        System.out.println("• Reset to original (for predefined scenes)");
+
+        System.out.println("\n[TIP] This scene coordinates " + actions.size() + " devices for optimal automation!");
+    }
+
+    public boolean resetSceneToOriginal(String userEmail, String sceneName) {
+        String sceneKey = sceneName.toUpperCase();
+
+        // Check if it's a predefined scene
+        if (!predefinedScenes.containsKey(sceneKey)) {
+            return false; // Cannot reset custom scenes
+        }
+
+        // Remove custom version to restore original
+        Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
+        if (userScenes != null) {
+            userScenes.remove(sceneKey);
+            if (userScenes.isEmpty()) {
+                userCustomScenes.remove(userEmail);
+            }
+        }
+
+        return true;
+    }
+
+    public boolean isSceneEditable(String sceneName) {
+        // All scenes are editable (predefined scenes become custom when edited)
+        return predefinedScenes.containsKey(sceneName.toUpperCase()) ||
+               userCustomScenes.values().stream()
+                   .anyMatch(scenes -> scenes.containsKey(sceneName.toUpperCase()));
+    }
+
+    public List<String> getAllAvailableSceneNames(String userEmail) {
+        Set<String> allScenes = new HashSet<>(predefinedScenes.keySet());
+
+        Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
+        if (userScenes != null) {
+            allScenes.addAll(userScenes.keySet());
+        }
+
+        return new ArrayList<>(allScenes);
     }
 }

@@ -2,6 +2,7 @@ package com.smarthome.model;
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +17,9 @@ public class Customer {
     private List<Gadget> gadgets;
     private List<String> groupMembers;
     private String groupCreator; // Email of the person who created the group (admin)
-    
+    private List<DeletedDeviceEnergyRecord> deletedDeviceEnergyRecords; // Historical energy data of deleted devices
+    private List<DevicePermission> devicePermissions; // Permissions granted to group members for this user's devices
+
     private int failedLoginAttempts;
     private LocalDateTime accountLockedUntil;
     private LocalDateTime lastFailedLoginTime;
@@ -26,11 +29,13 @@ public class Customer {
         this.gadgets = new ArrayList<>();
         this.groupMembers = new ArrayList<>();
         this.groupCreator = null;
+        this.deletedDeviceEnergyRecords = new ArrayList<>();
+        this.devicePermissions = new ArrayList<>();
         this.failedLoginAttempts = 0;
         this.accountLockedUntil = null;
         this.lastFailedLoginTime = null;
     }
-    
+
     public Customer(String email, String fullName, String password) {
         this.email = email;
         this.fullName = fullName;
@@ -38,6 +43,8 @@ public class Customer {
         this.gadgets = new ArrayList<>();
         this.groupMembers = new ArrayList<>();
         this.groupCreator = null;
+        this.deletedDeviceEnergyRecords = new ArrayList<>();
+        this.devicePermissions = new ArrayList<>();
         this.failedLoginAttempts = 0;
         this.accountLockedUntil = null;
         this.lastFailedLoginTime = null;
@@ -200,7 +207,129 @@ public class Customer {
         }
         return size + 1; // +1 for the current user
     }
-    
+
+    @DynamoDbAttribute("deletedDeviceEnergyRecords")
+    public List<DeletedDeviceEnergyRecord> getDeletedDeviceEnergyRecords() {
+        if (deletedDeviceEnergyRecords == null) {
+            deletedDeviceEnergyRecords = new ArrayList<>();
+        }
+        return deletedDeviceEnergyRecords;
+    }
+
+    public void setDeletedDeviceEnergyRecords(List<DeletedDeviceEnergyRecord> deletedDeviceEnergyRecords) {
+        this.deletedDeviceEnergyRecords = deletedDeviceEnergyRecords;
+    }
+
+    public void addDeletedDeviceRecord(DeletedDeviceEnergyRecord record) {
+        if (deletedDeviceEnergyRecords == null) {
+            deletedDeviceEnergyRecords = new ArrayList<>();
+        }
+        deletedDeviceEnergyRecords.add(record);
+    }
+
+    public double getTotalDeletedDeviceEnergyForCurrentMonth() {
+        if (deletedDeviceEnergyRecords == null || deletedDeviceEnergyRecords.isEmpty()) {
+            return 0.0;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        String currentMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());
+
+        return deletedDeviceEnergyRecords.stream()
+                .filter(record -> currentMonth.equals(record.getDeletionMonth()))
+                .mapToDouble(DeletedDeviceEnergyRecord::getTotalEnergyConsumedKWh)
+                .sum();
+    }
+
+    @DynamoDbAttribute("devicePermissions")
+    public List<DevicePermission> getDevicePermissions() {
+        if (devicePermissions == null) {
+            devicePermissions = new ArrayList<>();
+        }
+        return devicePermissions;
+    }
+
+    public void setDevicePermissions(List<DevicePermission> devicePermissions) {
+        this.devicePermissions = devicePermissions != null ? devicePermissions : new ArrayList<>();
+    }
+
+    /**
+     * Grant permission for a specific device to a group member
+     */
+    public boolean grantDevicePermission(String memberEmail, String deviceType, String roomName, String grantedBy) {
+        // Check if device exists
+        Gadget device = findGadget(deviceType, roomName);
+        if (device == null) {
+            return false;
+        }
+
+        // Check if permission already exists
+        if (hasDevicePermission(memberEmail, deviceType, roomName)) {
+            return false; // Permission already exists
+        }
+
+        // Create new permission
+        DevicePermission permission = new DevicePermission(memberEmail, deviceType, roomName, this.email, grantedBy);
+        getDevicePermissions().add(permission);
+        return true;
+    }
+
+    /**
+     * Revoke permission for a specific device from a group member
+     */
+    public boolean revokeDevicePermission(String memberEmail, String deviceType, String roomName) {
+        return getDevicePermissions().removeIf(permission ->
+            permission.getMemberEmail().equalsIgnoreCase(memberEmail) &&
+            permission.matchesDevice(deviceType, roomName, this.email));
+    }
+
+    /**
+     * Check if a member has permission for a specific device
+     */
+    public boolean hasDevicePermission(String memberEmail, String deviceType, String roomName) {
+        return getDevicePermissions().stream()
+            .anyMatch(permission ->
+                permission.getMemberEmail().equalsIgnoreCase(memberEmail) &&
+                permission.matchesDevice(deviceType, roomName, this.email));
+    }
+
+    /**
+     * Get all devices that a specific member has permission to access
+     */
+    public List<DevicePermission> getPermissionsForMember(String memberEmail) {
+        return getDevicePermissions().stream()
+            .filter(permission -> permission.getMemberEmail().equalsIgnoreCase(memberEmail))
+            .toList();
+    }
+
+    /**
+     * Get all devices that this user can access from other group members (based on permissions granted to this user)
+     * This method checks what devices OTHER users have given THIS user permission to access
+     */
+    public List<Gadget> getAccessibleGroupDevices(List<Customer> groupMembers) {
+        List<Gadget> accessibleDevices = new ArrayList<>();
+
+        for (Customer member : groupMembers) {
+            if (member.getEmail().equalsIgnoreCase(this.email)) {
+                continue; // Skip self
+            }
+
+            // Check what permissions this member has granted to current user
+            List<DevicePermission> permissionsForMe = member.getPermissionsForMember(this.email);
+
+            for (DevicePermission permission : permissionsForMe) {
+                if (permission.isCanView()) {
+                    Gadget device = member.findGadget(permission.getDeviceType(), permission.getRoomName());
+                    if (device != null) {
+                        accessibleDevices.add(device);
+                    }
+                }
+            }
+        }
+
+        return accessibleDevices;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
