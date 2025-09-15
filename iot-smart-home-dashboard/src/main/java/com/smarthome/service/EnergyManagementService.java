@@ -33,7 +33,6 @@ public class EnergyManagementService {
         List<Gadget> devices = customer.getGadgets();
         double totalEnergyKWh = 0.0;
 
-        // Calculate energy from active devices
         for (Gadget device : devices) {
             double currentSessionEnergy = 0.0;
             if (device.isOn() && device.getLastOnTime() != null) {
@@ -44,7 +43,6 @@ public class EnergyManagementService {
             totalEnergyKWh += device.getTotalEnergyConsumedKWh() + currentSessionEnergy;
         }
 
-        // CRITICAL: Include energy consumption from deleted devices for accurate monthly billing
         double deletedDeviceEnergy = customer.getTotalDeletedDeviceEnergyForCurrentMonth();
         totalEnergyKWh += deletedDeviceEnergy;
 

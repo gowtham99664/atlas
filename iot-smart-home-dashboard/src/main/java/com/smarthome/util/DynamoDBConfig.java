@@ -52,14 +52,20 @@ public class DynamoDBConfig {
             
             if (isLocal) {
                 String endpoint = properties.getProperty("dynamodb.local.endpoint", "http://localhost:8002");
-                // Use dummy credentials for local DynamoDB
                 AwsBasicCredentials localCredentials = AwsBasicCredentials.create("local", "local");
                 dynamoDbClient = DynamoDbClient.builder()
                         .endpointOverride(URI.create(endpoint))
                         .region(Region.of(region))
                         .credentialsProvider(StaticCredentialsProvider.create(localCredentials))
                         .build();
-                System.out.println("Connected to local DynamoDB at: " + endpoint);
+
+                try {
+                    dynamoDbClient.listTables();
+                    System.out.println("✅ Successfully connected to local DynamoDB at: " + endpoint);
+                } catch (Exception testEx) {
+                    System.err.println("❌ Failed to connect to DynamoDB at " + endpoint + ": " + testEx.getMessage());
+                    throw testEx;
+                }
             } else {
                 dynamoDbClient = DynamoDbClient.builder()
                         .region(Region.of(region))
@@ -92,6 +98,25 @@ public class DynamoDBConfig {
         return enhancedClient;
     }
     
+    public static boolean isConnected() {
+        return dynamoDbClient != null && enhancedClient != null;
+    }
+
+    public static void testConnection() {
+        if (dynamoDbClient == null) {
+            System.out.println("❌ DynamoDB client not initialized - running in DEMO mode");
+            return;
+        }
+
+        try {
+            var response = dynamoDbClient.listTables();
+            System.out.println("✅ DynamoDB connection successful!");
+            System.out.println("📋 Existing tables: " + response.tableNames());
+        } catch (Exception e) {
+            System.err.println("❌ DynamoDB connection test failed: " + e.getMessage());
+        }
+    }
+
     public static void shutdown() {
         if (dynamoDbClient != null) {
             dynamoDbClient.close();

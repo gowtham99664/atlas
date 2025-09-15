@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn clean:*)",
+      "Bash(mvn:*)",
+      "Bash(find:*)",
+      "Bash(tasklist)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(java:*)",
+      "Bash(timeout 10 java:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

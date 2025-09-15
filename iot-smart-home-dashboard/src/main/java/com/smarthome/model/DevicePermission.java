@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 @DynamoDbBean
 public class DevicePermission {
 
-    private String memberEmail;        // Who gets the permission
-    private String deviceType;         // Type of device (TV, AC, etc.)
-    private String roomName;          // Room where device is located
-    private String deviceOwnerEmail;  // Who owns the device
-    private boolean canControl;       // Can control the device (turn on/off)
-    private boolean canView;          // Can view device status and usage
-    private LocalDateTime grantedAt;  // When permission was granted
-    private String grantedBy;         // Admin who granted the permission
+    private String memberEmail;
+    private String deviceType;
+    private String roomName;
+    private String deviceOwnerEmail;
+    private boolean canControl;
+    private boolean canView;
+    private LocalDateTime grantedAt;
+    private String grantedBy;
 
     public DevicePermission() {
         this.canControl = true;

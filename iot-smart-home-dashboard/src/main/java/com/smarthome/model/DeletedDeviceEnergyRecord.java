@@ -4,10 +4,6 @@ import java.time.LocalDateTime;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 
-/**
- * Tracks energy consumption history of deleted devices to preserve
- * historical data for accurate monthly bill calculations.
- */
 @DynamoDbBean
 public class DeletedDeviceEnergyRecord {
 
@@ -22,7 +18,6 @@ public class DeletedDeviceEnergyRecord {
     private String deletionMonth; // Format: "YYYY-MM" for monthly grouping
 
     public DeletedDeviceEnergyRecord() {
-        // Default constructor for DynamoDB
     }
 
     public DeletedDeviceEnergyRecord(Gadget device) {

@@ -13,6 +13,9 @@ echo.
 echo Step 1: Building the application...
 cd iot-smart-home-dashboard
 
+echo Deleting old JAR files to force fresh build...
+del /Q target\*.jar 2>nul
+
 echo Attempting to build without clean first...
 call mvn compile
 if %ERRORLEVEL% NEQ 0 (

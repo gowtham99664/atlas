@@ -12,9 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-/**
- * JUnit 5 Test Cases for Device Permission System
- */
 public class DevicePermissionTest {
 
     private SmartHomeService smartHomeService;

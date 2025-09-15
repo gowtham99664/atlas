@@ -18,9 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-/**
- * JUnit 5 Test Cases for IoT Smart Home Dashboard
- */
 public class SmartHomeServiceTest {
 
     private SmartHomeService smartHomeService;

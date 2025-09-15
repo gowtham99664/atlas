@@ -107,7 +107,6 @@ public class TimerService {
     }
     
     public void displayScheduledTimers(Customer customer) {
-        // Force immediate check for due timers before displaying
         forceTimerCheck();
 
         System.out.println("\n=== Scheduled Timers ===");
@@ -153,8 +152,7 @@ public class TimerService {
                 String scheduledTime = device.getScheduledOffTime().format(DateTimeFormatter.ofPattern("dd-MM HH:mm"));
                 String status = countdown.length() > 20 ? countdown.substring(0, 17) + "..." : countdown;
                 
-                // Only show device name for the first entry if both ON and OFF timers exist
-                String displayDeviceName = device.getScheduledOnTime() != null ? "" : deviceName;
+                        String displayDeviceName = device.getScheduledOnTime() != null ? "" : deviceName;
                 
                 System.out.printf("| %-2s | %-23s | %-6s | %-17s | %-20s |\n", 
                                 device.getScheduledOnTime() != null ? "" : String.valueOf(timerIndex++), 
@@ -181,7 +179,6 @@ public class TimerService {
         long hours = (totalMinutes % (24 * 60)) / 60;
         long minutes = totalMinutes % 60;
 
-        // Show seconds for timers due within 2 minutes for more precision
         if (totalMinutes == 0 && seconds <= 60) {
             return String.format("[%ds remaining]", seconds);
         } else if (totalMinutes < 2) {
@@ -233,8 +230,7 @@ public class TimerService {
     }
     
     private void startTimerMonitoring() {
-        // Check every 10 seconds for precise timer execution
-        scheduler.scheduleAtFixedRate(() -> {
+            scheduler.scheduleAtFixedRate(() -> {
             try {
                 checkAndExecuteScheduledTasks();
             } catch (Exception e) {
@@ -255,21 +251,17 @@ public class TimerService {
                 for (Gadget device : customer.getGadgets()) {
                     if (!device.isTimerEnabled()) continue;
 
-                    // Check and execute ON timers - Execute immediately when due
                     if (device.getScheduledOnTime() != null) {
                         LocalDateTime scheduledOnTime = device.getScheduledOnTime();
 
-                        // Execute timer if current time has reached or passed the scheduled time
                         if (now.isAfter(scheduledOnTime) || now.isEqual(scheduledOnTime)) {
-                            // Check if this timer hasn't been executed recently (within last minute)
                             long minutesSinceScheduled = ChronoUnit.MINUTES.between(scheduledOnTime, now);
 
-                            if (minutesSinceScheduled <= 10) { // Execute within 10 minutes of scheduled time
+                            if (minutesSinceScheduled <= 10) {
                                 String previousStatus = device.getStatus();
                                 device.turnOn();
                                 String newStatus = device.getStatus();
 
-                                // Clear the timer immediately after execution
                                 device.setScheduledOnTime(null);
                                 customerUpdated = true;
 
@@ -282,9 +274,9 @@ public class TimerService {
                                 System.out.println("  Scheduled: " + scheduledOnTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
                                 System.out.println("  Executed: " + now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                                 System.out.println("  Status: " + previousStatus + " → " + newStatus);
+                                System.out.print("\nPress Enter to continue or enter your choice: ");
 
                             } else {
-                                // Remove very old timers (older than 10 minutes)
                                 device.setScheduledOnTime(null);
                                 customerUpdated = true;
 
@@ -298,21 +290,17 @@ public class TimerService {
                         }
                     }
 
-                    // Check and execute OFF timers - Execute immediately when due
                     if (device.getScheduledOffTime() != null) {
                         LocalDateTime scheduledOffTime = device.getScheduledOffTime();
 
-                        // Execute timer if current time has reached or passed the scheduled time
                         if (now.isAfter(scheduledOffTime) || now.isEqual(scheduledOffTime)) {
-                            // Check if this timer hasn't been executed recently (within last minute)
                             long minutesSinceScheduled = ChronoUnit.MINUTES.between(scheduledOffTime, now);
 
-                            if (minutesSinceScheduled <= 10) { // Execute within 10 minutes of scheduled time
+                            if (minutesSinceScheduled <= 10) {
                                 String previousStatus = device.getStatus();
                                 device.turnOff();
                                 String newStatus = device.getStatus();
 
-                                // Clear the timer immediately after execution
                                 device.setScheduledOffTime(null);
                                 customerUpdated = true;
 
@@ -325,9 +313,9 @@ public class TimerService {
                                 System.out.println("  Scheduled: " + scheduledOffTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
                                 System.out.println("  Executed: " + now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                                 System.out.println("  Status: " + previousStatus + " → " + newStatus);
+                                System.out.print("\nPress Enter to continue or enter your choice: ");
 
                             } else {
-                                // Remove very old timers (older than 10 minutes)
                                 device.setScheduledOffTime(null);
                                 customerUpdated = true;
 
@@ -342,7 +330,6 @@ public class TimerService {
                     }
                 }
 
-                // Update customer immediately after any changes to ensure device states are persisted
                 if (customerUpdated) {
                     boolean saveSuccess = customerService.updateCustomer(customer);
                     if (!saveSuccess) {
@@ -389,10 +376,6 @@ public class TimerService {
         return help.toString();
     }
 
-    /**
-     * Force an immediate check and execution of all due timers.
-     * This ensures timers execute on-demand without waiting for the next scheduled check.
-     */
     public void forceTimerCheck() {
         try {
             checkAndExecuteScheduledTasks();

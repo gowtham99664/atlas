@@ -16,9 +16,9 @@ public class Customer {
     private String password;
     private List<Gadget> gadgets;
     private List<String> groupMembers;
-    private String groupCreator; // Email of the person who created the group (admin)
-    private List<DeletedDeviceEnergyRecord> deletedDeviceEnergyRecords; // Historical energy data of deleted devices
-    private List<DevicePermission> devicePermissions; // Permissions granted to group members for this user's devices
+    private String groupCreator;
+    private List<DeletedDeviceEnergyRecord> deletedDeviceEnergyRecords;
+    private List<DevicePermission> devicePermissions;
 
     private int failedLoginAttempts;
     private LocalDateTime accountLockedUntil;

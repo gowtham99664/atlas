@@ -141,12 +141,10 @@ public class SmartHomeService {
         List<Gadget> allGadgets = new ArrayList<>();
         
         if (currentUser.isPartOfGroup()) {
-            // Add current user's devices
             if (currentUser.getGadgets() != null) {
                 allGadgets.addAll(currentUser.getGadgets());
             }
 
-            // Add group members' devices based on permissions
             int groupDeviceCount = 0;
             List<Customer> groupMemberObjects = new ArrayList<>();
 
@@ -157,7 +155,6 @@ public class SmartHomeService {
                 }
             }
 
-            // Get devices that this user has permission to access
             List<Gadget> accessibleGroupDevices = currentUser.getAccessibleGroupDevices(groupMemberObjects);
             allGadgets.addAll(accessibleGroupDevices);
             groupDeviceCount = accessibleGroupDevices.size();
@@ -233,7 +230,6 @@ public class SmartHomeService {
             Gadget targetGadget = null;
             Customer gadgetOwner = null;
             
-            // First check current user's gadgets
             if (currentUser.getGadgets() != null) {
                 for (Gadget gadget : currentUser.getGadgets()) {
                     if (gadget.getType().equalsIgnoreCase(gadgetType)) {
@@ -244,7 +240,6 @@ public class SmartHomeService {
                 }
             }
             
-            // If not found, check group members' gadgets
             if (targetGadget == null && currentUser.isPartOfGroup()) {
                 for (String memberEmail : currentUser.getGroupMembers()) {
                     Customer member = customerService.findCustomerByEmail(memberEmail);
@@ -276,10 +271,8 @@ public class SmartHomeService {
             targetGadget.toggleStatus();
             String newStatus = targetGadget.getStatus();
             
-            // Update the actual owner of the gadget
             boolean updated = customerService.updateCustomer(gadgetOwner);
             
-            // If the gadget belongs to current user, also update session
             if (gadgetOwner.getEmail().equals(currentUser.getEmail())) {
                 sessionManager.updateCurrentUser(gadgetOwner);
             }
@@ -337,7 +330,6 @@ public class SmartHomeService {
             Gadget targetGadget = null;
             Customer gadgetOwner = null;
             
-            // First check current user's gadgets
             if (currentUser.getGadgets() != null) {
                 for (Gadget gadget : currentUser.getGadgets()) {
                     if (gadget.getType().equalsIgnoreCase(gadgetType) && 
@@ -349,7 +341,6 @@ public class SmartHomeService {
                 }
             }
             
-            // If not found, check group members' gadgets
             if (targetGadget == null && currentUser.isPartOfGroup()) {
                 for (String memberEmail : currentUser.getGroupMembers()) {
                     Customer member = customerService.findCustomerByEmail(memberEmail);
@@ -377,10 +368,8 @@ public class SmartHomeService {
             targetGadget.toggleStatus();
             String newStatus = targetGadget.getStatus();
             
-            // Update the actual owner of the gadget
             boolean updated = customerService.updateCustomer(gadgetOwner);
             
-            // If the gadget belongs to current user, also update session
             if (gadgetOwner.getEmail().equals(currentUser.getEmail())) {
                 sessionManager.updateCurrentUser(gadgetOwner);
             }
@@ -457,11 +446,9 @@ public class SmartHomeService {
                 return false;
             }
             
-            // Set group creator - the person who adds someone becomes admin if no admin exists
             if (currentUser.getGroupCreator() == null) {
                 currentUser.setGroupCreator(currentUserEmail);
             }
-            // Set the same admin for the target user if they don't have one
             if (targetUser.getGroupCreator() == null) {
                 targetUser.setGroupCreator(currentUserEmail);
             }
@@ -481,7 +468,6 @@ public class SmartHomeService {
                 return true;
             } else {
                 System.out.println("[ERROR] Failed to update group membership in database!");
-                // Rollback changes if only one update succeeded
                 if (currentUserUpdated && !targetUserUpdated) {
                     currentUser.removeGroupMember(memberEmail);
                     customerService.updateCustomer(currentUser);
@@ -613,7 +599,6 @@ public class SmartHomeService {
     
     public void showCurrentWeather() {
         weatherService.displayCurrentWeather();
-        // displayCurrentWeather() now automatically shows suggestions
     }
 
     public void showWeatherForecast() {
@@ -777,11 +762,9 @@ public class SmartHomeService {
                 return false;
             }
 
-            // CRITICAL: Preserve energy consumption history before deletion
             if (device.getTotalEnergyConsumedKWh() > 0 ||
                 (device.isOn() && device.getLastOnTime() != null && device.getCurrentSessionUsageHours() > 0)) {
 
-                // Create historical record of deleted device energy consumption
                 DeletedDeviceEnergyRecord energyRecord = new DeletedDeviceEnergyRecord(device);
                 currentUser.addDeletedDeviceRecord(energyRecord);
 
@@ -789,7 +772,6 @@ public class SmartHomeService {
                 System.out.println("[INFO] Device usage time: " + energyRecord.getFormattedUsageTime());
             }
 
-            // Remove device from active devices list
             currentUser.getGadgets().removeIf(gadget ->
                 gadget.getType().equalsIgnoreCase(deviceType) &&
                 gadget.getRoomName().equalsIgnoreCase(roomName));
@@ -838,7 +820,6 @@ public class SmartHomeService {
         smartScenesService.displaySceneDetails(sceneName);
     }
 
-    // Scene Editing Methods
     public void showEditableSceneDetails(String sceneName) {
         if (!sessionManager.isLoggedIn()) {
             System.out.println("[ERROR] Please login first!");
@@ -857,7 +838,6 @@ public class SmartHomeService {
 
         Customer currentUser = sessionManager.getCurrentUser();
 
-        // Verify device exists
         Gadget device = currentUser.findGadget(deviceType, roomName);
         if (device == null) {
             System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
@@ -993,21 +973,18 @@ public class SmartHomeService {
             Customer currentUser = sessionManager.getCurrentUser();
             String currentUserEmail = currentUser.getEmail();
             
-            // Check if user is admin
             if (!currentUser.isGroupAdmin()) {
                 System.out.println("[ERROR] Only the group admin can remove members from the group!");
                 System.out.println("[INFO] Group admin is: " + currentUser.getGroupCreator());
                 return false;
             }
             
-            // Check if trying to remove themselves
             if (memberEmail.toLowerCase().trim().equals(currentUserEmail.toLowerCase().trim())) {
                 System.out.println("[ERROR] You cannot remove yourself from the group!");
                 System.out.println("[INFO] To leave the group, use a different feature or delete the group.");
                 return false;
             }
             
-            // Check if member exists in group
             if (!currentUser.isGroupMember(memberEmail)) {
                 System.out.println("[ERROR] " + memberEmail + " is not in your group!");
                 return false;
@@ -1019,11 +996,9 @@ public class SmartHomeService {
                 return false;
             }
             
-            // Remove from both users' group lists
             currentUser.removeGroupMember(memberEmail);
             targetUser.removeGroupMember(currentUserEmail);
             
-            // If target user has no more group members, clear their group creator
             if (!targetUser.isPartOfGroup()) {
                 targetUser.setGroupCreator(null);
             }
@@ -1039,7 +1014,6 @@ public class SmartHomeService {
                 return true;
             } else {
                 System.out.println("[ERROR] Failed to update group membership in database!");
-                // Rollback changes if only one update succeeded
                 if (currentUserUpdated && !targetUserUpdated) {
                     currentUser.addGroupMember(memberEmail);
                     customerService.updateCustomer(currentUser);
@@ -1065,7 +1039,6 @@ public class SmartHomeService {
         
         Customer currentUser = sessionManager.getCurrentUser();
         
-        // Auto-fix groups that don't have an admin (for existing groups)
         if (currentUser.isPartOfGroup() && currentUser.getGroupCreator() == null) {
             fixGroupAdmin(currentUser);
         }
@@ -1093,7 +1066,6 @@ public class SmartHomeService {
             memberCount++;
         }
         
-        // Show device count information
         int totalDevices = 0;
         int yourDevices = currentUser.getGadgets() != null ? currentUser.getGadgets().size() : 0;
         totalDevices += yourDevices;
@@ -1123,10 +1095,8 @@ public class SmartHomeService {
         try {
             String currentUserEmail = currentUser.getEmail();
             
-            // Set current user as group admin
             currentUser.setGroupCreator(currentUserEmail);
             
-            // Update all group members to have this admin
             for (String memberEmail : currentUser.getGroupMembers()) {
                 Customer member = customerService.findCustomerByEmail(memberEmail);
                 if (member != null && member.getGroupCreator() == null) {
@@ -1135,7 +1105,6 @@ public class SmartHomeService {
                 }
             }
             
-            // Update current user
             boolean updated = customerService.updateCustomer(currentUser);
             if (updated) {
                 sessionManager.updateCurrentUser(currentUser);
@@ -1151,13 +1120,11 @@ public class SmartHomeService {
         TableDimensions dimensions = calculateTableDimensions(allGadgets);
         TableFormatStrings formats = createTableFormatStrings(dimensions);
         
-        // Display table header
         System.out.println("Device List (Enter number to view detailed energy info):");
         System.out.println(formats.borderFormat);
         System.out.printf(formats.headerFormat + "\n", "#", "Device", "Power", "Status", "Usage Time", "Energy(kWh)");
         System.out.println(formats.borderFormat);
         
-        // Display table rows
         displayTableRows(allGadgets, formats);
         System.out.println(formats.borderFormat);
     }
@@ -1174,7 +1141,6 @@ public class SmartHomeService {
         final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd-MM HH:mm");
         
         for (Gadget gadget : allGadgets) {
-            // Calculate dimensions for main row
             String deviceName = String.format("%s %s (%s)", gadget.getType(), gadget.getModel(), gadget.getRoomName());
             deviceWidth = Math.max(deviceWidth, deviceName.length());
             
@@ -1190,14 +1156,12 @@ public class SmartHomeService {
             String energyStr = String.format("%.3f", gadget.getCurrentTotalEnergyConsumedKWh());
             energyWidth = Math.max(energyWidth, energyStr.length());
             
-            // Calculate dimensions for session info
             if (gadget.isOn() && gadget.getLastOnTime() != null) {
                 deviceWidth = Math.max(deviceWidth, "  Current Session:".length());
                 String sessionTime = String.format("%.1fh", gadget.getCurrentSessionUsageHours());
                 usageWidth = Math.max(usageWidth, sessionTime.length());
             }
             
-            // Calculate dimensions for timer info
             if (gadget.isTimerEnabled()) {
                 String timerInfo = buildTimerInfo(gadget, now, timeFormatter);
                 String timerDisplay = "  Timer: " + timerInfo;
@@ -1205,7 +1169,6 @@ public class SmartHomeService {
             }
         }
         
-        // Set minimum widths for readability
         return new TableDimensions(
             numWidth,
             Math.max(deviceWidth, 25),
@@ -1262,16 +1225,13 @@ public class SmartHomeService {
         for (int i = 0; i < allGadgets.size(); i++) {
             Gadget gadget = allGadgets.get(i);
             
-            // Main device row
             displayDeviceRow(gadget, i + 1, formats.rowFormat);
             
-            // Current session row (if applicable)
             if (gadget.isOn() && gadget.getLastOnTime() != null) {
                 String sessionTime = String.format("%.1fh", gadget.getCurrentSessionUsageHours());
                 System.out.printf(formats.emptyRowFormat + "\n", "", "  Current Session:", "", "", sessionTime, "");
             }
             
-            // Timer row (if applicable)
             if (gadget.isTimerEnabled()) {
                 String timerInfo = buildTimerInfo(gadget, now, timeFormatter);
                 String timerDisplay = "  Timer: " + timerInfo;
@@ -1295,7 +1255,6 @@ public class SmartHomeService {
             energyStr);
     }
     
-    // Helper classes for better code organization
     private static class TableDimensions {
         final int numWidth, deviceWidth, powerWidth, statusWidth, usageWidth, energyWidth;
         
@@ -1320,7 +1279,6 @@ public class SmartHomeService {
         }
     }
 
-    // User Profile Management Methods
     public boolean verifyCurrentPassword(String password) {
         if (!sessionManager.isLoggedIn()) {
             return false;
@@ -1428,7 +1386,6 @@ public class SmartHomeService {
         Customer currentUser = sessionManager.getCurrentUser();
         String oldEmail = currentUser.getEmail();
 
-        // Update email in the customer object
         currentUser.setEmail(newEmail.trim().toLowerCase());
 
         boolean success = customerService.updateCustomerEmail(oldEmail, currentUser);
@@ -1437,7 +1394,6 @@ public class SmartHomeService {
             System.out.println("[INFO] Email changed from '" + oldEmail + "' to '" + newEmail + "'");
             return true;
         } else {
-            // Revert the change if update failed
             currentUser.setEmail(oldEmail);
             System.out.println("[ERROR] Failed to update email in database!");
             return false;
@@ -1472,11 +1428,7 @@ public class SmartHomeService {
         }
     }
 
-    // Device Permission Management Methods
 
-    /**
-     * Grant device permission to a group member (Admin only)
-     */
     public boolean grantDevicePermission(String memberEmail, String deviceType, String roomName) {
         if (!sessionManager.isLoggedIn()) {
             System.out.println("[ERROR] Please login first!");
@@ -1493,17 +1445,14 @@ public class SmartHomeService {
                 return false;
             }
 
-            // Check if member is in the group
             if (!currentUser.isGroupMember(memberEmail)) {
                 System.out.println("[ERROR] " + memberEmail + " is not in your group!");
                 return false;
             }
 
-            // Grant permission
             boolean success = currentUser.grantDevicePermission(memberEmail, deviceType, roomName, currentUser.getEmail());
 
             if (success) {
-                // Update in database
                 boolean updated = customerService.updateCustomer(currentUser);
                 if (updated) {
                     sessionManager.updateCurrentUser(currentUser);
@@ -1524,9 +1473,6 @@ public class SmartHomeService {
         }
     }
 
-    /**
-     * Revoke device permission from a group member (Admin only)
-     */
     public boolean revokeDevicePermission(String memberEmail, String deviceType, String roomName) {
         if (!sessionManager.isLoggedIn()) {
             System.out.println("[ERROR] Please login first!");
@@ -1543,11 +1489,9 @@ public class SmartHomeService {
                 return false;
             }
 
-            // Revoke permission
             boolean success = currentUser.revokeDevicePermission(memberEmail, deviceType, roomName);
 
             if (success) {
-                // Update in database
                 boolean updated = customerService.updateCustomer(currentUser);
                 if (updated) {
                     sessionManager.updateCurrentUser(currentUser);
@@ -1568,9 +1512,6 @@ public class SmartHomeService {
         }
     }
 
-    /**
-     * Display all device permissions granted by the current user (Admin only)
-     */
     public void showDevicePermissions() {
         if (!sessionManager.isLoggedIn()) {
             System.out.println("[ERROR] Please login first!");
@@ -1603,7 +1544,6 @@ public class SmartHomeService {
         System.out.println("[INFO] Current device permissions you have granted:");
         System.out.println();
 
-        // Group permissions by member
         Map<String, List<com.smarthome.model.DevicePermission>> permissionsByMember = new HashMap<>();
         for (var permission : permissions) {
             permissionsByMember.computeIfAbsent(permission.getMemberEmail(), k -> new ArrayList<>()).add(permission);
@@ -1633,9 +1573,6 @@ public class SmartHomeService {
         System.out.println("[INFO] Total permissions granted: " + permissions.size());
     }
 
-    /**
-     * Get all group members for device permission management
-     */
     public List<Customer> getGroupMembersForPermissions() {
         if (!sessionManager.isLoggedIn()) {
             return new ArrayList<>();
@@ -1658,9 +1595,6 @@ public class SmartHomeService {
         return members;
     }
 
-    /**
-     * Check if device permission exists
-     */
     public boolean hasDevicePermission(String memberEmail, String deviceType, String roomName) {
         if (!sessionManager.isLoggedIn()) {
             return false;

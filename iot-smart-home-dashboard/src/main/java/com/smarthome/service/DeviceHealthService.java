@@ -44,8 +44,7 @@ public class DeviceHealthService {
             this.recommendations = new ArrayList<>();
             this.lastCheckTime = LocalDateTime.now();
         }
-        
-        // Getters
+
         public String getDeviceType() { return deviceType; }
         public String getModel() { return model; }
         public String getRoomName() { return roomName; }
@@ -56,8 +55,7 @@ public class DeviceHealthService {
         public LocalDateTime getLastCheckTime() { return lastCheckTime; }
         public int getEstimatedLifespanMonths() { return estimatedLifespanMonths; }
         public double getEnergyEfficiencyScore() { return energyEfficiencyScore; }
-        
-        // Setters
+
         public void setHealthScore(int healthScore) { this.healthScore = healthScore; }
         public void setHealthStatus(String healthStatus) { this.healthStatus = healthStatus; }
         public void addIssue(String issue) { this.issues.add(issue); }
@@ -79,8 +77,7 @@ public class DeviceHealthService {
             this.deviceHealthList = new ArrayList<>();
             this.systemRecommendations = new ArrayList<>();
         }
-        
-        // Getters
+
         public int getTotalDevices() { return totalDevices; }
         public int getHealthyDevices() { return healthyDevices; }
         public int getWarningDevices() { return warningDevices; }
@@ -88,8 +85,7 @@ public class DeviceHealthService {
         public List<DeviceHealth> getDeviceHealthList() { return deviceHealthList; }
         public double getOverallSystemHealth() { return overallSystemHealth; }
         public List<String> getSystemRecommendations() { return systemRecommendations; }
-        
-        // Setters
+
         public void setTotalDevices(int totalDevices) { this.totalDevices = totalDevices; }
         public void setHealthyDevices(int healthyDevices) { this.healthyDevices = healthyDevices; }
         public void setWarningDevices(int warningDevices) { this.warningDevices = warningDevices; }

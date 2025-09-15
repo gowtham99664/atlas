@@ -85,7 +85,6 @@ public class SmartScenesService {
     }
     
     private void initializePredefinedScenes() {
-        // Morning Scene
         List<SceneAction> morningActions = Arrays.asList(
             new SceneAction("LIGHT", "Living Room", "ON", "Turn on living room lights"),
             new SceneAction("LIGHT", "Kitchen", "ON", "Turn on kitchen lights"),
@@ -96,7 +95,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("MORNING", morningActions);
         
-        // Evening Scene
         List<SceneAction> eveningActions = Arrays.asList(
             new SceneAction("LIGHT", "Living Room", "ON", "Turn on living room ambiance"),
             new SceneAction("LIGHT", "Master Bedroom", "ON", "Turn on bedroom lights"),
@@ -107,7 +105,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("EVENING", eveningActions);
         
-        // Night/Sleep Scene
         List<SceneAction> nightActions = Arrays.asList(
             new SceneAction("LIGHT", "Living Room", "OFF", "Turn off living room lights"),
             new SceneAction("LIGHT", "Kitchen", "OFF", "Turn off kitchen lights"),
@@ -119,7 +116,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("NIGHT", nightActions);
         
-        // Away/Security Scene
         List<SceneAction> awayActions = Arrays.asList(
             new SceneAction("LIGHT", "Living Room", "OFF", "Turn off all lights to save energy"),
             new SceneAction("LIGHT", "Kitchen", "OFF", "Turn off kitchen lights"),
@@ -134,7 +130,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("AWAY", awayActions);
         
-        // Movie Night Scene
         List<SceneAction> movieActions = Arrays.asList(
             new SceneAction("TV", "Living Room", "ON", "Turn on entertainment system"),
             new SceneAction("LIGHT", "Living Room", "OFF", "Dim lights for movie ambiance"),
@@ -144,7 +139,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("MOVIE", movieActions);
         
-        // Workout Scene
         List<SceneAction> workoutActions = Arrays.asList(
             new SceneAction("FAN", "Living Room", "ON", "Increase air circulation"),
             new SceneAction("SPEAKER", "Living Room", "ON", "Play workout music"),
@@ -154,7 +148,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("WORKOUT", workoutActions);
         
-        // Cooking Scene
         List<SceneAction> cookingActions = Arrays.asList(
             new SceneAction("LIGHT", "Kitchen", "ON", "Ensure good kitchen lighting"),
             new SceneAction("AIR_PURIFIER", "Kitchen", "ON", "Keep air clean while cooking"),
@@ -163,7 +156,6 @@ public class SmartScenesService {
         );
         predefinedScenes.put("COOKING", cookingActions);
         
-        // Energy Saving Scene
         List<SceneAction> energySavingActions = Arrays.asList(
             new SceneAction("LIGHT", "Living Room", "OFF", "Turn off unnecessary lights"),
             new SceneAction("LIGHT", "Kitchen", "OFF", "Save energy in kitchen"),
@@ -180,7 +172,6 @@ public class SmartScenesService {
         
         List<SceneAction> actions = predefinedScenes.get(sceneName.toUpperCase());
         if (actions == null) {
-            // Check for custom scenes
             Map<String, List<SceneAction>> userScenes = userCustomScenes.get(user.getEmail());
             if (userScenes != null) {
                 actions = userScenes.get(sceneName.toUpperCase());
@@ -221,7 +212,6 @@ public class SmartScenesService {
             }
         }
         
-        // Update user data
         try {
             customerService.updateCustomer(user);
         } catch (Exception e) {
@@ -340,17 +330,14 @@ public class SmartScenesService {
         System.out.println("\n[TIP] This scene coordinates " + actions.size() + " devices for optimal automation!");
     }
 
-    // Scene Editing Methods
     public List<SceneAction> getSceneActions(String userEmail, String sceneName) {
         String sceneKey = sceneName.toUpperCase();
 
-        // Check user custom scenes first
         Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
         if (userScenes != null && userScenes.containsKey(sceneKey)) {
             return new ArrayList<>(userScenes.get(sceneKey));
         }
 
-        // Check predefined scenes
         List<SceneAction> predefinedActions = predefinedScenes.get(sceneKey);
         if (predefinedActions != null) {
             return new ArrayList<>(predefinedActions);
@@ -363,7 +350,6 @@ public class SmartScenesService {
         try {
             String sceneKey = sceneName.toUpperCase();
 
-            // Create or update custom scene
             userCustomScenes.computeIfAbsent(userEmail, k -> new HashMap<>())
                            .put(sceneKey, new ArrayList<>(newActions));
 
@@ -379,13 +365,12 @@ public class SmartScenesService {
             return false;
         }
 
-        // Check if device already exists in scene
         boolean deviceExists = actions.stream()
                 .anyMatch(action -> action.getDeviceType().equals(newAction.getDeviceType()) &&
                                   action.getRoomName().equals(newAction.getRoomName()));
 
         if (deviceExists) {
-            return false; // Device already in scene
+            return false;
         }
 
         actions.add(newAction);
@@ -423,7 +408,7 @@ public class SmartScenesService {
             }
         }
 
-        return false; // Device not found in scene
+        return false;
     }
 
     private String generateActionDescription(String deviceType, String roomName, String action) {
@@ -440,7 +425,6 @@ public class SmartScenesService {
 
         System.out.println("\n=== " + sceneName.toUpperCase() + " Scene (Editable View) ===");
 
-        // Check if this is a custom scene or modified predefined scene
         Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
         boolean isCustom = userScenes != null && userScenes.containsKey(sceneName.toUpperCase());
 
@@ -456,15 +440,15 @@ public class SmartScenesService {
         for (int i = 0; i < actions.size(); i++) {
             SceneAction action = actions.get(i);
             System.out.printf("%d. %s\n", (i + 1), action.getDescription());
-            System.out.printf("   Device: %s in %s → %s\n",
+            System.out.printf("   Device: %s in %s -> %s\n",
                             action.getDeviceType(), action.getRoomName(), action.getAction());
         }
 
         System.out.println("\n[EDIT OPTIONS] You can:");
-        System.out.println("• Add new devices to this scene");
-        System.out.println("• Remove existing devices from this scene");
-        System.out.println("• Change device actions (ON ↔ OFF)");
-        System.out.println("• Reset to original (for predefined scenes)");
+        System.out.println("- Add new devices to this scene");
+        System.out.println("- Remove existing devices from this scene");
+        System.out.println("- Change device actions (ON <-> OFF)");
+        System.out.println("- Reset to original (for predefined scenes)");
 
         System.out.println("\n[TIP] This scene coordinates " + actions.size() + " devices for optimal automation!");
     }
@@ -472,12 +456,10 @@ public class SmartScenesService {
     public boolean resetSceneToOriginal(String userEmail, String sceneName) {
         String sceneKey = sceneName.toUpperCase();
 
-        // Check if it's a predefined scene
         if (!predefinedScenes.containsKey(sceneKey)) {
-            return false; // Cannot reset custom scenes
+            return false;
         }
 
-        // Remove custom version to restore original
         Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
         if (userScenes != null) {
             userScenes.remove(sceneKey);
@@ -490,7 +472,6 @@ public class SmartScenesService {
     }
 
     public boolean isSceneEditable(String sceneName) {
-        // All scenes are editable (predefined scenes become custom when edited)
         return predefinedScenes.containsKey(sceneName.toUpperCase()) ||
                userCustomScenes.values().stream()
                    .anyMatch(scenes -> scenes.containsKey(sceneName.toUpperCase()));
