@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.smarthome.DevicePermissionTest
 -------------------------------------------------------------------------------
-Tests run: 10, Failures: 6, Errors: 0, Skipped: 0, Time elapsed: 3.389 s <<< FAILURE! -- in com.smarthome.DevicePermissionTest
-com.smarthome.DevicePermissionTest.testCustomerDevicePermissions -- Time elapsed: 2.225 s <<< FAILURE!
+Tests run: 10, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 7.749 s <<< FAILURE! -- in com.smarthome.DevicePermissionTest
+com.smarthome.DevicePermissionTest.testCustomerDevicePermissions -- Time elapsed: 5.510 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: Permission should be granted successfully ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -14,7 +14,7 @@ org.opentest4j.AssertionFailedError: Permission should be granted successfully =
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 
-com.smarthome.DevicePermissionTest.testMultipleDevicePermissions -- Time elapsed: 0.141 s <<< FAILURE!
+com.smarthome.DevicePermissionTest.testMultipleDevicePermissions -- Time elapsed: 0.227 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: TV permission should be granted ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -26,7 +26,7 @@ org.opentest4j.AssertionFailedError: TV permission should be granted ==> expecte
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 
-com.smarthome.DevicePermissionTest.testRevokeDevicePermissionViaService -- Time elapsed: 0.116 s <<< FAILURE!
+com.smarthome.DevicePermissionTest.testRevokeDevicePermissionViaService -- Time elapsed: 0.222 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: Permission should exist before revoking ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -38,7 +38,7 @@ org.opentest4j.AssertionFailedError: Permission should exist before revoking ==>
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 
-com.smarthome.DevicePermissionTest.testGrantDevicePermissionViaService -- Time elapsed: 0.112 s <<< FAILURE!
+com.smarthome.DevicePermissionTest.testGrantDevicePermissionViaService -- Time elapsed: 0.298 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: Device permission should be granted via service ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -50,7 +50,7 @@ org.opentest4j.AssertionFailedError: Device permission should be granted via ser
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 
-com.smarthome.DevicePermissionTest.testDuplicatePermissionPrevention -- Time elapsed: 0.127 s <<< FAILURE!
+com.smarthome.DevicePermissionTest.testDuplicatePermissionPrevention -- Time elapsed: 0.274 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: First permission grant should succeed ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -58,18 +58,6 @@ org.opentest4j.AssertionFailedError: First permission grant should succeed ==> e
 	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
 	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
 	at com.smarthome.DevicePermissionTest.testDuplicatePermissionPrevention(DevicePermissionTest.java:273)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-
-com.smarthome.DevicePermissionTest.testGroupSetupAndAdmin -- Time elapsed: 0.105 s <<< FAILURE!
-org.opentest4j.AssertionFailedError: Member should be added to group successfully ==> expected: <true> but was: <false>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
-	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
-	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
-	at com.smarthome.DevicePermissionTest.testGroupSetupAndAdmin(DevicePermissionTest.java:132)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
 	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)

@@ -161,8 +161,10 @@ public class SmartHomeDashboard {
     
     private static void showMainMenu() {
         while (true) {
-            System.out.println("\n=== IoT Smart Home Dashboard ===");
-            System.out.println("[DEVICE MANAGEMENT]:");
+            clearScreen();
+            System.out.println("=== Amazon - Atlas ===");
+            System.out.println("=== IoT Smart Home Dashboard ===");
+            System.out.println("[USER & DEVICE MANAGEMENT]:");
             System.out.println("1. Register New Account");
             System.out.println("2. Login");
             System.out.println("3. Forgot Password");
@@ -185,8 +187,11 @@ public class SmartHomeDashboard {
             System.out.println();
             System.out.println("[SYSTEM]:");
             System.out.println("16. Settings");
-            System.out.println("17. Logout");
-            System.out.println("18. Exit");
+            System.out.println("17. Clear Screen");
+            System.out.println("18. Logout");
+            System.out.println("19. Exit");
+            System.out.println();
+            System.out.println("0. About Developer");
 
             System.out.print("Choose an option: ");
             
@@ -199,9 +204,12 @@ public class SmartHomeDashboard {
                 }
                 
                 int choice = Integer.parseInt(inputLine);
-                int exitOption = 18;
+                int exitOption = 19;
 
                 switch (choice) {
+                    case 0:
+                        aboutDeveloper();
+                        break;
                     case 1:
                         if (smartHomeService.isLoggedIn()) {
                             handleRegistrationWhileLoggedIn();
@@ -279,18 +287,21 @@ public class SmartHomeDashboard {
                         }
                         break;
                     case 17:
+                        clearScreen();
+                        break;
+                    case 18:
                         if (checkLoginStatus()) {
                             smartHomeService.logout();
                         }
                         break;
-                    case 18:
+                    case 19:
                         handleApplicationExit();
                         return;
                     default:
-                        System.out.println("Invalid option! Please choose between 1-18.");
+                        System.out.println("Invalid option! Please choose between 1-19.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number between 1-18.");
+                System.out.println("Invalid input! Please enter a number between 1-19.");
             }
         }
     }
@@ -1462,11 +1473,37 @@ public class SmartHomeDashboard {
                 String roomName = selectedGadget.getRoomName();
                 
                 String currentStatus = selectedGadget.getStatus();
-                String action = selectedGadget.isOn() ? "OFF" : "ON";
-                
-                System.out.println("\nSelected: " + deviceType + " " + selectedGadget.getModel() + 
+
+                System.out.println("\nSelected: " + deviceType + " " + selectedGadget.getModel() +
                                  " in " + roomName + " [Current Status: " + currentStatus + "]");
-                System.out.println("Timer will turn device " + action + " (opposite of current status)");
+
+                System.out.println("\nChoose the desired state for the device when timer executes:");
+                System.out.println("1. Turn ON");
+                System.out.println("2. Turn OFF");
+                System.out.print("Choose action (1-2): ");
+
+                String action = null;
+                while (action == null) {
+                    try {
+                        int actionChoice = Integer.parseInt(scanner.nextLine().trim());
+                        switch (actionChoice) {
+                            case 1:
+                                action = "ON";
+                                break;
+                            case 2:
+                                action = "OFF";
+                                break;
+                            default:
+                                System.out.println("[ERROR] Invalid choice! Please choose 1 for ON or 2 for OFF.");
+                                System.out.print("Choose action (1-2): ");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("[ERROR] Invalid input! Please enter 1 or 2.");
+                        System.out.print("Choose action (1-2): ");
+                    }
+                }
+
+                System.out.println("Timer will turn device " + action + " as requested");
                 
                 String dateTime = null;
                 while (dateTime == null) {
@@ -3370,6 +3407,41 @@ public class SmartHomeDashboard {
             System.out.println("[NOTE] You can enter any brand name, not limited to this list");
         }
         System.out.println();
+    }
+
+    private static void aboutDeveloper() {
+        System.out.println("\n=== About Developer ===");
+        System.out.println("Developer Name: Sushma Mainampati");
+        System.out.println("Employee ID: 108915821");
+        System.out.println("Email: mainamps@amazon.com");
+        System.out.println();
+        System.out.print("Press Enter to return to main menu...");
+        try {
+            scanner.nextLine();
+        } catch (Exception e) {
+        }
+    }
+
+    private static void clearScreen() {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+
+            if (os.contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            }
+
+            System.out.println("=== Screen Cleared ===");
+            System.out.println("Welcome back to IoT Smart Home Dashboard!");
+            System.out.println("You can now start fresh with a clean screen.\n");
+
+        } catch (Exception e) {
+            System.out.println("\n".repeat(50));
+            System.out.println("=== Screen Cleared ===");
+            System.out.println("Welcome back to IoT Smart Home Dashboard!");
+            System.out.println("You can now start fresh with a clean screen.\n");
+        }
     }
 
 }
