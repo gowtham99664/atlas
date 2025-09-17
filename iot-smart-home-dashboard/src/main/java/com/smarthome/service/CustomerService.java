@@ -80,7 +80,6 @@ public class CustomerService {
                 System.out.println("💾 Customer registered in DEMO mode (data will not persist)");
             } else {
                 customerTable.putItem(customer);
-                System.out.println("✅ Customer successfully saved to DynamoDB");
             }
             return true;
             
@@ -94,9 +93,11 @@ public class CustomerService {
         try {
             email = email.trim().toLowerCase();
             Customer customer = findCustomerByEmail(email);
-            
+
             if (customer == null) {
-                System.out.println("[ERROR] Invalid email or password!");
+                System.out.println("[ERROR] Email not registered. Please create an account first.");
+                // Add rate limiting even for non-existent accounts to prevent enumeration
+                addSecurityDelay(1);
                 return null;
             }
             
@@ -118,6 +119,8 @@ public class CustomerService {
                 }
                 return customer;
             } else {
+                // Add progressive delay based on failed attempts before handling failed login
+                addSecurityDelay(customer.getFailedLoginAttempts() + 1);
                 handleFailedLogin(customer);
                 return null;
             }
@@ -232,29 +235,49 @@ public class CustomerService {
     }
     
     private int calculateLockoutMinutes(int failedAttempts) {
-        if (failedAttempts >= 7) {
-            return 60;
+        // Enhanced security: More aggressive lockout policy
+        if (failedAttempts >= 10) {
+            return 1440; // 24 hours - severe security violation
+        } else if (failedAttempts >= 7) {
+            return 240;  // 4 hours - repeated violations
         } else if (failedAttempts >= 5) {
-            return 15;
+            return 60;   // 1 hour - persistent attempts
         } else if (failedAttempts >= 3) {
-            return 5;
+            return 15;   // 15 minutes - suspicious activity
+        } else if (failedAttempts >= 2) {
+            return 5;    // 5 minutes - first warning
         }
         return 0;
     }
     
     private void handleFailedLogin(Customer customer) {
         customer.incrementFailedAttempts();
-        
-        int lockoutMinutes = calculateLockoutMinutes(customer.getFailedLoginAttempts());
+        int attempts = customer.getFailedLoginAttempts();
+
+        // Enhanced security logging
+        System.out.println("[SECURITY] Failed login attempt #" + attempts + " for account: " +
+                         customer.getEmail() + " at " + java.time.LocalDateTime.now().toString().replace("T", " "));
+
+        int lockoutMinutes = calculateLockoutMinutes(attempts);
         if (lockoutMinutes > 0) {
             customer.lockAccount(lockoutMinutes);
-            System.out.println("[LOCKED] Account locked for " + lockoutMinutes + " minutes due to " + 
-                             customer.getFailedLoginAttempts() + " failed login attempts.");
+
+            if (lockoutMinutes >= 1440) {
+                System.out.println("[SECURITY ALERT] Account PERMANENTLY LOCKED for 24 hours due to " +
+                                 attempts + " failed attempts. Contact administrator if legitimate.");
+            } else if (lockoutMinutes >= 240) {
+                System.out.println("[HIGH SECURITY RISK] Account locked for " + (lockoutMinutes/60) + " hours due to " +
+                                 attempts + " repeated failed attempts.");
+            } else {
+                System.out.println("[LOCKED] Account locked for " + lockoutMinutes + " minutes due to " +
+                                 attempts + " failed login attempts.");
+            }
         } else {
-            System.out.println("[WARNING] Invalid credentials. Failed attempts: " + 
-                             customer.getFailedLoginAttempts() + "/3 before lockout.");
+            // First attempt - give warning
+            System.out.println("[WARNING] Invalid password. This is attempt " + attempts + " of 2 allowed before lockout.");
+            System.out.println("[SECURITY] Account will be locked after 2 failed attempts for security.");
         }
-        
+
         updateCustomer(customer);
     }
     
@@ -398,6 +421,43 @@ public class CustomerService {
         } catch (Exception e) {
             System.err.println("Error updating password: " + e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Enhanced security: Progressive delay to prevent rapid brute force attacks
+     * Delays increase exponentially with failed attempts to slow down attackers
+     */
+    private void addSecurityDelay(int failedAttempts) {
+        try {
+            int delaySeconds;
+            switch (failedAttempts) {
+                case 1:
+                    delaySeconds = 1;  // 1 second - first failed attempt
+                    break;
+                case 2:
+                    delaySeconds = 3;  // 3 seconds - second attempt
+                    break;
+                case 3:
+                    delaySeconds = 5;  // 5 seconds - getting suspicious
+                    break;
+                case 4:
+                    delaySeconds = 10; // 10 seconds - definite attack pattern
+                    break;
+                default:
+                    delaySeconds = 15; // 15 seconds - severe attack pattern
+                    break;
+            }
+
+            if (delaySeconds > 1) {
+                System.out.println("[SECURITY] Implementing " + delaySeconds + " second delay due to failed attempts...");
+            }
+
+            Thread.sleep(delaySeconds * 1000L);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("[SECURITY] Security delay interrupted");
         }
     }
 
