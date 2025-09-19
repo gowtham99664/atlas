@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(javac:*)",
+      "Bash(mvn:*)",
+      "Bash(timeout 10 mvn exec:java:*)",
+      "Bash(find:*)",
+      "Bash(java:*)",
+      "Bash(timeout:*)",
+      "Bash(dir:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
