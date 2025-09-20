@@ -131,22 +131,27 @@ public class CalendarEventService {
                 break;
         }
     }
-    public void displayUpcomingEvents(String userEmail) {
-        System.out.println("\n=== Upcoming Calendar Events ===");
+    public List<CalendarEvent> getUpcomingEvents(String userEmail) {
         List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
         LocalDateTime now = LocalDateTime.now();
-        List<CalendarEvent> upcomingEvents = events.stream()
+        return events.stream()
             .filter(event -> event.getStartTime().isAfter(now))
             .sorted((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()))
+            .limit(10)
             .toList();
+    }
+
+    public void displayUpcomingEvents(String userEmail) {
+        System.out.println("\n=== Upcoming Calendar Events ===");
+        List<CalendarEvent> upcomingEvents = getUpcomingEvents(userEmail);
         if (upcomingEvents.isEmpty()) {
             System.out.println("No upcoming events scheduled.");
             return;
         }
-        for (int i = 0; i < upcomingEvents.size() && i < 10; i++) {
+        for (int i = 0; i < upcomingEvents.size(); i++) {
             CalendarEvent event = upcomingEvents.get(i);
             System.out.printf("%d. %s (%s)\n", (i + 1), event.getTitle(), event.getEventType());
-            System.out.printf("   [DATE] %s - %s\n", 
+            System.out.printf("   [DATE] %s - %s\n",
                             event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
                             event.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm")));
             if (!event.getAutomationActions().isEmpty()) {
@@ -181,7 +186,7 @@ public class CalendarEventService {
             String timing = action.getMinutesOffset() == 0 ? "at event start" :
                           action.getMinutesOffset() < 0 ? (Math.abs(action.getMinutesOffset()) + " min before") :
                           (action.getMinutesOffset() + " min after");
-            System.out.printf("- %s %s in %s → %s (%s)\n", 
+            System.out.printf("- %s %s in %s -> %s (%s)\n", 
                             action.getDeviceType(), action.getAction(), action.getRoomName(), 
                             timing, action.getAction());
         }
@@ -191,12 +196,75 @@ public class CalendarEventService {
                       "Cooking", "Meal", "Workout", "Exercise", "Arrival", "Home", 
                       "Departure", "Leaving", "Custom");
     }
+    public CalendarEvent getEventByTitle(String userEmail, String eventTitle) {
+        List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+        return events.stream()
+            .filter(e -> e.getTitle().equalsIgnoreCase(eventTitle))
+            .findFirst()
+            .orElse(null);
+    }
+
+    public boolean editEvent(String userEmail, String originalTitle, String newTitle, String newDescription,
+                           LocalDateTime newStartTime, LocalDateTime newEndTime, String newEventType) {
+        try {
+            List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+            CalendarEvent eventToEdit = events.stream()
+                .filter(e -> e.getTitle().equalsIgnoreCase(originalTitle))
+                .findFirst()
+                .orElse(null);
+
+            if (eventToEdit == null) {
+                System.out.println("[ERROR] Event not found: " + originalTitle);
+                return false;
+            }
+
+            events.remove(eventToEdit);
+
+            String eventId = generateEventId(userEmail, newStartTime);
+            CalendarEvent updatedEvent = new CalendarEvent(eventId, newTitle, newDescription, newStartTime, newEndTime, newEventType);
+            events.add(updatedEvent);
+
+            addDefaultAutomationForEventType(updatedEvent, newEventType);
+
+            System.out.println("[SUCCESS] Event updated: " + newTitle);
+            System.out.println("Event Date: " + newStartTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")) +
+                             " to " + newEndTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+            return true;
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to edit event: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean deleteEvent(String userEmail, String eventTitle) {
         try {
             List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+            CalendarEvent eventToDelete = events.stream()
+                .filter(event -> event.getTitle().equalsIgnoreCase(eventTitle))
+                .findFirst()
+                .orElse(null);
+
+            if (eventToDelete == null) {
+                System.out.println("[ERROR] Event not found: " + eventTitle);
+                return false;
+            }
+
             boolean removed = events.removeIf(event -> event.getTitle().equalsIgnoreCase(eventTitle));
             if (removed) {
                 System.out.println("[SUCCESS] Event deleted: " + eventTitle);
+
+                if (!eventToDelete.getAutomationActions().isEmpty()) {
+                    System.out.println("[INFO] Automation actions cancelled:");
+                    for (AutomationAction action : eventToDelete.getAutomationActions()) {
+                        String timing = action.getMinutesOffset() == 0 ? "at event start" :
+                                      action.getMinutesOffset() < 0 ? (Math.abs(action.getMinutesOffset()) + " min before") :
+                                      (action.getMinutesOffset() + " min after");
+                        System.out.printf("   - %s %s in %s -> %s (%s) - CANCELLED\n",
+                                        action.getDeviceType(), action.getAction(), action.getRoomName(),
+                                        action.getAction(), timing);
+                    }
+                    System.out.println("[INFO] All scheduled device automation for this event has been cleared.");
+                }
                 return true;
             } else {
                 System.out.println("[ERROR] Event not found: " + eventTitle);
@@ -206,6 +274,19 @@ public class CalendarEventService {
             System.out.println("[ERROR] Failed to delete event: " + e.getMessage());
             return false;
         }
+    }
+
+    public List<AutomationAction> getEventAutomationActions(String userEmail, String eventTitle) {
+        List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+        CalendarEvent event = events.stream()
+            .filter(e -> e.getTitle().equalsIgnoreCase(eventTitle))
+            .findFirst()
+            .orElse(null);
+
+        if (event != null) {
+            return new ArrayList<>(event.getAutomationActions());
+        }
+        return new ArrayList<>();
     }
     public List<CalendarEvent> getEventsForAutomation(String userEmail, LocalDateTime checkTime) {
         List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());

@@ -14,10 +14,14 @@ import java.util.concurrent.TimeUnit;
 public class TimerService {
     private final ScheduledExecutorService scheduler;
     private final CustomerService customerService;
+    private final CalendarEventService calendarEventService;
+    private final AlertService alertService;
     private static TimerService instance;
     private TimerService(CustomerService customerService) {
         this.scheduler = Executors.newScheduledThreadPool(5);
         this.customerService = customerService;
+        this.calendarEventService = CalendarEventService.getInstance();
+        this.alertService = AlertService.getInstance();
         startTimerMonitoring();
     }
     public static synchronized TimerService getInstance(CustomerService customerService) {
@@ -226,7 +230,7 @@ public class TimerService {
                                                  " in " + device.getRoomName() + " turned ON automatically");
                                 System.out.println("  Scheduled: " + scheduledOnTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
                                 System.out.println("  Executed: " + now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-                                System.out.println("  Status: " + previousStatus + " → " + newStatus);
+                                System.out.println("  Status: " + previousStatus + " -> " + newStatus);
                                 System.out.print("\nPress Enter to continue or enter your choice: ");
                             } else {
                                 device.setScheduledOnTime(null);
@@ -256,7 +260,7 @@ public class TimerService {
                                                  " in " + device.getRoomName() + " turned OFF automatically");
                                 System.out.println("  Scheduled: " + scheduledOffTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
                                 System.out.println("  Executed: " + now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-                                System.out.println("  Status: " + previousStatus + " → " + newStatus);
+                                System.out.println("  Status: " + previousStatus + " -> " + newStatus);
                                 System.out.print("\nPress Enter to continue or enter your choice: ");
                             } else {
                                 device.setScheduledOffTime(null);
@@ -277,6 +281,13 @@ public class TimerService {
                     }
                 }
             }
+
+            // Check and execute calendar event automation
+            checkAndExecuteCalendarEventAutomation(now);
+
+            // Check and execute alert monitoring
+            checkAndExecuteAlerts(now);
+
         } catch (Exception e) {
             System.err.println("Error checking scheduled tasks: " + e.getMessage());
             e.printStackTrace();
@@ -329,6 +340,108 @@ public class TimerService {
                 scheduler.shutdownNow();
                 Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    private void checkAndExecuteCalendarEventAutomation(LocalDateTime now) {
+        try {
+            // Get current user
+            SessionManager sessionManager = SessionManager.getInstance();
+            Customer currentUser = sessionManager.getCurrentUser();
+            if (currentUser == null) {
+                return; // No user logged in
+            }
+
+            // Get all upcoming events
+            List<CalendarEventService.CalendarEvent> upcomingEvents =
+                calendarEventService.getUpcomingEvents(currentUser.getEmail());
+
+            for (CalendarEventService.CalendarEvent event : upcomingEvents) {
+                List<CalendarEventService.AutomationAction> actions = event.getAutomationActions();
+
+                for (CalendarEventService.AutomationAction action : actions) {
+                    // Calculate when this automation should execute
+                    LocalDateTime executionTime = event.getStartTime().plusMinutes(action.getMinutesOffset());
+
+                    // Check if it's time to execute this automation (within 1 minute window)
+                    long minutesDiff = ChronoUnit.MINUTES.between(executionTime, now);
+                    if (Math.abs(minutesDiff) <= 1) {
+                        // Execute the automation action
+                        executeCalendarEventAutomation(currentUser, action, event.getTitle());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error checking calendar event automation: " + e.getMessage());
+        }
+    }
+
+    private void executeCalendarEventAutomation(Customer customer, CalendarEventService.AutomationAction action, String eventTitle) {
+        try {
+            // Find the device to control
+            Gadget targetDevice = null;
+            for (Gadget device : customer.getGadgets()) {
+                if (device.getType().equalsIgnoreCase(action.getDeviceType()) &&
+                    device.getRoomName().equalsIgnoreCase(action.getRoomName())) {
+                    targetDevice = device;
+                    break;
+                }
+            }
+
+            if (targetDevice != null) {
+                String previousStatus = targetDevice.getStatus();
+
+                // Execute the action
+                if ("ON".equalsIgnoreCase(action.getAction())) {
+                    targetDevice.turnOn();
+                } else if ("OFF".equalsIgnoreCase(action.getAction())) {
+                    targetDevice.turnOff();
+                }
+
+                String newStatus = targetDevice.getStatus();
+
+                // Save the updated device state
+                boolean saveSuccess = customerService.updateCustomer(customer);
+
+                if (saveSuccess) {
+                    System.out.println("\n[CALENDAR AUTOMATION EXECUTED] " + eventTitle);
+                    System.out.println("  Device: " + targetDevice.getType() + " " + targetDevice.getModel() +
+                                     " in " + targetDevice.getRoomName());
+                    System.out.println("  Action: Turned " + action.getAction());
+                    System.out.println("  Status: " + previousStatus + " -> " + newStatus);
+                    System.out.println("  Time: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                    System.out.print("\nPress Enter to continue or enter your choice: ");
+                } else {
+                    System.err.println("[ERROR] Failed to save device state after calendar automation");
+                }
+            } else {
+                System.out.println("[CALENDAR AUTOMATION SKIPPED] Device not found: " +
+                                 action.getDeviceType() + " in " + action.getRoomName() + " for event: " + eventTitle);
+            }
+        } catch (Exception e) {
+            System.err.println("Error executing calendar automation: " + e.getMessage());
+        }
+    }
+
+    private void checkAndExecuteAlerts(LocalDateTime now) {
+        try {
+            // Get current user
+            SessionManager sessionManager = SessionManager.getInstance();
+            Customer currentUser = sessionManager.getCurrentUser();
+            if (currentUser == null) {
+                return; // No user logged in
+            }
+
+            String userEmail = currentUser.getEmail();
+
+            // Check time-based alerts
+            alertService.checkTimeBasedAlerts(userEmail, now);
+
+            // Check energy usage alerts
+            alertService.checkEnergyUsageAlerts(userEmail, currentUser);
+
+        } catch (Exception e) {
+            System.err.println("Error checking alerts: " + e.getMessage());
         }
     }
 }

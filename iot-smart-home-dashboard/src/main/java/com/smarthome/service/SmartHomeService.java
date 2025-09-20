@@ -20,6 +20,7 @@ public class SmartHomeService {
     private final WeatherService weatherService;
     private final SmartScenesService smartScenesService;
     private final DeviceHealthService deviceHealthService;
+    private final AlertService alertService;
     public SmartHomeService() {
         this.customerService = new CustomerService();
         this.gadgetService = new GadgetService();
@@ -30,6 +31,7 @@ public class SmartHomeService {
         this.weatherService = WeatherService.getInstance();
         this.smartScenesService = SmartScenesService.getInstance();
         this.deviceHealthService = DeviceHealthService.getInstance();
+        this.alertService = AlertService.getInstance();
     }
     public boolean checkEmailAvailability(String email) {
         return customerService.isEmailAvailable(email);
@@ -490,6 +492,60 @@ public class SmartHomeService {
         Customer currentUser = sessionManager.getCurrentUser();
         calendarService.displayEventAutomation(currentUser.getEmail(), eventTitle);
     }
+
+    public List<CalendarEventService.CalendarEvent> getUpcomingEvents() {
+        if (!sessionManager.isLoggedIn()) {
+            return new ArrayList<>();
+        }
+        Customer currentUser = sessionManager.getCurrentUser();
+        return calendarService.getUpcomingEvents(currentUser.getEmail());
+    }
+
+    public boolean deleteCalendarEvent(String eventTitle) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+        Customer currentUser = sessionManager.getCurrentUser();
+
+        List<CalendarEventService.AutomationAction> automationActions =
+            calendarService.getEventAutomationActions(currentUser.getEmail(), eventTitle);
+
+        boolean success = calendarService.deleteEvent(currentUser.getEmail(), eventTitle);
+
+        if (success && !automationActions.isEmpty()) {
+            System.out.println("\n=== Device Status Information ===");
+            System.out.println("[INFO] Please check your device status if needed:");
+            System.out.println("The cancelled event had automation that would have affected these devices:");
+
+            for (CalendarEventService.AutomationAction action : automationActions) {
+                System.out.printf("   - %s in %s (would be turned %s)\n",
+                                action.getDeviceType(), action.getRoomName(), action.getAction());
+            }
+
+            System.out.println("\n[TIP] Use 'Device Status Monitor' from main menu to check current device states.");
+            System.out.println("[TIP] Use 'Device Control Panel' to manually adjust any devices if needed.");
+        }
+
+        return success;
+    }
+
+    public boolean editCalendarEvent(String originalTitle, String newTitle, String newDescription,
+                                   String startDateTime, String endDateTime, String eventType) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+        try {
+            Customer currentUser = sessionManager.getCurrentUser();
+            LocalDateTime startTime = timerService.parseDateTime(startDateTime);
+            LocalDateTime endTime = timerService.parseDateTime(endDateTime);
+            return calendarService.editEvent(currentUser.getEmail(), originalTitle, newTitle, newDescription, startTime, endTime, eventType);
+        } catch (Exception e) {
+            System.out.println("[ERROR] Invalid date format! Use DD-MM-YYYY HH:MM");
+            return false;
+        }
+    }
     public void showCurrentWeather() {
         weatherService.displayCurrentWeather();
     }
@@ -690,7 +746,7 @@ public class SmartHomeService {
         SmartScenesService.SceneAction newAction = new SmartScenesService.SceneAction(deviceType, roomName, action, description);
         boolean success = smartScenesService.addDeviceToScene(currentUser.getEmail(), sceneName, newAction);
         if (success) {
-            System.out.println("[SUCCESS] Device added to scene: " + deviceType + " in " + roomName + " → " + action);
+            System.out.println("[SUCCESS] Device added to scene: " + deviceType + " in " + roomName + " -> " + action);
         } else {
             System.out.println("[ERROR] Failed to add device to scene. Device may already exist in this scene.");
         }
@@ -718,7 +774,7 @@ public class SmartHomeService {
         Customer currentUser = sessionManager.getCurrentUser();
         boolean success = smartScenesService.changeDeviceAction(currentUser.getEmail(), sceneName, deviceType, roomName, newAction);
         if (success) {
-            System.out.println("[SUCCESS] Device action changed: " + deviceType + " in " + roomName + " → " + newAction);
+            System.out.println("[SUCCESS] Device action changed: " + deviceType + " in " + roomName + " -> " + newAction);
         } else {
             System.out.println("[ERROR] Failed to change device action. Device may not exist in this scene.");
         }
@@ -1302,5 +1358,119 @@ public class SmartHomeService {
         }
         Customer currentUser = sessionManager.getCurrentUser();
         return currentUser.hasDevicePermission(memberEmail, deviceType, roomName);
+    }
+
+    // Alert Management Methods
+    public boolean createTimeBasedAlert(String alertName, String deviceType, String roomName,
+                                       LocalDateTime triggerTime, String message) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+
+        // Validate device exists
+        Gadget device = currentUser.findGadget(deviceType, roomName);
+        if (device == null) {
+            System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
+            return false;
+        }
+
+        // Validate trigger time is in future
+        if (triggerTime.isBefore(LocalDateTime.now())) {
+            System.out.println("[ERROR] Alert trigger time must be in the future!");
+            return false;
+        }
+
+        return alertService.createTimeBasedAlert(currentUser.getEmail(), alertName, deviceType, roomName, triggerTime, message);
+    }
+
+    public boolean createEnergyUsageAlert(String alertName, String deviceType, String roomName,
+                                         double energyThreshold, String comparisonType, String message) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+
+        // Validate device exists
+        Gadget device = currentUser.findGadget(deviceType, roomName);
+        if (device == null) {
+            System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
+            return false;
+        }
+
+        // Validate energy threshold
+        if (energyThreshold <= 0) {
+            System.out.println("[ERROR] Energy threshold must be greater than 0!");
+            return false;
+        }
+
+        return alertService.createEnergyUsageAlert(currentUser.getEmail(), alertName, deviceType, roomName,
+                                                  energyThreshold, comparisonType, message);
+    }
+
+    public void displayUserAlerts() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        alertService.displayUserAlerts(currentUser.getEmail());
+    }
+
+    public List<AlertService.Alert> getUserAlerts() {
+        if (!sessionManager.isLoggedIn()) {
+            return new ArrayList<>();
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        return alertService.getUserAlerts(currentUser.getEmail());
+    }
+
+    public boolean deleteAlert(String alertId) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        return alertService.deleteAlert(currentUser.getEmail(), alertId);
+    }
+
+    public boolean toggleAlert(String alertId) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        return alertService.toggleAlert(currentUser.getEmail(), alertId);
+    }
+
+    public void forceAlertCheck() {
+        if (!sessionManager.isLoggedIn()) {
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        LocalDateTime now = LocalDateTime.now();
+
+        // Check time-based alerts
+        alertService.checkTimeBasedAlerts(currentUser.getEmail(), now);
+
+        // Check energy usage alerts
+        alertService.checkEnergyUsageAlerts(currentUser.getEmail(), currentUser);
+    }
+
+    public String getAlertHelp() {
+        return alertService.getAlertHelp();
+    }
+
+    public AlertService getAlertService() {
+        return alertService;
     }
 }

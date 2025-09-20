@@ -301,45 +301,79 @@ public class DeviceHealthService {
         System.out.printf("[!!] Critical: %d devices\n", report.getCriticalDevices());
         System.out.println();
         System.out.println("[DEVICE HEALTH DETAILS]:");
-        System.out.println("+----+-------------------------+---------+-----------+-----------+----------+");
-        System.out.printf("| %-2s | %-23s | %-7s | %-9s | %-9s | %-8s |\n", 
-                         "#", "Device", "Health", "Status", "Efficiency", "Lifespan");
-        System.out.println("+----+-------------------------+---------+-----------+-----------+----------+");
+        System.out.println("+-" + "-".repeat(80) + "-+");
+        System.out.printf("| %-78s |\n", "# | Device Name & Location | Health | Status | Efficiency | Lifespan");
+        System.out.println("+-" + "-".repeat(80) + "-+");
+
         int deviceIndex = 1;
         for (DeviceHealth device : report.getDeviceHealthList()) {
-            String deviceName = String.format("%s %s (%s)", device.getDeviceType(), 
+            String deviceName = String.format("%s %s (%s)", device.getDeviceType(),
                                             device.getModel(), device.getRoomName());
-            if (deviceName.length() > 23) {
-                deviceName = deviceName.substring(0, 20) + "...";
-            }
-            String healthStatus = device.getHealthStatus();
-            if (healthStatus.length() > 9) {
-                healthStatus = healthStatus.substring(0, 6) + "...";
-            }
-            System.out.printf("| %-2d | %-23s | %6d%% | %-9s | %8.1f%% | %7d mo |\n", 
-                            deviceIndex++,
-                            deviceName,
-                            device.getHealthScore(),
-                            healthStatus,
-                            device.getEnergyEfficiencyScore(),
-                            device.getEstimatedLifespanMonths());
-            if (!device.getIssues().isEmpty()) {
-                for (String issue : device.getIssues()) {
-                    String displayIssue = issue.length() > 23 ? issue.substring(0, 20) + "..." : issue;
-                    System.out.printf("| %-2s | %-23s | %-7s | %-9s | %-9s | %-8s |\n", 
-                                    "", "  Issue: " + displayIssue, "", "", "", "");
+            String deviceLine = String.format("%d | %-30s | %3d%% | %-9s | %6.1f%% | %4d mo",
+                                            deviceIndex++,
+                                            deviceName,
+                                            device.getHealthScore(),
+                                            device.getHealthStatus(),
+                                            device.getEnergyEfficiencyScore(),
+                                            device.getEstimatedLifespanMonths());
+            System.out.printf("| %-78s |\n", deviceLine);
+
+            // Display issues and recommendations in a clean format
+            if (!device.getIssues().isEmpty() || !device.getRecommendations().isEmpty()) {
+                System.out.printf("| %-78s |\n", "");
+
+                if (!device.getIssues().isEmpty()) {
+                    for (String issue : device.getIssues()) {
+                        String issueText = "   [ISSUE] " + issue;
+                        if (issueText.length() > 78) {
+                            // Split long text into multiple lines
+                            while (issueText.length() > 78) {
+                                int splitPoint = 75;
+                                while (splitPoint > 50 && issueText.charAt(splitPoint) != ' ') {
+                                    splitPoint--;
+                                }
+                                if (splitPoint <= 50) splitPoint = 75;
+                                System.out.printf("| %-78s |\n", issueText.substring(0, splitPoint));
+                                issueText = "           " + issueText.substring(splitPoint).trim();
+                            }
+                            if (!issueText.trim().isEmpty()) {
+                                System.out.printf("| %-78s |\n", issueText);
+                            }
+                        } else {
+                            System.out.printf("| %-78s |\n", issueText);
+                        }
+                    }
                 }
-            }
-            if (!device.getRecommendations().isEmpty()) {
-                for (String rec : device.getRecommendations()) {
-                    String displayRec = rec.length() > 23 ? rec.substring(0, 20) + "..." : rec;
-                    System.out.printf("| %-2s | %-23s | %-7s | %-9s | %-9s | %-8s |\n", 
-                                    "", "  Fix: " + displayRec, "", "", "", "");
+
+                if (!device.getRecommendations().isEmpty()) {
+                    for (String rec : device.getRecommendations()) {
+                        String recText = "   [FIX] " + rec;
+                        if (recText.length() > 78) {
+                            // Split long text into multiple lines
+                            while (recText.length() > 78) {
+                                int splitPoint = 75;
+                                while (splitPoint > 50 && recText.charAt(splitPoint) != ' ') {
+                                    splitPoint--;
+                                }
+                                if (splitPoint <= 50) splitPoint = 75;
+                                System.out.printf("| %-78s |\n", recText.substring(0, splitPoint));
+                                recText = "         " + recText.substring(splitPoint).trim();
+                            }
+                            if (!recText.trim().isEmpty()) {
+                                System.out.printf("| %-78s |\n", recText);
+                            }
+                        } else {
+                            System.out.printf("| %-78s |\n", recText);
+                        }
+                    }
                 }
+                System.out.println("+-" + "-".repeat(80) + "-+");
+            } else {
+                System.out.println("+-" + "-".repeat(80) + "-+");
             }
         }
-        System.out.println("+----+-------------------------+---------+-----------+-----------+----------+");
-        System.out.println("[SYSTEM RECOMMENDATIONS]:");
+
+        System.out.println("\n[SYSTEM RECOMMENDATIONS]:");
         for (String recommendation : report.getSystemRecommendations()) {
             System.out.println("  " + recommendation);
         }

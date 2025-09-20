@@ -1,0 +1,40 @@
+-------------------------------------------------------------------------------
+Test set: com.smarthome.AlertsFunctionalityTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 6.751 s <<< FAILURE! -- in com.smarthome.AlertsFunctionalityTest
+com.smarthome.AlertsFunctionalityTest.testAlertSystemIntegration -- Time elapsed: 0.184 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: New user should have no alerts initially ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.AlertsFunctionalityTest.testAlertSystemIntegration(AlertsFunctionalityTest.java:57)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.smarthome.AlertsFunctionalityTest.testTimeBasedAlertCreation -- Time elapsed: 0.154 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Should have 1 alert after creation ==> expected: <1> but was: <2>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:559)
+	at com.smarthome.AlertsFunctionalityTest.testTimeBasedAlertCreation(AlertsFunctionalityTest.java:84)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.smarthome.AlertsFunctionalityTest.testAlertManagementOperations -- Time elapsed: 0.153 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Should have 1 alert ==> expected: <1> but was: <3>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:559)
+	at com.smarthome.AlertsFunctionalityTest.testAlertManagementOperations(AlertsFunctionalityTest.java:153)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

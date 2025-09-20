@@ -94,7 +94,7 @@ public class DynamoDBConfig {
         try {
             var response = dynamoDbClient.listTables();
             System.out.println(" DynamoDB connection successful!");
-            System.out.println("��� Existing tables: " + response.tableNames());
+            System.out.println("[INFO] Existing tables: " + response.tableNames());
         } catch (Exception e) {
             System.err.println(" DynamoDB connection test failed: " + e.getMessage());
         }

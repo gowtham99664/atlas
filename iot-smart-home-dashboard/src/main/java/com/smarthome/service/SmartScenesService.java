@@ -208,7 +208,6 @@ public class SmartScenesService {
     }
     public void displayAvailableScenes() {
         System.out.println("\n=== Smart Scenes Available ===");
-        List<String> sceneNames = getAvailableSceneNames();
         System.out.println("\n[DAILY ROUTINE SCENES]:");
         System.out.println("1. MORNING - Start your day right");
         System.out.println("   - Turn on lights in living room & kitchen");
@@ -246,7 +245,11 @@ public class SmartScenesService {
         System.out.println("\n[TIP] Each scene intelligently controls multiple devices with one command!");
     }
     public List<String> getAvailableSceneNames() {
-        return new ArrayList<>(predefinedScenes.keySet());
+        // Return scenes in the same order as displayed in displayAvailableScenes()
+        return Arrays.asList(
+            "MORNING", "EVENING", "NIGHT", "AWAY", "ENERGY_SAVING",
+            "MOVIE", "WORKOUT", "COOKING"
+        );
     }
     public boolean createCustomScene(String userEmail, String sceneName, List<SceneAction> actions) {
         try {
@@ -269,7 +272,7 @@ public class SmartScenesService {
         for (int i = 0; i < actions.size(); i++) {
             SceneAction action = actions.get(i);
             System.out.printf("%d. %s\n", (i + 1), action.getDescription());
-            System.out.printf("   Device: %s in %s → %s\n", 
+            System.out.printf("   Device: %s in %s -> %s\n", 
                             action.getDeviceType(), action.getRoomName(), action.getAction());
         }
         System.out.println("\n[TIP] This scene coordinates " + actions.size() + " devices for optimal automation!");
@@ -390,11 +393,18 @@ public class SmartScenesService {
                    .anyMatch(scenes -> scenes.containsKey(sceneName.toUpperCase()));
     }
     public List<String> getAllAvailableSceneNames(String userEmail) {
-        Set<String> allScenes = new HashSet<>(predefinedScenes.keySet());
+        // Start with predefined scenes in the correct order
+        List<String> orderedScenes = new ArrayList<>(getAvailableSceneNames());
+
+        // Add any custom user scenes that aren't already in the list
         Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
         if (userScenes != null) {
-            allScenes.addAll(userScenes.keySet());
+            for (String customScene : userScenes.keySet()) {
+                if (!orderedScenes.contains(customScene)) {
+                    orderedScenes.add(customScene);
+                }
+            }
         }
-        return new ArrayList<>(allScenes);
+        return orderedScenes;
     }
 }

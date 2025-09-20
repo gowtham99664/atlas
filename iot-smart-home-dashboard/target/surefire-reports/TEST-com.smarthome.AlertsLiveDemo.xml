@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.smarthome.AlertsLiveDemo" time="5.482" tests="3" errors="0" skipped="0" failures="1">
+  <properties>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Calcutta"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="24"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-24\bin"/>
+    <property name="sun.java.command" value="C:\Users\gochendr\AppData\Local\Temp\surefire6426233053454135228\surefirebooter-20250920153656758_3.jar C:\Users\gochendr\AppData\Local\Temp\surefire6426233053454135228 2025-09-20T15-36-56_576-jvmRun1 surefire-20250920153656758_1tmp surefire_0-20250920153656758_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="AlertsLiveDemo"/>
+    <property name="surefire.test.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\gochendr"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-24"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\gochendr\AppData\Local\Temp\surefire6426233053454135228\surefirebooter-20250920153656758_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="24.0.2+12-54"/>
+    <property name="user.name" value="gochendr"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\gochendr\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\gochendr\AppData\Local\Temp\"/>
+    <property name="java.version" value="24.0.2"/>
+    <property name="user.dir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\gochendr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\gochendr\bin;C:\Program Files\PowerShell\7;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Users\gochendr\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\gochendr\AppData\Local\Programs\Python\Python311;C:\Program Files\Git\cmd;C:\tools;C:\Program Files\nodejs;C:\Program Files\Amazon\AWSCLIV2;C:\Program Files\GitHub CLI;C:\Program Files\Java\jdk-24\bin;C:\Program Files\apache-maven-3.9.11\bin;C:\Program Files\PowerShell\7;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.4\bin;C:\tools;C:\Users\gochendr\AppData\Local\Programs\Lens\resources\cli\bin;C:\Users\gochendr\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Roaming\npm;C:\Users\gochendr\duo-sso.exe;C:\Users\gochendr\claude_setup;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="24.0.2+12-54"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="68.0"/>
+  </properties>
+  <testcase name="demonstrateCompleteAlertsWorkflow" classname="com.smarthome.AlertsLiveDemo" time="5.209">
+    <failure message="Should have created at least 3 alerts ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Should have created at least 3 alerts ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.AlertsLiveDemo.demonstrateCompleteAlertsWorkflow(AlertsLiveDemo.java:192)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[ Successfully connected to local DynamoDB at: http://localhost:8002
+[INFO] DynamoDB table 'customers' already exists
+
+============================================================
+        🚨 ALERTS FEATURE LIVE DEMO 🚨
+============================================================
+[ERROR] Registration failed! Email might already be registered.
+[SUCCESS] Login successful! Welcome back, Demo User!
+✅ Demo user logged in successfully!
+
+📋 STEP 1: Adding Demo Devices
+==============================================
+A TV already exists in Living Room. You can only have one TV per room.
+A AC already exists in Master Bedroom. You can only have one AC per room.
+A MICROWAVE already exists in Kitchen. You can only have one MICROWAVE per room.
+A FAN already exists in Study Room. You can only have one FAN per room.
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+| 2  | AC LG (Master Bedroom)        |    1500W | OFF       |      0h 00m |       0.000 |
+| 3  | MICROWAVE Whirlpool (Kitchen) |    1200W | RUNNING   |      0h 15m |       0.300 |
+|    |   Current Session:            |          |           | 0.3h        |             |
+| 4  | FAN Bajaj (Study Room)        |      75W | OFF       |      0h 00m |       0.000 |
++----+-------------------------------+----------+-----------+-------------+-------------+
+📱 Added 4 demo devices:
+   1. TV (Samsung) in Living Room - Energy: 0.00 kWh
+   2. AC (LG) in Master Bedroom - Energy: 0.00 kWh
+   3. MICROWAVE (Whirlpool) in Kitchen - Energy: 0.00 kWh
+   4. FAN (Bajaj) in Study Room - Energy: 0.00 kWh
+
+📋 STEP 2: Creating Time-Based Alerts
+==============================================
+[SUCCESS] Time-based alert created: TV Reminder
+  Device: TV in Living Room
+  Trigger: 20-09-2025 15:38
+[SUCCESS] Time-based alert created: AC Energy Check
+  Device: AC in Master Bedroom
+  Trigger: 20-09-2025 15:39
+⏰ Created time-based alerts:
+   1. TV Reminder - triggers at 15:38:00
+   2. AC Energy Check - triggers at 15:39:00
+
+📋 STEP 3: Creating Energy Usage Alerts
+==============================================
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+| 2  | AC LG (Master Bedroom)        |    1500W | OFF       |      0h 00m |       0.000 |
+| 3  | MICROWAVE Whirlpool (Kitchen) |    1200W | RUNNING   |      0h 15m |       0.300 |
+|    |   Current Session:            |          |           | 0.3h        |             |
+| 4  | FAN Bajaj (Study Room)        |      75W | OFF       |      0h 00m |       0.000 |
++----+-------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] MICROWAVE Whirlpool in Kitchen switched OFF
+
+=== All Gadgets Status ===
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+| 2  | AC LG (Master Bedroom)        |    1500W | OFF       |      0h 00m |       0.000 |
+| 3  | MICROWAVE Whirlpool (Kitchen) |    1200W | OFF       |      0h 15m |       0.300 |
+| 4  | FAN Bajaj (Study Room)        |      75W | OFF       |      0h 00m |       0.000 |
++----+-------------------------------+----------+-----------+-------------+-------------+
+🔥 Turned ON microwave to generate energy usage
+[SUCCESS] Energy usage alert created: High Microwave Usage
+  Device: MICROWAVE in Kitchen
+  Condition: Energy greater than 0.01 kWh
+⚡ Created energy usage alert:
+   - Microwave energy alert (threshold: 0.01 kWh)
+
+📋 STEP 4: Viewing All Created Alerts
+==============================================
+
+=== Your Device Alerts ===
+Total Alerts: 3 | Active: 3 | Inactive: 0
+
++----+-------------------------+---------------+-------------------+--------+-------+
+| #  | Alert Name              | Device        | Condition         | Status | Count |
++----+-------------------------+---------------+-------------------+--------+-------+
+| 1  | TV Reminder             | TV (Living... | Trigger at 20-... | ACTIVE | 0     |
+| 2  | AC Energy Check         | AC (Master... | Trigger at 20-... | ACTIVE | 0     |
+| 3  | High Microwave Usage    | MICROWAVE ... | Energy greater... | ACTIVE | 0     |
++----+-------------------------+---------------+-------------------+--------+-------+
+
+📋 STEP 5: Testing Alert Monitoring
+==============================================
+🔍 Forcing alert check to see if any alerts should trigger...
+
+============================================================
+        DEVICE ALERT TRIGGERED!
+============================================================
+Alert Name: High Microwave Usage
+Device: MICROWAVE in Kitchen
+Type: ENERGY USAGE
+Condition: Energy greater than 0.01 kWh
+Message: Microwave energy usage is higher than expected!
+Triggered: 20-09-2025 15:37:00
+Reason: Energy usage alert: MICROWAVE in Kitchen has consumed 0.30 kWh (threshold: 0.01 kWh)
+============================================================
+[SUCCESS] Alert deleted successfully
+✅ Alert automatically deleted after triggering
+============================================================
+This was a one-time alert and has been automatically removed.
+
+Press Enter to continue or enter your choice: 
+📋 STEP 6: Alert Management Demo
+==============================================
+🛠️ Managing alerts:
+   Total alerts created: 2
+   First alert: TV Reminder
+   Status: ACTIVE
+   Trigger count: 0
+[SUCCESS] Alert deactivated
+   Toggle result: SUCCESS
+
+📋 STEP 7: Simulating Time Passage
+==============================================
+⏳ Waiting a moment and checking alerts again...
+🔄 Checking alerts after time passage...
+
+📋 STEP 8: Final Alert Status
+==============================================
+
+=== Your Device Alerts ===
+Total Alerts: 2 | Active: 1 | Inactive: 1
+
++----+-------------------------+---------------+-------------------+--------+-------+
+| #  | Alert Name              | Device        | Condition         | Status | Count |
++----+-------------------------+---------------+-------------------+--------+-------+
+| 1  | TV Reminder             | TV (Living... | Trigger at 20-... | OFF    | 0     |
+| 2  | AC Energy Check         | AC (Master... | Trigger at 20-... | ACTIVE | 0     |
++----+-------------------------+---------------+-------------------+--------+-------+
+
+============================================================
+        ✅ ALERTS DEMO COMPLETED SUCCESSFULLY!
+============================================================
+
+📊 DEMO SUMMARY:
+• ✅ Created multiple devices
+• ✅ Created time-based alerts
+• ✅ Created energy usage alerts
+• ✅ Displayed alert management interface
+• ✅ Tested alert monitoring/triggering
+• ✅ Demonstrated alert toggle functionality
+
+🎯 HOW TO ACCESS IN REAL APP:
+   Main Menu → 6. Device Control Panel → Options 11-15
+
+🚨 ALERTS ARE NOW WORKING AND READY TO USE!
+[SUCCESS] Logged out successfully from account: demo@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+]]></system-out>
+  </testcase>
+  <testcase name="demonstrateDeviceControlPanelIntegration" classname="com.smarthome.AlertsLiveDemo" time="0.112">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+
+============================================================
+        🚨 ALERTS FEATURE LIVE DEMO 🚨
+============================================================
+[ERROR] Registration failed! Email might already be registered.
+[SUCCESS] Login successful! Welcome back, Demo User!
+✅ Demo user logged in successfully!
+
+🎛️ DEVICE CONTROL PANEL INTEGRATION DEMO
+===================================================
+📍 WHERE TO FIND ALERTS IN THE REAL APP:
+
+   [MAIN MENU]
+   ├── 1. Register New Account
+   ├── 2. Sign In to Account
+   ├── 3. Forgot Password
+   ├── 4. Add Smart Device
+   ├── 5. View All Connected Devices
+   ├── 6. Device Control Panel  ← SELECT THIS
+   └── ...
+
+   [DEVICE CONTROL PANEL]
+   ├── 1-10. Device Management Options
+   ├── [DEVICE ALERTS & MONITORING]:
+   ├── 11. Create Time-Based Alert      ← NEW!
+   ├── 12. Create Energy Usage Alert   ← NEW!
+   ├── 13. View & Manage Alerts        ← NEW!
+   ├── 14. Check Alert Status          ← NEW!
+   ├── 15. Alert Help & Information    ← NEW!
+   └── 0. Return to Main Menu
+
+🎯 NAVIGATION PATH:
+   Main Menu → Option 6 → Options 11-15
+
+✅ Perfect integration with existing menu structure!
+[SUCCESS] Logged out successfully from account: demo@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+]]></system-out>
+  </testcase>
+  <testcase name="demonstrateAlertHelpSystem" classname="com.smarthome.AlertsLiveDemo" time="0.103">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+
+============================================================
+        🚨 ALERTS FEATURE LIVE DEMO 🚨
+============================================================
+[ERROR] Registration failed! Email might already be registered.
+[SUCCESS] Login successful! Welcome back, Demo User!
+✅ Demo user logged in successfully!
+
+📚 ALERT HELP SYSTEM DEMO
+==============================================
+📖 Alert Help Content:
+
+=== Device Alerts Help ===
+Alerts notify you when specific conditions are met.
+
+ALERT TYPES:
+1. Time-Based Alerts:
+   - Trigger at specific date/time
+   - Example: Remind to turn off AC at 11 PM
+   - Format: DD-MM-YYYY HH:MM
+
+2. Energy Usage Alerts:
+   - Trigger when energy consumption meets threshold
+   - Example: Alert when TV uses more than 5 kWh
+   - Comparison types: Greater than, Less than, Equals
+
+IMPORTANT NOTES:
+- Alerts are notifications only
+- No automatic device actions are taken
+- You decide what action to take when alerted
+- Alerts can be activated/deactivated anytime
+
+
+💡 PRACTICAL EXAMPLES:
+1. ⏰ Time Alert: 'Turn off AC at 11 PM'
+   → Device: AC in Master Bedroom
+   → Time: 23:00 daily
+   → Action: Just notifies, you decide what to do
+
+2. ⚡ Energy Alert: 'High TV usage warning'
+   → Device: TV in Living Room
+   → Threshold: > 5.0 kWh
+   → Action: Alert when TV uses too much energy
+
+✅ Help system is fully functional!
+[SUCCESS] Logged out successfully from account: demo@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+]]></system-out>
+  </testcase>
+</testsuite>

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.smarthome.SmartHomeServiceCoreTest" time="12.561" tests="25" errors="1" skipped="0" failures="12">
+  <properties>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Calcutta"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="24"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-24\bin"/>
+    <property name="sun.java.command" value="C:\Users\gochendr\AppData\Local\Temp\surefire10325208359593500857\surefirebooter-20250920102349006_3.jar C:\Users\gochendr\AppData\Local\Temp\surefire10325208359593500857 2025-09-20T10-23-48_841-jvmRun1 surefire-20250920102349006_1tmp surefire_0-20250920102349006_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="SmartHomeServiceCoreTest"/>
+    <property name="surefire.test.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\gochendr"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-24"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\gochendr\AppData\Local\Temp\surefire10325208359593500857\surefirebooter-20250920102349006_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="24.0.2+12-54"/>
+    <property name="user.name" value="gochendr"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\gochendr\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\gochendr\AppData\Local\Temp\"/>
+    <property name="java.version" value="24.0.2"/>
+    <property name="user.dir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\gochendr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\gochendr\bin;C:\Program Files\PowerShell\7;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Users\gochendr\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\gochendr\AppData\Local\Programs\Python\Python311;C:\Program Files\Git\cmd;C:\tools;C:\Program Files\nodejs;C:\Program Files\Amazon\AWSCLIV2;C:\Program Files\GitHub CLI;C:\Program Files\Java\jdk-24\bin;C:\Program Files\apache-maven-3.9.11\bin;C:\Program Files\PowerShell\7;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.4\bin;C:\tools;C:\Users\gochendr\AppData\Local\Programs\Lens\resources\cli\bin;C:\Users\gochendr\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Roaming\npm;C:\Users\gochendr\duo-sso.exe;C:\Users\gochendr\claude_setup;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="24.0.2+12-54"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="68.0"/>
+  </properties>
+  <testcase name="testUpdateUserFullName" classname="com.smarthome.SmartHomeServiceCoreTest" time="6.72">
+    <failure message="Updating user full name should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Updating user full name should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testUpdateUserFullName(SmartHomeServiceCoreTest.java:312)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[ Successfully connected to local DynamoDB at: http://localhost:8002
+[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[SECURITY] Implementing 5 second delay due to failed attempts...
+[SECURITY] Failed login attempt #3 for account: test@smarthome.com at 2025-09-20 10:23:56.440747
+[LOCKED] Account locked for 15 minutes due to 3 failed login attempts.
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testConnectDeviceWithoutLogin" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.008">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+Please login first!
+✅ Connect without login test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testDuplicateEmailRegistration" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.015">
+    <failure message="First registration should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: First registration should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testDuplicateEmailRegistration(SmartHomeServiceCoreTest.java:89)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testValidCustomerLogin" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.019">
+    <failure message="Valid customer login should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Valid customer login should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testValidCustomerLogin(SmartHomeServiceCoreTest.java:107)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:38:56.443786300. Please try again later.
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRegistrationInvalidEmail" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.008">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+Invalid email format!
+✅ Invalid email test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRegistrationWeakPassword" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.007">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Invalid password! Please ensure your password meets all requirements:
+Password must be 8-128 characters long and contain:
+- At least one uppercase letter (A-Z)
+- At least one lowercase letter (a-z)
+- At least one number (0-9)
+- At least one special character (!@#$%^&*)
+- Cannot be a common password
+- Cannot have more than 2 repeating characters
+✅ Weak password test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testVerifyCurrentPassword" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.021">
+    <failure message="Verifying correct password should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Verifying correct password should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testVerifyCurrentPassword(SmartHomeServiceCoreTest.java:361)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:38:56.443786300. Please try again later.
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testConnectValidDevice" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.018">
+    <failure message="Connecting valid device should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Connecting valid device should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testConnectValidDevice(SmartHomeServiceCoreTest.java:164)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:38:56.443786300. Please try again later.
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowCurrentUserInfo" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.02">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:38:56.443786300. Please try again later.
+Please login first!
+Please login first!
+✅ Show user info test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testPasswordResetFlow" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.191">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[SUCCESS] Account found! You can now reset your password.
+[SUCCESS] Password reset successful! You can now login with your new password.
+[SUCCESS] Login successful! Welcome back, Updated Test User!
+✅ Password reset flow test passed
+[SUCCESS] Logged out successfully from account: test@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testLogoutFunctionality" classname="com.smarthome.SmartHomeServiceCoreTest" time="1.119">
+    <failure message="User should be logged in initially ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: User should be logged in initially ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testLogoutFunctionality(SmartHomeServiceCoreTest.java:144)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[SECURITY] Failed login attempt #1 for account: test@smarthome.com at 2025-09-20 10:23:57.946983200
+[WARNING] Invalid password. This is attempt 1 of 2 allowed before lockout.
+[SECURITY] Account will be locked after 2 failed attempts for security.
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testLoginNonExistentEmail" classname="com.smarthome.SmartHomeServiceCoreTest" time="1.025">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Email not registered. Please create an account first.
+✅ Non-existent email test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRegistrationMismatchedPasswords" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.009">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+Passwords do not match!
+✅ Mismatched passwords test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testConnectMultipleDifferentDevices" classname="com.smarthome.SmartHomeServiceCoreTest" time="3.157">
+    <failure message="expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:179)
+	at com.smarthome.SmartHomeServiceCoreTest.testConnectMultipleDifferentDevices(SmartHomeServiceCoreTest.java:215)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[SECURITY] Implementing 3 second delay due to failed attempts...
+[SECURITY] Failed login attempt #2 for account: test@smarthome.com at 2025-09-20 10:24:02.154845100
+[LOCKED] Account locked for 5 minutes due to 2 failed login attempts.
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testLoginWrongPassword" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.016">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+✅ Wrong password test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testConnectDuplicateDevice" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.018">
+    <failure message="First device connection should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: First device connection should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testConnectDuplicateDevice(SmartHomeServiceCoreTest.java:195)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testValidCustomerRegistration" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.012">
+    <failure message="Valid customer registration should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Valid customer registration should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testValidCustomerRegistration(SmartHomeServiceCoreTest.java:48)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testServiceGetters" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.007">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+✅ Service getters test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testChangeSpecificDeviceStatus" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.017">
+    <failure message="Changing specific device status should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Changing specific device status should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testChangeSpecificDeviceStatus(SmartHomeServiceCoreTest.java:281)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+Please login first!
+Please login first!
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testChangeDeviceStatus" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.017">
+    <error message="Cannot invoke &quot;java.util.List.get(int)&quot; because &quot;devices&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "java.util.List.get(int)" because "devices" is null
+	at com.smarthome.SmartHomeServiceCoreTest.testChangeDeviceStatus(SmartHomeServiceCoreTest.java:255)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></error>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+Please login first!
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRegistrationInvalidName" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.007">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+Invalid name! Name should contain only letters and spaces (minimum 2 characters).
+✅ Invalid name test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testEmailAvailabilityCheck" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.02">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+✅ Email availability check test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testUpdateUserEmail" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.016">
+    <failure message="Updating user email should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Updating user email should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testUpdateUserEmail(SmartHomeServiceCoreTest.java:330)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testConnectInvalidDevice" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.016">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+Please login first!
+Please login first!
+✅ Invalid device test passed
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testUpdateUserPassword" classname="com.smarthome.SmartHomeServiceCoreTest" time="0.016">
+    <failure message="Updating user password should succeed ==&gt; expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Updating user password should succeed ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.smarthome.SmartHomeServiceCoreTest.testUpdateUserPassword(SmartHomeServiceCoreTest.java:348)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></failure>
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+🔧 Setting up core test environment...
+[ERROR] Registration failed! Email might already be registered.
+[LOCKED] Account is locked until: 2025-09-20 10:29:02.154845100. Please try again later.
+Please login first!
+🧹 Cleaned up core test environment
+]]></system-out>
+  </testcase>
+</testsuite>

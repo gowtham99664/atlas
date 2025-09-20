@@ -122,7 +122,7 @@ public class WeatherService {
                 if (temp >= -20 && temp <= 50) {
                     return temp;
                 } else {
-                    System.out.println("Please enter a realistic temperature between -20°C and 50°C.");
+                    System.out.println("Please enter a realistic temperature between -20C and 50C.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid temperature number.");
@@ -277,7 +277,7 @@ public class WeatherService {
         WeatherData weather = getCurrentWeather();
         System.out.println("\n=== Weather Information ===");
         System.out.printf("[Weather] Condition: %s\n", weather.getCondition());
-        System.out.printf("[Temp] Temperature: %.1f°C\n", weather.getTemperatureCelsius());
+        System.out.printf("[Temp] Temperature: %.1fC\n", weather.getTemperatureCelsius());
         System.out.printf("[Humidity] %d%%\n", weather.getHumidity());
         System.out.printf("[Wind] Speed: %.1f km/h\n", weather.getWindSpeed());
         System.out.printf("[Air Quality] Index: %d (%s)\n", weather.getAirQualityIndex(), getAirQualityDescription(weather.getAirQualityIndex()));
@@ -303,7 +303,7 @@ public class WeatherService {
         List<WeatherAutomationRule> suggestions = new ArrayList<>();
         if (weather.isHot()) {
             suggestions.add(new WeatherAutomationRule("Hot Weather", "AC", "Living Room", "ON", 
-                "Temperature is " + String.format("%.1f", weather.getTemperatureCelsius()) + "°C - Turn on AC for comfort"));
+                "Temperature is " + String.format("%.1f", weather.getTemperatureCelsius()) + "C - Turn on AC for comfort"));
             suggestions.add(new WeatherAutomationRule("Hot Weather", "FAN", "Master Bedroom", "ON", 
                 "High temperature - Turn on bedroom fan"));
             suggestions.add(new WeatherAutomationRule("Hot Weather", "GEYSER", "Kitchen", "OFF", 
@@ -311,7 +311,7 @@ public class WeatherService {
         }
         if (weather.isCold()) {
             suggestions.add(new WeatherAutomationRule("Cold Weather", "GEYSER", "Kitchen", "ON", 
-                "Temperature is " + String.format("%.1f", weather.getTemperatureCelsius()) + "°C - Ensure hot water availability"));
+                "Temperature is " + String.format("%.1f", weather.getTemperatureCelsius()) + "C - Ensure hot water availability"));
             suggestions.add(new WeatherAutomationRule("Cold Weather", "FAN", "Living Room", "OFF", 
                 "Cold weather - Turn off unnecessary fans"));
             suggestions.add(new WeatherAutomationRule("Cold Weather", "AC", "Master Bedroom", "OFF", 
@@ -356,7 +356,7 @@ public class WeatherService {
         System.out.println("\n=== Weather-Based Automation Suggestions ===");
         for (int i = 0; i < suggestions.size(); i++) {
             WeatherAutomationRule rule = suggestions.get(i);
-            System.out.printf("%d. %s %s in %s → %s\n", 
+            System.out.printf("%d. %s %s in %s -> %s\n", 
                             (i + 1), rule.getDeviceType(), rule.getAction(), 
                             rule.getRoomName(), rule.getReason());
         }
@@ -389,7 +389,7 @@ public class WeatherService {
             LocalDateTime forecastDate = baseDate.plusDays(i);
             System.out.printf("Day %d (%s):\n", (i + 1), 
                             forecastDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            System.out.printf("  [WEATHER] %s | [TEMP] %.1f°C | [HUMIDITY] %d%% | AQI: %d\n", 
+            System.out.printf("  [WEATHER] %s | [TEMP] %.1fC | [HUMIDITY] %d%% | AQI: %d\n", 
                             weather.getCondition(), weather.getTemperatureCelsius(), 
                             weather.getHumidity(), weather.getAirQualityIndex());
         }
@@ -408,40 +408,40 @@ public class WeatherService {
         help.append("\n=== Weather-Based Smart Automation Help ===\n");
         help.append("Get personalized device automation suggestions based on weather conditions:\n\n");
         help.append("[DATA SOURCE] Weather Data Options:\n");
-        help.append("   • Manual Input: Enter actual weather for accurate suggestions\n");
-        help.append("   • Simulated Data: Use demo mode for testing features\n");
-        help.append("   • Update Anytime: Refresh weather data as conditions change\n\n");
-        help.append("[HOT] HOT WEATHER (>30°C):\n");
-        help.append("   • Auto-suggest AC ON in main rooms\n");
-        help.append("   • Turn on fans for air circulation\n");
-        help.append("   • Reduce geyser usage to save energy\n");
-        help.append("   • Smart scenes for cooling optimization\n\n");
-        help.append("[COLD] COLD WEATHER (<18°C):\n");
-        help.append("   • Ensure geysers are ON for hot water\n");
-        help.append("   • Turn off unnecessary fans and AC\n");
-        help.append("   • Maintain comfortable indoor temperature\n");
-        help.append("   • Heating device optimization\n\n");
+        help.append("   - Manual Input: Enter actual weather for accurate suggestions\n");
+        help.append("   - Simulated Data: Use demo mode for testing features\n");
+        help.append("   - Update Anytime: Refresh weather data as conditions change\n\n");
+        help.append("[HOT] HOT WEATHER (>30C):\n");
+        help.append("   - Auto-suggest AC ON in main rooms\n");
+        help.append("   - Turn on fans for air circulation\n");
+        help.append("   - Reduce geyser usage to save energy\n");
+        help.append("   - Smart scenes for cooling optimization\n\n");
+        help.append("[COLD] COLD WEATHER (<18C):\n");
+        help.append("   - Ensure geysers are ON for hot water\n");
+        help.append("   - Turn off unnecessary fans and AC\n");
+        help.append("   - Maintain comfortable indoor temperature\n");
+        help.append("   - Heating device optimization\n\n");
         help.append("[HUMID] HIGH HUMIDITY (>70%):\n");
-        help.append("   • Turn on fans for better air circulation\n");
-        help.append("   • Activate air purifiers for comfort\n");
-        help.append("   • Dehumidification suggestions\n\n");
+        help.append("   - Turn on fans for better air circulation\n");
+        help.append("   - Activate air purifiers for comfort\n");
+        help.append("   - Dehumidification suggestions\n\n");
         help.append("[AIR] POOR AIR QUALITY (AQI >150):\n");
-        help.append("   • Auto-activate all air purifiers\n");
-        help.append("   • Indoor air quality improvement\n");
-        help.append("   • Ventilation management recommendations\n\n");
+        help.append("   - Auto-activate all air purifiers\n");
+        help.append("   - Indoor air quality improvement\n");
+        help.append("   - Ventilation management recommendations\n\n");
         help.append("[RAIN] RAINY WEATHER:\n");
-        help.append("   • Turn on lights for better visibility\n");
-        help.append("   • Ensure geyser is ON for warmth\n");
-        help.append("   • Moisture control suggestions\n\n");
+        help.append("   - Turn on lights for better visibility\n");
+        help.append("   - Ensure geyser is ON for warmth\n");
+        help.append("   - Moisture control suggestions\n\n");
         help.append("[STORM] STORMY CONDITIONS:\n");
-        help.append("   • Turn off electronics for safety\n");
-        help.append("   • Avoid high-power appliances during lightning\n");
-        help.append("   • Emergency preparedness mode\n\n");
+        help.append("   - Turn off electronics for safety\n");
+        help.append("   - Avoid high-power appliances during lightning\n");
+        help.append("   - Emergency preparedness mode\n\n");
         help.append("[FEATURES] Advanced Features:\n");
-        help.append("   • Real-time weather input for accurate suggestions\n");
-        help.append("   • Personalized automation based on your devices\n");
-        help.append("   • Energy-saving recommendations\n");
-        help.append("   • Safety-first approach during severe weather\n\n");
+        help.append("   - Real-time weather input for accurate suggestions\n");
+        help.append("   - Personalized automation based on your devices\n");
+        help.append("   - Energy-saving recommendations\n");
+        help.append("   - Safety-first approach during severe weather\n\n");
         help.append("[TIP] For best results, update weather data regularly!\n");
         return help.toString();
     }

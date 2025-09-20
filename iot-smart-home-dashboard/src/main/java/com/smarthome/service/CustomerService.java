@@ -33,7 +33,7 @@ public class CustomerService {
             this.demoCustomers = null;
             createTableIfNotExists();
         } else {
-            System.out.println("í¾® Running in DEMO MODE - data won't persist between sessions");
+            System.out.println("[INFO] Running in DEMO MODE - data won't persist between sessions");
             this.customerTable = null;
             this.isDemoMode = true;
             this.demoCustomers = new HashMap<>();
@@ -43,9 +43,9 @@ public class CustomerService {
         if (!isDemoMode) {
             try {
                 customerTable.describeTable();
-                System.out.println("í³‹ DynamoDB table 'customers' already exists");
+                System.out.println("[INFO] DynamoDB table 'customers' already exists");
             } catch (ResourceNotFoundException e) {
-                System.out.println("í´¨ Creating DynamoDB table 'customers'...");
+                System.out.println("[INFO] Creating DynamoDB table 'customers'...");
                 customerTable.createTable();
                 System.out.println(" Successfully created 'customers' table in DynamoDB");
             } catch (Exception e) {
@@ -64,7 +64,7 @@ public class CustomerService {
             Customer customer = new Customer(email, fullName.trim(), hashedPassword);
             if (isDemoMode) {
                 demoCustomers.put(email, customer);
-                System.out.println("í²¾ Customer registered in DEMO mode (data will not persist)");
+                System.out.println("[INFO] Customer registered in DEMO mode (data will not persist)");
             } else {
                 customerTable.putItem(customer);
             }
