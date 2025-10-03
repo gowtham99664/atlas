@@ -318,7 +318,6 @@ public class DeviceHealthService {
                                             device.getEstimatedLifespanMonths());
             System.out.printf("| %-78s |\n", deviceLine);
 
-            // Display issues and recommendations in a clean format
             if (!device.getIssues().isEmpty() || !device.getRecommendations().isEmpty()) {
                 System.out.printf("| %-78s |\n", "");
 
@@ -326,7 +325,6 @@ public class DeviceHealthService {
                     for (String issue : device.getIssues()) {
                         String issueText = "   [ISSUE] " + issue;
                         if (issueText.length() > 78) {
-                            // Split long text into multiple lines
                             while (issueText.length() > 78) {
                                 int splitPoint = 75;
                                 while (splitPoint > 50 && issueText.charAt(splitPoint) != ' ') {
@@ -349,7 +347,6 @@ public class DeviceHealthService {
                     for (String rec : device.getRecommendations()) {
                         String recText = "   [FIX] " + rec;
                         if (recText.length() > 78) {
-                            // Split long text into multiple lines
                             while (recText.length() > 78) {
                                 int splitPoint = 75;
                                 while (splitPoint > 50 && recText.charAt(splitPoint) != ' ') {

@@ -106,7 +106,8 @@ public class SmartHomeService {
             System.out.println("Error: " + e.getMessage());
             return false;
         } catch (Exception e) {
-            System.out.println("Unexpected error occurred. Please try again.");
+            System.out.println("[ERROR] Unexpected error while connecting to gadget: " + e.getMessage());
+            System.out.println("Please verify your inputs and try again. Contact support if the problem persists.");
             return false;
         }
     }
@@ -245,7 +246,8 @@ public class SmartHomeService {
                 return false;
             }
         } catch (Exception e) {
-            System.out.println("Error changing gadget status. Please try again.");
+            System.out.println("[ERROR] Failed to change gadget status: " + e.getMessage());
+            System.out.println("Please try again or contact support if the problem persists.");
             return false;
         }
     }
@@ -328,7 +330,8 @@ public class SmartHomeService {
                 return false;
             }
         } catch (Exception e) {
-            System.out.println("Error changing gadget status. Please try again.");
+            System.out.println("[ERROR] Failed to change gadget status: " + e.getMessage());
+            System.out.println("Please try again or contact support if the problem persists.");
             return false;
         }
     }
@@ -461,6 +464,21 @@ public class SmartHomeService {
         Customer currentUser = sessionManager.getCurrentUser();
         return timerService.cancelTimer(currentUser, deviceType, roomName, action);
     }
+
+    public boolean editDeviceTimer(String deviceType, String roomName, String action, String newDateTime) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+        try {
+            Customer currentUser = sessionManager.getCurrentUser();
+            LocalDateTime newScheduledTime = timerService.parseDateTime(newDateTime);
+            return timerService.editTimer(currentUser, deviceType, roomName, action, newScheduledTime);
+        } catch (Exception e) {
+            System.out.println("[ERROR] Invalid date format! Use DD-MM-YYYY HH:MM");
+            return false;
+        }
+    }
     public boolean createCalendarEvent(String title, String description, String startDateTime, String endDateTime, String eventType) {
         if (!sessionManager.isLoggedIn()) {
             System.out.println("[ERROR] Please login first!");
@@ -565,11 +583,61 @@ public class SmartHomeService {
         timerService.forceTimerCheck();
         System.out.println("[INFO] Manual timer check completed. Any due timers have been executed.");
     }
+
+    public void forceCalendarAutomationCheck() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return;
+        }
+        timerService.forceTimerCheck();
+        System.out.println("[INFO] Manual calendar automation check completed. Any due calendar automations have been executed.");
+        System.out.println("[INFO] Event start/end notifications are also checked and displayed if events are active.");
+    }
+
+    public void displayCurrentDeviceStates() {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return;
+        }
+
+        Customer currentUser = sessionManager.getCurrentUser();
+        List<Gadget> allGadgets = viewGadgets();
+
+        if (allGadgets.isEmpty()) {
+            System.out.println("\n=== Current Device States ===");
+            System.out.println("No devices connected.");
+            return;
+        }
+
+        System.out.println("\n=== Current Device States ===");
+        System.out.println("+----+-------------------------+--------+");
+        System.out.printf("| %-2s | %-23s | %-6s |\n", "#", "Device", "Status");
+        System.out.println("+----+-------------------------+--------+");
+
+        int index = 1;
+        for (Gadget device : allGadgets) {
+            String deviceName = String.format("%s %s (%s)", device.getType(), device.getModel(), device.getRoomName());
+            if (deviceName.length() > 23) {
+                deviceName = deviceName.substring(0, 20) + "...";
+            }
+            System.out.printf("| %-2d | %-23s | %-6s |\n", index++, deviceName, device.getStatus());
+        }
+        System.out.println("+----+-------------------------+--------+");
+    }
     public TimerService getTimerService() {
         return timerService;
     }
     public CalendarEventService getCalendarService() {
         return calendarService;
+    }
+
+    public boolean addCustomDeviceAutomation(String eventTitle, String deviceType, String roomName, String action, int minutesOffset) {
+        if (!sessionManager.isLoggedIn()) {
+            System.out.println("[ERROR] Please login first!");
+            return false;
+        }
+        Customer currentUser = sessionManager.getCurrentUser();
+        return calendarService.addCustomDeviceAutomation(currentUser.getEmail(), eventTitle, deviceType, roomName, action, minutesOffset);
     }
     public WeatherService getWeatherService() {
         return weatherService;
@@ -587,6 +655,10 @@ public class SmartHomeService {
             Gadget device = currentUser.findGadget(deviceType, currentRoom);
             if (device == null) {
                 System.out.println("[ERROR] Device not found: " + deviceType + " in " + currentRoom);
+                return false;
+            }
+            if (!gadgetService.getValidRooms().contains(newRoom)) {
+                System.out.println("[ERROR] Invalid room name: " + newRoom);
                 return false;
             }
             Gadget existingDeviceInNewRoom = currentUser.findGadget(deviceType, newRoom);
@@ -1360,7 +1432,6 @@ public class SmartHomeService {
         return currentUser.hasDevicePermission(memberEmail, deviceType, roomName);
     }
 
-    // Alert Management Methods
     public boolean createTimeBasedAlert(String alertName, String deviceType, String roomName,
                                        LocalDateTime triggerTime, String message) {
         if (!sessionManager.isLoggedIn()) {
@@ -1370,14 +1441,12 @@ public class SmartHomeService {
 
         Customer currentUser = sessionManager.getCurrentUser();
 
-        // Validate device exists
         Gadget device = currentUser.findGadget(deviceType, roomName);
         if (device == null) {
             System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
             return false;
         }
 
-        // Validate trigger time is in future
         if (triggerTime.isBefore(LocalDateTime.now())) {
             System.out.println("[ERROR] Alert trigger time must be in the future!");
             return false;
@@ -1395,14 +1464,12 @@ public class SmartHomeService {
 
         Customer currentUser = sessionManager.getCurrentUser();
 
-        // Validate device exists
         Gadget device = currentUser.findGadget(deviceType, roomName);
         if (device == null) {
             System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
             return false;
         }
 
-        // Validate energy threshold
         if (energyThreshold <= 0) {
             System.out.println("[ERROR] Energy threshold must be greater than 0!");
             return false;
@@ -1459,10 +1526,8 @@ public class SmartHomeService {
         Customer currentUser = sessionManager.getCurrentUser();
         LocalDateTime now = LocalDateTime.now();
 
-        // Check time-based alerts
         alertService.checkTimeBasedAlerts(currentUser.getEmail(), now);
 
-        // Check energy usage alerts
         alertService.checkEnergyUsageAlerts(currentUser.getEmail(), currentUser);
     }
 

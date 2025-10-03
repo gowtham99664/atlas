@@ -47,10 +47,9 @@ public class AlertService {
             this.isActive = true;
             this.createdTime = LocalDateTime.now();
             this.triggerCount = 0;
-            this.autoDeleteAfterTrigger = true; // Default: auto-delete after trigger
+            this.autoDeleteAfterTrigger = true;
         }
 
-        // Getters and setters
         public String getAlertId() { return alertId; }
         public String getAlertName() { return alertName; }
         public String getDeviceType() { return deviceType; }
@@ -96,7 +95,7 @@ public class AlertService {
 
     public static class EnergyUsageAlert extends Alert {
         private double energyThreshold;
-        private String comparisonType; // "GREATER_THAN", "LESS_THAN", "EQUALS"
+        private String comparisonType;
 
         public EnergyUsageAlert(String alertId, String alertName, String deviceType, String roomName,
                                double energyThreshold, String comparisonType, String message) {
@@ -308,13 +307,12 @@ public class AlertService {
         System.out.println("Reason: " + triggerReason);
         System.out.println("=".repeat(60));
 
-        // Auto-delete alert if configured to do so
         if (alert.isAutoDeleteAfterTrigger()) {
             boolean deleted = deleteAlert(userEmail, alert.getAlertId());
             if (deleted) {
-                System.out.println("✅ Alert automatically deleted after triggering");
+                System.out.println("Alert automatically deleted after triggering");
             } else {
-                System.out.println("⚠️ Alert triggered but auto-deletion failed");
+                System.out.println("Alert triggered but auto-deletion failed");
             }
             System.out.println("=".repeat(60));
             System.out.println("This was a one-time alert and has been automatically removed.");

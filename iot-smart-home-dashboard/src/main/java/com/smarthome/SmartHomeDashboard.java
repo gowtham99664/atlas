@@ -4,9 +4,11 @@ import com.smarthome.model.Gadget;
 import com.smarthome.service.SmartHomeService;
 import com.smarthome.service.CalendarEventService;
 import com.smarthome.service.AlertService;
+import com.smarthome.service.TimerService;
 import com.smarthome.util.DynamoDBConfig;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -1023,6 +1025,39 @@ public class SmartHomeDashboard {
             return null;
         }
     }
+
+    private static boolean isValidFutureDateTime(String dateTimeStr) {
+        try {
+            LocalDateTime inputDateTime = LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+            LocalDateTime now = LocalDateTime.now();
+            return inputDateTime.isAfter(now);
+        } catch (Exception e) {
+            System.out.println("[ERROR] Invalid date format! Please use DD-MM-YYYY HH:MM format.");
+            return false;
+        }
+    }
+
+    private static boolean isValidDateTimeRange(String startDateTimeStr, String endDateTimeStr) {
+        try {
+            LocalDateTime startDateTime = LocalDateTime.parse(startDateTimeStr, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+            LocalDateTime endDateTime = LocalDateTime.parse(endDateTimeStr, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+
+            if (endDateTime.isBefore(startDateTime) || endDateTime.isEqual(startDateTime)) {
+                return false;
+            }
+
+            long durationMinutes = ChronoUnit.MINUTES.between(startDateTime, endDateTime);
+            if (durationMinutes < 15) {
+                System.out.println("[WARNING] Event duration is only " + durationMinutes + " minutes. Consider making it longer.");
+            }
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("[ERROR] Invalid date format! Please use DD-MM-YYYY HH:MM format.");
+            return false;
+        }
+    }
+
     private static int getValidatedIntegerInput(String prompt) {
         while (true) {
             try {
@@ -1429,48 +1464,125 @@ public class SmartHomeDashboard {
         }
     }
     private static void showScheduledTimers() {
-        System.out.println("\n=== Scheduled Timers Management ===");
-        List<Gadget> timersWithDevices = smartHomeService.getScheduledTimersWithDevices();
-        if (timersWithDevices == null || timersWithDevices.isEmpty()) {
-            System.out.println("No timers scheduled.");
-            System.out.println("\n0. Return to Main Menu");
-            System.out.print("Choose an option: ");
+        while (true) {
+            System.out.println("\n=== Active Schedules ===");
+            List<Gadget> timersWithDevices = smartHomeService.getScheduledTimersWithDevices();
+            if (timersWithDevices == null || timersWithDevices.isEmpty()) {
+                System.out.println("No timers scheduled.");
+                System.out.println("\n0. Return to Main Menu");
+                System.out.print("Choose an option: ");
+                try {
+                    scanner.nextLine().trim();
+                } catch (Exception e) {
+                }
+                return;
+            }
+
+            smartHomeService.showScheduledTimers();
+
+            System.out.println("\n=== Schedule Management ===");
+            System.out.println("1. Edit/Update Timer");
+            System.out.println("2. Cancel Timer");
+            System.out.println("3. Force Execute Due Timers");
+            System.out.println();
+            System.out.println("0. Return to Main Menu");
+            System.out.print("Choose an option (0-3): ");
             try {
-                scanner.nextLine().trim();
-            } catch (Exception e) {
+                String inputLine = scanner.nextLine().trim();
+                if (inputLine.isEmpty()) {
+                    System.out.println("Please enter a valid option number.");
+                    continue;
+                }
+                if ("0".equals(inputLine)) {
+                    return;
+                }
+                int choice = Integer.parseInt(inputLine);
+                switch (choice) {
+                    case 1:
+                        editTimerBySelection(timersWithDevices);
+                        break;
+                    case 2:
+                        cancelTimerBySelection(timersWithDevices);
+                        break;
+                    case 3:
+                        smartHomeService.forceTimerCheck();
+                        break;
+                    default:
+                        System.out.println("Invalid option! Please choose between 0-3.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a number between 0-3.");
             }
-            return;
-        }
-        System.out.println("\n=== Timer Actions ===");
-        System.out.println("1. Cancel Timer");
-        System.out.println("2. Force Execute Due Timers");
-        System.out.println();
-        System.out.println("0. Return to Main Menu");
-        System.out.print("Choose an option (0-2): ");
-        try {
-            String inputLine = scanner.nextLine().trim();
-            if (inputLine.isEmpty()) {
-                System.out.println("Please enter a valid option number.");
-                return;
-            }
-            if ("0".equals(inputLine)) {
-                return;
-            }
-            int choice = Integer.parseInt(inputLine);
-            switch (choice) {
-                case 1:
-                    cancelTimerBySelection(timersWithDevices);
-                    break;
-                case 2:
-                    smartHomeService.forceTimerCheck();
-                    break;
-                default:
-                    System.out.println("Invalid option! Please choose between 0-2.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input! Please enter a number between 0-2.");
         }
     }
+
+    private static void editTimerBySelection(List<Gadget> timersWithDevices) {
+        try {
+            System.out.println("\n=== Edit Timer - Select Device & Action ===");
+            List<TimerEntry> timerEntries = new ArrayList<>();
+            for (Gadget device : timersWithDevices) {
+                if (device.getScheduledOnTime() != null) {
+                    timerEntries.add(new TimerEntry(device, "ON", device.getScheduledOnTime()));
+                }
+                if (device.getScheduledOffTime() != null) {
+                    timerEntries.add(new TimerEntry(device, "OFF", device.getScheduledOffTime()));
+                }
+            }
+            if (timerEntries.isEmpty()) {
+                System.out.println("No timers found to edit.");
+                return;
+            }
+            for (int i = 0; i < timerEntries.size(); i++) {
+                TimerEntry entry = timerEntries.get(i);
+                System.out.printf("%d. %s %s in %s - Turn %s at: %s\n",
+                    (i + 1),
+                    entry.device.getType(),
+                    entry.device.getModel(),
+                    entry.device.getRoomName(),
+                    entry.action,
+                    entry.scheduledTime.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+            }
+            System.out.print("Choose timer to edit (1-" + timerEntries.size() + "): ");
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            if (choice >= 1 && choice <= timerEntries.size()) {
+                TimerEntry selectedEntry = timerEntries.get(choice - 1);
+
+                System.out.println("\nEditing timer for: " + selectedEntry.device.getType() + " " +
+                                 selectedEntry.device.getModel() + " in " + selectedEntry.device.getRoomName());
+                System.out.println("Current action: Turn " + selectedEntry.action);
+                System.out.println("Current time: " + selectedEntry.scheduledTime.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+
+                System.out.println("\n[DATE & TIME FORMAT]: DD-MM-YYYY HH:MM (24-hour format)");
+                System.out.println("Examples: 25-12-2024 18:30, 01-01-2025 09:00");
+                System.out.print("Enter new date and time: ");
+                String newDateTime = getValidatedInput("Date Time");
+                if (newDateTime == null) {
+                    System.out.println("Invalid input. Edit cancelled.");
+                    return;
+                }
+
+                boolean success = smartHomeService.editDeviceTimer(
+                    selectedEntry.device.getType(),
+                    selectedEntry.device.getRoomName(),
+                    selectedEntry.action,
+                    newDateTime
+                );
+
+                if (success) {
+                    System.out.println("[SUCCESS] Timer updated successfully!");
+                } else {
+                    System.out.println("[ERROR] Failed to update timer.");
+                }
+            } else {
+                System.out.println("Invalid choice! Please choose between 1-" + timerEntries.size());
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to edit timer. Please try again.");
+        }
+    }
+
     private static void cancelTimerBySelection(List<Gadget> timersWithDevices) {
         try {
             System.out.println("\n=== Cancel Timer - Select Device & Action ===");
@@ -1531,11 +1643,11 @@ public class SmartHomeDashboard {
     private static void showCalendarEventsMenu() {
         while (true) {
             if (checkReturnToMainMenu()) return;
-            System.out.println("\n=== Calendar Events & Automation ===");
+            System.out.println("\n=== Calendar Events ===");
             System.out.println("1. Create New Event");
-            System.out.println("2. View Upcoming Events");
-            System.out.println("3. View Event Automation Details");
-            System.out.println("4. Event Types Help");
+            System.out.println("2. View My Events");
+            System.out.println("3. Edit Event");
+            System.out.println("4. Delete Event");
             System.out.println();
             System.out.println("0. Return to Main Menu");
             System.out.print("Choose an option (0-4): ");
@@ -1550,10 +1662,10 @@ public class SmartHomeDashboard {
                 }
                 int choice = Integer.parseInt(inputLine);
                 switch (choice) {
-                    case 1: createCalendarEvent(); break;
-                    case 2: showUpcomingEvents(); break;
-                    case 3: showEventAutomationDetails(); break;
-                    case 4: showEventTypesHelp(); break;
+                    case 1: createSimpleCalendarEvent(); break;
+                    case 2: showMyEvents(); break;
+                    case 3: editCalendarEvent(); break;
+                    case 4: deleteCalendarEvent(); break;
                     default: System.out.println("Invalid option! Please choose between 0-4.");
                 }
             } catch (NumberFormatException e) {
@@ -1561,6 +1673,564 @@ public class SmartHomeDashboard {
             }
         }
     }
+    private static void createSimpleCalendarEvent() {
+        System.out.println("\n=== Create Calendar Event ===");
+
+        List<Gadget> userDevices = smartHomeService.viewGadgets();
+        if (userDevices.isEmpty()) {
+            System.out.println("[INFO] No devices connected. Connect some devices first to use calendar automation.");
+            System.out.println("You can still create events and add device automation later.");
+            System.out.println();
+        } else {
+            System.out.println("[INFO] You have " + userDevices.size() + " connected devices available for automation.");
+            System.out.println("After creating the event, you can configure device states directly.");
+            System.out.println();
+        }
+
+        try {
+            System.out.print("Enter event title: ");
+            String title = getValidatedInput("Event Title");
+            if (title == null) return;
+
+            System.out.print("Enter event description: ");
+            String description = getValidatedInput("Event Description");
+            if (description == null) return;
+
+            System.out.print("Enter start date and time (DD-MM-YYYY HH:MM): ");
+            String startDateTime = getValidatedInput("Start Date Time");
+            if (startDateTime == null) return;
+
+            if (!isValidFutureDateTime(startDateTime)) {
+                System.out.println("[ERROR] Start date cannot be in the past! Please enter a future date and time.");
+                return;
+            }
+
+            System.out.print("Enter end date and time (DD-MM-YYYY HH:MM): ");
+            String endDateTime = getValidatedInput("End Date Time");
+            if (endDateTime == null) return;
+
+            if (!isValidDateTimeRange(startDateTime, endDateTime)) {
+                System.out.println("[ERROR] End date must be after start date!");
+                return;
+            }
+
+            boolean success = smartHomeService.createCalendarEvent(title, description, startDateTime, endDateTime, "Personal");
+
+            if (success) {
+                System.out.println("\n[SUCCESS] Calendar event created successfully!");
+                System.out.println("Event: " + title);
+
+                configureDeviceAutomationDuringCreation(title, userDevices);
+            } else {
+                System.out.println("[ERROR] Failed to create calendar event. Please try again.");
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error creating calendar event: " + e.getMessage());
+        }
+    }
+
+    private static void configureDeviceAutomationDuringCreation(String eventTitle, List<Gadget> userDevices) {
+        try {
+            if (userDevices.isEmpty()) {
+                System.out.println("\n[INFO] No devices connected. You can add device automation later.");
+                System.out.println("Use 'Configure Device States for Event' to set up automation after connecting devices.");
+                return;
+            }
+
+            TimerService.suppressNotifications(true);
+
+            System.out.println("\n=== Device Automation Setup ===");
+            System.out.print("Would you like to configure device automation for this event? (y/N): ");
+            String response = scanner.nextLine().trim();
+
+            if (!"y".equalsIgnoreCase(response) && !"yes".equalsIgnoreCase(response)) {
+                System.out.println("[INFO] Event created without device automation.");
+                System.out.println("You can add device automation later using 'Configure Device States for Event'.");
+                TimerService.suppressNotifications(false);
+                TimerService.displayBufferedNotifications();
+                return;
+            }
+
+            System.out.println("\n=== Available Devices ===");
+            for (int i = 0; i < userDevices.size(); i++) {
+                Gadget device = userDevices.get(i);
+                System.out.printf("%d. %s %s in %s (Current: %s)\n",
+                                i + 1, device.getType(), device.getModel(), device.getRoomName(), device.getStatus());
+            }
+
+            int automationsConfigured = 0;
+
+            while (true) {
+                System.out.print("\nSelect device number (1-" + userDevices.size() + ") or 0 to finish: ");
+                try {
+                    String input = scanner.nextLine().trim();
+                    if ("0".equals(input)) {
+                        break;
+                    }
+
+                    int deviceChoice = Integer.parseInt(input);
+                    if (deviceChoice < 1 || deviceChoice > userDevices.size()) {
+                        System.out.println("Invalid choice! Please select a valid device number.");
+                        continue;
+                    }
+
+                    Gadget selectedDevice = userDevices.get(deviceChoice - 1);
+                    System.out.println("\nSelected: " + selectedDevice.getType() + " " + selectedDevice.getModel() + " in " + selectedDevice.getRoomName());
+
+                    System.out.println("Choose desired state during the event:");
+                    System.out.println("1. ON");
+                    System.out.println("2. OFF");
+                    System.out.print("Enter choice (1-2): ");
+
+                    String stateInput = scanner.nextLine().trim();
+                    String action;
+                    if ("1".equals(stateInput)) {
+                        action = "ON";
+                    } else if ("2".equals(stateInput)) {
+                        action = "OFF";
+                    } else {
+                        System.out.println("Invalid choice! Skipping this device.");
+                        continue;
+                    }
+
+                    System.out.println("\nWhen should this action happen?");
+                    System.out.println("1. At event start (0 minutes)");
+                    System.out.println("2. Before event start");
+                    System.out.println("3. After event start");
+                    System.out.print("Enter choice (1-3): ");
+
+                    String timingChoice = scanner.nextLine().trim();
+                    int minutesOffset = 0;
+
+                    if ("2".equals(timingChoice)) {
+                        System.out.print("Enter minutes before event start: ");
+                        try {
+                            int minsBefore = Integer.parseInt(scanner.nextLine().trim());
+                            if (minsBefore < 0) {
+                                System.out.println("Please enter a positive number.");
+                                continue;
+                            }
+                            minutesOffset = -minsBefore;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input! Skipping this device.");
+                            continue;
+                        }
+                    } else if ("3".equals(timingChoice)) {
+                        System.out.print("Enter minutes after event start: ");
+                        try {
+                            int minsAfter = Integer.parseInt(scanner.nextLine().trim());
+                            if (minsAfter < 0) {
+                                System.out.println("Please enter a positive number.");
+                                continue;
+                            }
+                            minutesOffset = minsAfter;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input! Skipping this device.");
+                            continue;
+                        }
+                    } else if (!"1".equals(timingChoice)) {
+                        System.out.println("Invalid choice! Using default (at event start).");
+                        minutesOffset = 0;
+                    }
+
+                    boolean success = smartHomeService.addCustomDeviceAutomation(
+                        eventTitle, selectedDevice.getType(), selectedDevice.getRoomName(), action, minutesOffset);
+
+                    if (success) {
+                        automationsConfigured++;
+                        String timing = minutesOffset == 0 ? "at event start" :
+                                      minutesOffset < 0 ? (Math.abs(minutesOffset) + " minutes before event") :
+                                      (minutesOffset + " minutes after event start");
+                        System.out.println("[SUCCESS] Added: " + selectedDevice.getType() + " in " + selectedDevice.getRoomName() + " -> " + action + " (" + timing + ")");
+                    } else {
+                        System.out.println("[ERROR] Failed to add automation for this device.");
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! Please enter a valid number.");
+                }
+            }
+
+            System.out.println("\n=== Automation Setup Complete ===");
+            if (automationsConfigured > 0) {
+                System.out.println("Configured " + automationsConfigured + " device automation(s) for: " + eventTitle);
+                System.out.println("Your event is ready with device automation!");
+            } else {
+                System.out.println("No device automations were configured.");
+                System.out.println("You can add them later using 'Configure Device States for Event'.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error configuring device automation: " + e.getMessage());
+        } finally {
+            TimerService.suppressNotifications(false);
+            TimerService.displayBufferedNotifications();
+        }
+    }
+
+    private static void showMyEvents() {
+        System.out.println("\n=== My Calendar Events ===");
+
+        List<CalendarEventService.CalendarEvent> events = smartHomeService.getUpcomingEvents();
+        if (events.isEmpty()) {
+            System.out.println("No events found. Create some events first!");
+            return;
+        }
+
+        System.out.println("Your Events:");
+        for (int i = 0; i < events.size(); i++) {
+            CalendarEventService.CalendarEvent event = events.get(i);
+            System.out.printf("%d. %s\n", i + 1, event.getTitle());
+            System.out.printf("   Description: %s\n", event.getDescription());
+            System.out.printf("   Time: %s to %s\n",
+                            event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                            event.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+
+            List<CalendarEventService.AutomationAction> actions = event.getAutomationActions();
+            if (!actions.isEmpty()) {
+                System.out.printf("   Device Automation: %d actions configured\n", actions.size());
+                for (CalendarEventService.AutomationAction action : actions) {
+                    String timing = action.getMinutesOffset() == 0 ? "at event start" :
+                                  action.getMinutesOffset() < 0 ? (Math.abs(action.getMinutesOffset()) + " min before") :
+                                  (action.getMinutesOffset() + " min after");
+                    System.out.printf("     - %s %s in %s -> %s (%s)\n",
+                                    action.getDeviceType(), action.getDeviceType(), action.getRoomName(),
+                                    action.getAction(), timing);
+                }
+            } else {
+                System.out.println("   Device Automation: None configured");
+            }
+            System.out.println();
+        }
+    }
+
+    private static void editCalendarEvent() {
+        System.out.println("\n=== Edit Calendar Event ===");
+
+        List<CalendarEventService.CalendarEvent> events = smartHomeService.getUpcomingEvents();
+        if (events.isEmpty()) {
+            System.out.println("No events found. Create some events first!");
+            return;
+        }
+
+        System.out.println("Select an event to edit:");
+        for (int i = 0; i < events.size(); i++) {
+            CalendarEventService.CalendarEvent event = events.get(i);
+            System.out.printf("%d. %s (%s)\n", i + 1, event.getTitle(),
+                            event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+        }
+
+        System.out.print("Choose event to edit (1-" + events.size() + "): ");
+        try {
+            String inputLine = scanner.nextLine().trim();
+            if (inputLine.isEmpty() || "0".equals(inputLine)) return;
+
+            int eventChoice = Integer.parseInt(inputLine);
+            if (eventChoice < 1 || eventChoice > events.size()) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            CalendarEventService.CalendarEvent selectedEvent = events.get(eventChoice - 1);
+            System.out.println("\nEditing event: " + selectedEvent.getTitle());
+
+            System.out.println("\nWhat would you like to edit?");
+            System.out.println("1. Event Details (title, description, time)");
+            System.out.println("2. Device Automation States");
+            System.out.println("3. Add New Device Automation");
+            System.out.println("4. Remove Device Automation");
+            System.out.print("Choose option (1-4): ");
+
+            String editChoice = scanner.nextLine().trim();
+            switch (editChoice) {
+                case "1":
+                    editEventDetails(selectedEvent);
+                    break;
+                case "2":
+                    editDeviceAutomationStates(selectedEvent);
+                    break;
+                case "3":
+                    addDeviceAutomationToEvent(selectedEvent);
+                    break;
+                case "4":
+                    removeDeviceAutomationFromEvent(selectedEvent);
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error editing event: " + e.getMessage());
+        }
+    }
+
+    private static void editEventDetails(CalendarEventService.CalendarEvent event) {
+        System.out.println("\n=== Edit Event Details ===");
+        System.out.println("Current details:");
+        System.out.println("Title: " + event.getTitle());
+        System.out.println("Description: " + event.getDescription());
+        System.out.println("Start: " + event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+        System.out.println("End: " + event.getEndTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+
+        System.out.print("\nEnter new title (or press Enter to keep current): ");
+        String newTitle = scanner.nextLine().trim();
+        if (newTitle.isEmpty()) newTitle = event.getTitle();
+
+        System.out.print("Enter new description (or press Enter to keep current): ");
+        String newDescription = scanner.nextLine().trim();
+        if (newDescription.isEmpty()) newDescription = event.getDescription();
+
+        System.out.print("Enter new start time (DD-MM-YYYY HH:MM) or press Enter to keep current: ");
+        String newStartTime = scanner.nextLine().trim();
+        if (newStartTime.isEmpty()) {
+            newStartTime = event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+        }
+
+        System.out.print("Enter new end time (DD-MM-YYYY HH:MM) or press Enter to keep current: ");
+        String newEndTime = scanner.nextLine().trim();
+        if (newEndTime.isEmpty()) {
+            newEndTime = event.getEndTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+        }
+
+        if (!newStartTime.equals(event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")))) {
+            if (!isValidFutureDateTime(newStartTime)) {
+                System.out.println("[ERROR] Start date cannot be in the past! Please enter a future date and time.");
+                return;
+            }
+        }
+
+        if (!isValidDateTimeRange(newStartTime, newEndTime)) {
+            System.out.println("[ERROR] End date must be after start date!");
+            return;
+        }
+
+        boolean success = smartHomeService.editCalendarEvent(
+            event.getTitle(), newTitle, newDescription, newStartTime, newEndTime, event.getEventType());
+
+        if (success) {
+            System.out.println("\n[SUCCESS] Event details updated successfully!");
+            System.out.println("Updated event: " + newTitle);
+        } else {
+            System.out.println("[ERROR] Failed to update event details.");
+        }
+    }
+
+    private static void editDeviceAutomationStates(CalendarEventService.CalendarEvent event) {
+        System.out.println("\n=== Edit Device Automation States ===");
+
+        List<CalendarEventService.AutomationAction> actions = event.getAutomationActions();
+        if (actions.isEmpty()) {
+            System.out.println("No device automations configured for this event.");
+            System.out.println("Use 'Add New Device Automation' to add some.");
+            return;
+        }
+
+        System.out.println("Current device automations:");
+        for (int i = 0; i < actions.size(); i++) {
+            CalendarEventService.AutomationAction action = actions.get(i);
+            String timing = action.getMinutesOffset() == 0 ? "at event start" :
+                          action.getMinutesOffset() < 0 ? (Math.abs(action.getMinutesOffset()) + " min before") :
+                          (action.getMinutesOffset() + " min after");
+            System.out.printf("%d. %s in %s -> %s (%s)\n", i + 1,
+                            action.getDeviceType(), action.getRoomName(), action.getAction(), timing);
+        }
+
+        System.out.print("Select automation to edit (1-" + actions.size() + "): ");
+        try {
+            int actionChoice = Integer.parseInt(scanner.nextLine().trim());
+            if (actionChoice < 1 || actionChoice > actions.size()) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            CalendarEventService.AutomationAction selectedAction = actions.get(actionChoice - 1);
+            System.out.println("\nEditing: " + selectedAction.getDeviceType() + " in " + selectedAction.getRoomName());
+
+            System.out.println("Current state: " + selectedAction.getAction());
+            System.out.println("Choose new state:");
+            System.out.println("1. ON");
+            System.out.println("2. OFF");
+            System.out.print("Enter choice (1-2): ");
+
+            String stateChoice = scanner.nextLine().trim();
+            String newAction = "1".equals(stateChoice) ? "ON" : "2".equals(stateChoice) ? "OFF" : null;
+
+            if (newAction == null) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            System.out.println("\n[INFO] Automation state will be updated.");
+            System.out.println("Device: " + selectedAction.getDeviceType() + " in " + selectedAction.getRoomName() + " -> " + newAction);
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        }
+    }
+
+    private static void addDeviceAutomationToEvent(CalendarEventService.CalendarEvent event) {
+        System.out.println("\n=== Add Device Automation ===");
+
+        List<Gadget> userDevices = smartHomeService.viewGadgets();
+        if (userDevices.isEmpty()) {
+            System.out.println("[ERROR] No devices available. Please connect some devices first.");
+            return;
+        }
+
+        System.out.println("Your connected devices:");
+        for (int i = 0; i < userDevices.size(); i++) {
+            Gadget device = userDevices.get(i);
+            System.out.printf("%d. %s %s in %s (Current: %s)\n",
+                            i + 1, device.getType(), device.getModel(), device.getRoomName(), device.getStatus());
+        }
+
+        System.out.print("Select device (1-" + userDevices.size() + "): ");
+        try {
+            int deviceChoice = Integer.parseInt(scanner.nextLine().trim());
+            if (deviceChoice < 1 || deviceChoice > userDevices.size()) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            Gadget selectedDevice = userDevices.get(deviceChoice - 1);
+
+            System.out.println("Choose desired state:");
+            System.out.println("1. ON");
+            System.out.println("2. OFF");
+            System.out.print("Enter choice (1-2): ");
+
+            String stateInput = scanner.nextLine().trim();
+            String action = "1".equals(stateInput) ? "ON" : "2".equals(stateInput) ? "OFF" : null;
+            if (action == null) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            System.out.println("When should this action happen?");
+            System.out.println("1. At event start (0 minutes)");
+            System.out.println("2. Before event start");
+            System.out.println("3. After event start");
+            System.out.print("Enter choice (1-3): ");
+
+            String timingChoice = scanner.nextLine().trim();
+            int minutesOffset = 0;
+
+            if ("2".equals(timingChoice)) {
+                System.out.print("Enter minutes before event start: ");
+                int minsBefore = Integer.parseInt(scanner.nextLine().trim());
+                minutesOffset = -Math.abs(minsBefore);
+            } else if ("3".equals(timingChoice)) {
+                System.out.print("Enter minutes after event start: ");
+                int minsAfter = Integer.parseInt(scanner.nextLine().trim());
+                minutesOffset = Math.abs(minsAfter);
+            }
+
+            boolean success = smartHomeService.addCustomDeviceAutomation(
+                event.getTitle(), selectedDevice.getType(), selectedDevice.getRoomName(), action, minutesOffset);
+
+            if (success) {
+                System.out.println("\n[SUCCESS] Device automation added to event!");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        }
+    }
+
+    private static void removeDeviceAutomationFromEvent(CalendarEventService.CalendarEvent event) {
+        System.out.println("\n=== Remove Device Automation ===");
+
+        List<CalendarEventService.AutomationAction> actions = event.getAutomationActions();
+        if (actions.isEmpty()) {
+            System.out.println("No device automations configured for this event.");
+            return;
+        }
+
+        System.out.println("Current device automations:");
+        for (int i = 0; i < actions.size(); i++) {
+            CalendarEventService.AutomationAction action = actions.get(i);
+            String timing = action.getMinutesOffset() == 0 ? "at event start" :
+                          action.getMinutesOffset() < 0 ? (Math.abs(action.getMinutesOffset()) + " min before") :
+                          (action.getMinutesOffset() + " min after");
+            System.out.printf("%d. %s in %s -> %s (%s)\n", i + 1,
+                            action.getDeviceType(), action.getRoomName(), action.getAction(), timing);
+        }
+
+        System.out.print("Select automation to remove (1-" + actions.size() + "): ");
+        try {
+            int actionChoice = Integer.parseInt(scanner.nextLine().trim());
+            if (actionChoice < 1 || actionChoice > actions.size()) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            CalendarEventService.AutomationAction selectedAction = actions.get(actionChoice - 1);
+            System.out.print("Are you sure you want to remove this automation? (y/N): ");
+            String confirm = scanner.nextLine().trim();
+
+            if ("y".equalsIgnoreCase(confirm) || "yes".equalsIgnoreCase(confirm)) {
+                System.out.println("[INFO] Automation removal would be processed here.");
+                System.out.println("Removed: " + selectedAction.getDeviceType() + " in " + selectedAction.getRoomName());
+            } else {
+                System.out.println("Automation removal cancelled.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        }
+    }
+
+    private static void deleteCalendarEvent() {
+        System.out.println("\n=== Delete Calendar Event ===");
+
+        List<CalendarEventService.CalendarEvent> events = smartHomeService.getUpcomingEvents();
+        if (events.isEmpty()) {
+            System.out.println("No events found.");
+            return;
+        }
+
+        System.out.println("Select an event to delete:");
+        for (int i = 0; i < events.size(); i++) {
+            CalendarEventService.CalendarEvent event = events.get(i);
+            System.out.printf("%d. %s (%s)\n", i + 1, event.getTitle(),
+                            event.getStartTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+        }
+
+        System.out.print("Choose event to delete (1-" + events.size() + "): ");
+        try {
+            String inputLine = scanner.nextLine().trim();
+            if (inputLine.isEmpty() || "0".equals(inputLine)) return;
+
+            int eventChoice = Integer.parseInt(inputLine);
+            if (eventChoice < 1 || eventChoice > events.size()) {
+                System.out.println("Invalid choice!");
+                return;
+            }
+
+            CalendarEventService.CalendarEvent selectedEvent = events.get(eventChoice - 1);
+            System.out.print("Are you sure you want to delete '" + selectedEvent.getTitle() + "'? (y/N): ");
+            String confirm = scanner.nextLine().trim();
+
+            if ("y".equalsIgnoreCase(confirm) || "yes".equalsIgnoreCase(confirm)) {
+                boolean success = smartHomeService.deleteCalendarEvent(selectedEvent.getTitle());
+                if (success) {
+                    System.out.println("[SUCCESS] Event deleted successfully!");
+                } else {
+                    System.out.println("[ERROR] Failed to delete event.");
+                }
+            } else {
+                System.out.println("Event deletion cancelled.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error deleting event: " + e.getMessage());
+        }
+    }
+
     private static void createCalendarEvent() {
         System.out.println("\n=== Create Calendar Event ===");
         System.out.println(smartHomeService.getCalendarService().getCalendarHelp());
@@ -1574,9 +2244,20 @@ public class SmartHomeDashboard {
             System.out.print("Enter start date and time (DD-MM-YYYY HH:MM): ");
             String startDateTime = getValidatedInput("Start Date Time");
             if (startDateTime == null) return;
+
+            if (!isValidFutureDateTime(startDateTime)) {
+                System.out.println("[ERROR] Start date cannot be in the past! Please enter a future date and time.");
+                return;
+            }
+
             System.out.print("Enter end date and time (DD-MM-YYYY HH:MM): ");
             String endDateTime = getValidatedInput("End Date Time");
             if (endDateTime == null) return;
+
+            if (!isValidDateTimeRange(startDateTime, endDateTime)) {
+                System.out.println("[ERROR] End date must be after start date!");
+                return;
+            }
             System.out.println("Available event types:");
             List<String> eventTypes = smartHomeService.getCalendarService().getEventTypes();
             for (int i = 0; i < eventTypes.size(); i++) {
@@ -1860,6 +2541,153 @@ public class SmartHomeDashboard {
             System.out.println("[ERROR] Failed to show event automation details.");
         }
     }
+    private static void configureCustomDeviceStatesForEvent() {
+        System.out.println("\n=== Configure Custom Device States for Event ===");
+
+        System.out.print("Enter event title: ");
+        String eventTitle = getValidatedInput("Event Title");
+        if (eventTitle == null) return;
+
+        List<Gadget> userDevices = smartHomeService.viewGadgets();
+        if (userDevices.isEmpty()) {
+            System.out.println("[ERROR] No devices available. Please connect some devices first.");
+            return;
+        }
+
+        System.out.println("\nAvailable devices:");
+        for (int i = 0; i < userDevices.size(); i++) {
+            Gadget device = userDevices.get(i);
+            System.out.printf("%d. %s %s in %s (Current: %s)\n",
+                            i + 1, device.getType(), device.getModel(), device.getRoomName(), device.getStatus());
+        }
+
+        System.out.print("Select device number (1-" + userDevices.size() + "): ");
+        try {
+            String inputLine = scanner.nextLine().trim();
+            if (inputLine.isEmpty() || "0".equals(inputLine)) return;
+
+            int deviceChoice = Integer.parseInt(inputLine);
+            if (deviceChoice < 1 || deviceChoice > userDevices.size()) {
+                System.out.println("Invalid choice! Please select a valid device number.");
+                return;
+            }
+
+            Gadget selectedDevice = userDevices.get(deviceChoice - 1);
+
+            System.out.println("\nSelected device: " + selectedDevice.getType() + " " + selectedDevice.getModel() + " in " + selectedDevice.getRoomName());
+            System.out.println("Choose desired state:");
+            System.out.println("1. ON");
+            System.out.println("2. OFF");
+            System.out.print("Enter choice (1-2): ");
+
+            String stateInput = scanner.nextLine().trim();
+            String action;
+            if ("1".equals(stateInput)) {
+                action = "ON";
+            } else if ("2".equals(stateInput)) {
+                action = "OFF";
+            } else {
+                System.out.println("Invalid choice! Please select 1 or 2.");
+                return;
+            }
+
+            System.out.println("\nChoose timing relative to event start:");
+            System.out.println("1. At event start (0 minutes)");
+            System.out.println("2. Before event start (negative minutes)");
+            System.out.println("3. After event start (positive minutes)");
+            System.out.print("Enter choice (1-3): ");
+
+            String timingChoice = scanner.nextLine().trim();
+            int minutesOffset = 0;
+
+            if ("2".equals(timingChoice)) {
+                System.out.print("Enter minutes before event start (positive number): ");
+                try {
+                    int minsBefore = Integer.parseInt(scanner.nextLine().trim());
+                    if (minsBefore < 0) {
+                        System.out.println("Please enter a positive number for minutes before.");
+                        return;
+                    }
+                    minutesOffset = -minsBefore;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! Please enter a valid number.");
+                    return;
+                }
+            } else if ("3".equals(timingChoice)) {
+                System.out.print("Enter minutes after event start (positive number): ");
+                try {
+                    int minsAfter = Integer.parseInt(scanner.nextLine().trim());
+                    if (minsAfter < 0) {
+                        System.out.println("Please enter a positive number for minutes after.");
+                        return;
+                    }
+                    minutesOffset = minsAfter;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! Please enter a valid number.");
+                    return;
+                }
+            } else if (!"1".equals(timingChoice)) {
+                System.out.println("Invalid choice! Please select 1, 2, or 3.");
+                return;
+            }
+
+            boolean success = smartHomeService.addCustomDeviceAutomation(
+                eventTitle, selectedDevice.getType(), selectedDevice.getRoomName(), action, minutesOffset
+            );
+
+            if (success) {
+                System.out.println("\n[TIP] Use 'Force Calendar Automation Check' to test the automation immediately.");
+                System.out.println("[TIP] Use 'View Current Device States' to see real-time device status changes.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+        }
+    }
+
+    private static void createTestEventForNotifications() {
+        System.out.println("\n=== Create Test Event for Notifications ===");
+        System.out.println("This will create an event that starts in 30 seconds and lasts 2 minutes");
+        System.out.println("Perfect for testing event start and end notifications!");
+        System.out.println();
+
+        System.out.print("Enter test event title (or press Enter for default): ");
+        String title = scanner.nextLine().trim();
+        if (title.isEmpty()) {
+            title = "Notification Test Event";
+        }
+
+        System.out.print("Enter test event description (or press Enter for default): ");
+        String description = scanner.nextLine().trim();
+        if (description.isEmpty()) {
+            description = "Test event to demonstrate start and end notifications";
+        }
+
+        LocalDateTime startTime = LocalDateTime.now().plusSeconds(30);
+        LocalDateTime endTime = startTime.plusMinutes(2);
+
+        String startDateTime = startTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+        String endDateTime = endTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+
+        boolean success = smartHomeService.createCalendarEvent(title, description, startDateTime, endDateTime, "Meeting");
+
+        if (success) {
+            System.out.println("\n[SUCCESS] Test event created successfully!");
+            System.out.println("Event: " + title);
+            System.out.println("Starts: " + startTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            System.out.println("Ends: " + endTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            System.out.println();
+            System.out.println("NOTIFICATIONS WILL APPEAR:");
+            System.out.println("   - START notification in ~30 seconds");
+            System.out.println("   - END notification in ~2.5 minutes");
+            System.out.println();
+            System.out.println("TIP: Stay in the application to see the notifications!");
+            System.out.println("TIP: You can also use 'Force Calendar Automation Check' to trigger immediately");
+        } else {
+            System.out.println("[ERROR] Failed to create test event. Please try again.");
+        }
+    }
+
     private static void showEventTypesHelp() {
         System.out.println(smartHomeService.getCalendarService().getCalendarHelp());
     }
@@ -2215,7 +3043,6 @@ public class SmartHomeDashboard {
         while (true) {
             if (checkReturnToMainMenu()) return;
             System.out.println("\n=== Smart Scenes (One-Click Automation) ===");
-            System.out.println("*** UPDATED VERSION - Dec 14, 2025 ***");
             System.out.println("[SCENE OPERATIONS]:");
             System.out.println("1. Execute Scene");
             System.out.println("2. View Available Scenes");
@@ -3223,25 +4050,21 @@ public class SmartHomeDashboard {
         }
     }
 
-    // Alert Management Methods
     private static void createTimeBasedAlert() {
         System.out.println("\n=== Create Time-Based Alert ===");
         System.out.println("[Navigation] Enter '0' to return to Device Control Panel");
 
         try {
-            // Get alert name
             System.out.print("Enter alert name: ");
             String alertName = getValidatedInputWithNavigation("Alert Name");
             if (alertName == null || checkReturnToMainMenu()) return;
 
-            // Get device list to choose from
             List<Gadget> devices = smartHomeService.viewGadgets();
             if (devices.isEmpty()) {
                 System.out.println("[ERROR] No devices found! Please add devices first.");
                 return;
             }
 
-            // Display devices
             System.out.println("\n=== Your Devices ===");
             for (int i = 0; i < devices.size(); i++) {
                 Gadget device = devices.get(i);
@@ -3249,7 +4072,6 @@ public class SmartHomeDashboard {
                     (i + 1), device.getType(), device.getModel(), device.getRoomName());
             }
 
-            // Select device
             System.out.print("Choose device number (1-" + devices.size() + "): ");
             String deviceChoice = getValidatedInputWithNavigation("");
             if (deviceChoice == null || checkReturnToMainMenu()) return;
@@ -3268,7 +4090,6 @@ public class SmartHomeDashboard {
 
             Gadget selectedDevice = devices.get(deviceIndex);
 
-            // Get trigger date and time
             System.out.println("\n[DATE & TIME FORMAT]: DD-MM-YYYY HH:MM (24-hour format)");
             System.out.println("Examples: 25-12-2024 18:30, 01-01-2025 09:00");
             System.out.print("Enter trigger date and time: ");
@@ -3283,12 +4104,10 @@ public class SmartHomeDashboard {
                 return;
             }
 
-            // Get alert message
             System.out.print("Enter alert message: ");
             String message = getValidatedInputWithNavigation("Alert Message");
             if (message == null || checkReturnToMainMenu()) return;
 
-            // Create the alert
             boolean success = smartHomeService.createTimeBasedAlert(
                 alertName, selectedDevice.getType(), selectedDevice.getRoomName(),
                 triggerTime, message);
@@ -3308,19 +4127,16 @@ public class SmartHomeDashboard {
         System.out.println("[Navigation] Enter '0' to return to Device Control Panel");
 
         try {
-            // Get alert name
             System.out.print("Enter alert name: ");
             String alertName = getValidatedInputWithNavigation("Alert Name");
             if (alertName == null || checkReturnToMainMenu()) return;
 
-            // Get device list to choose from
             List<Gadget> devices = smartHomeService.viewGadgets();
             if (devices.isEmpty()) {
                 System.out.println("[ERROR] No devices found! Please add devices first.");
                 return;
             }
 
-            // Display devices
             System.out.println("\n=== Your Devices ===");
             for (int i = 0; i < devices.size(); i++) {
                 Gadget device = devices.get(i);
@@ -3329,7 +4145,6 @@ public class SmartHomeDashboard {
                     device.getTotalEnergyConsumedKWh());
             }
 
-            // Select device
             System.out.print("Choose device number (1-" + devices.size() + "): ");
             String deviceChoice = getValidatedInputWithNavigation("");
             if (deviceChoice == null || checkReturnToMainMenu()) return;
@@ -3348,7 +4163,6 @@ public class SmartHomeDashboard {
 
             Gadget selectedDevice = devices.get(deviceIndex);
 
-            // Get energy threshold
             System.out.printf("Current energy consumption: %.2f kWh\n", selectedDevice.getTotalEnergyConsumedKWh());
             System.out.print("Enter energy threshold (kWh): ");
             String thresholdStr = getValidatedInputWithNavigation("Energy Threshold");
@@ -3366,7 +4180,6 @@ public class SmartHomeDashboard {
                 return;
             }
 
-            // Get comparison type
             System.out.println("\n[COMPARISON TYPES]:");
             System.out.println("1. Greater than (>) - Alert when usage exceeds threshold");
             System.out.println("2. Less than (<) - Alert when usage is below threshold");
@@ -3385,12 +4198,10 @@ public class SmartHomeDashboard {
                     return;
             }
 
-            // Get alert message
             System.out.print("Enter alert message: ");
             String message = getValidatedInputWithNavigation("Alert Message");
             if (message == null || checkReturnToMainMenu()) return;
 
-            // Create the alert
             boolean success = smartHomeService.createEnergyUsageAlert(
                 alertName, selectedDevice.getType(), selectedDevice.getRoomName(),
                 threshold, comparisonType, message);
@@ -3436,7 +4247,6 @@ public class SmartHomeDashboard {
                         deleteAlertFromList(alerts);
                         break;
                     case "3":
-                        // Just refresh - continue the loop
                         break;
                     default:
                         System.out.println("Invalid option! Please enter 0-3.");

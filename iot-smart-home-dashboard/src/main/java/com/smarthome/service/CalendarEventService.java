@@ -52,6 +52,10 @@ public class CalendarEventService {
         public void addAutomationAction(AutomationAction action) {
             this.automationActions.add(action);
         }
+
+        public void clearAutomationActions() {
+            this.automationActions.clear();
+        }
     }
     public static class AutomationAction {
         private String deviceType;
@@ -140,6 +144,26 @@ public class CalendarEventService {
             .limit(10)
             .toList();
     }
+
+    public List<CalendarEvent> getActiveAndUpcomingEvents(String userEmail) {
+        List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+        LocalDateTime now = LocalDateTime.now();
+        return events.stream()
+            .filter(event -> event.getEndTime().isAfter(now))
+            .sorted((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()))
+            .toList();
+    }
+
+    public List<CalendarEvent> getRecentlyEndedEvents(String userEmail) {
+        List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneHourAgo = now.minusHours(1);
+        return events.stream()
+            .filter(event -> event.getEndTime().isBefore(now) && event.getEndTime().isAfter(oneHourAgo))
+            .sorted((e1, e2) -> e2.getEndTime().compareTo(e1.getEndTime()))
+            .toList();
+    }
+
 
     public void displayUpcomingEvents(String userEmail) {
         System.out.println("\n=== Upcoming Calendar Events ===");
@@ -305,6 +329,35 @@ public class CalendarEventService {
     private String generateEventId(String userEmail, LocalDateTime startTime) {
         return userEmail.split("@")[0] + "_" + startTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
     }
+    public boolean addCustomDeviceAutomation(String userEmail, String eventTitle, String deviceType, String roomName, String action, int minutesOffset) {
+        try {
+            List<CalendarEvent> events = userEvents.getOrDefault(userEmail, new ArrayList<>());
+            CalendarEvent event = events.stream()
+                .filter(e -> e.getTitle().equalsIgnoreCase(eventTitle))
+                .findFirst()
+                .orElse(null);
+
+            if (event == null) {
+                System.out.println("[ERROR] Event not found: " + eventTitle);
+                return false;
+            }
+
+            AutomationAction customAction = new AutomationAction(deviceType, roomName, action, minutesOffset);
+            event.addAutomationAction(customAction);
+
+            System.out.println("[SUCCESS] Custom automation added to event: " + eventTitle);
+            System.out.printf("Device: %s in %s -> %s (%s)\n",
+                            deviceType, roomName, action,
+                            minutesOffset == 0 ? "at event start" :
+                            minutesOffset < 0 ? (Math.abs(minutesOffset) + " min before") :
+                            (minutesOffset + " min after"));
+            return true;
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed to add custom automation: " + e.getMessage());
+            return false;
+        }
+    }
+
     public String getCalendarHelp() {
         StringBuilder help = new StringBuilder();
         help.append("\n=== Calendar Events Help ===\n");

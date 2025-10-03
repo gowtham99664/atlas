@@ -245,7 +245,6 @@ public class SmartScenesService {
         System.out.println("\n[TIP] Each scene intelligently controls multiple devices with one command!");
     }
     public List<String> getAvailableSceneNames() {
-        // Return scenes in the same order as displayed in displayAvailableScenes()
         return Arrays.asList(
             "MORNING", "EVENING", "NIGHT", "AWAY", "ENERGY_SAVING",
             "MOVIE", "WORKOUT", "COOKING"
@@ -393,10 +392,8 @@ public class SmartScenesService {
                    .anyMatch(scenes -> scenes.containsKey(sceneName.toUpperCase()));
     }
     public List<String> getAllAvailableSceneNames(String userEmail) {
-        // Start with predefined scenes in the correct order
         List<String> orderedScenes = new ArrayList<>(getAvailableSceneNames());
 
-        // Add any custom user scenes that aren't already in the list
         Map<String, List<SceneAction>> userScenes = userCustomScenes.get(userEmail);
         if (userScenes != null) {
             for (String customScene : userScenes.keySet()) {

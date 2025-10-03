@@ -26,7 +26,7 @@ public class DynamoDBConfig {
             if (input == null) {
                 System.out.println("Unable to find application.properties, using defaults");
                 properties.setProperty("dynamodb.local", "true");
-                properties.setProperty("dynamodb.local.endpoint", "http://localhost:8002");//localhost:8002");
+                properties.setProperty("dynamodb.local.endpoint", "http://localhost:8002");
                 properties.setProperty("dynamodb.region", "us-east-1");
             } else {
                 properties.load(input);

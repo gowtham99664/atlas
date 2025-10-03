@@ -12,10 +12,6 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Live Demo of Alerts Functionality with Dummy Data
- * This test shows exactly how the alerts feature works with real examples
- */
 public class AlertsLiveDemo {
 
     private SmartHomeService smartHomeService;
@@ -27,14 +23,13 @@ public class AlertsLiveDemo {
     void setUp() {
         smartHomeService = new SmartHomeService();
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("        🚨 ALERTS FEATURE LIVE DEMO 🚨");
+        System.out.println("        ALERTS FEATURE LIVE DEMO");
         System.out.println("=".repeat(60));
 
-        // Register and login demo user
         smartHomeService.registerCustomer(DEMO_NAME, DEMO_EMAIL, DEMO_PASSWORD, DEMO_PASSWORD);
         smartHomeService.loginCustomer(DEMO_EMAIL, DEMO_PASSWORD);
 
-        System.out.println("✅ Demo user logged in successfully!");
+        System.out.println(" Demo user logged in successfully!");
     }
 
     @AfterEach
@@ -45,20 +40,18 @@ public class AlertsLiveDemo {
     }
 
     @Test
-    @DisplayName("🎬 Live Demo: Complete Alerts Workflow")
+    @DisplayName("Live Demo: Complete Alerts Workflow")
     void demonstrateCompleteAlertsWorkflow() {
-        System.out.println("\n📋 STEP 1: Adding Demo Devices");
+        System.out.println("\nSTEP 1: Adding Demo Devices");
         System.out.println("=" + "=".repeat(45));
 
-        // Add some demo devices
         smartHomeService.connectToGadget("TV", "Samsung", "Living Room");
         smartHomeService.connectToGadget("AC", "LG", "Master Bedroom");
         smartHomeService.connectToGadget("MICROWAVE", "Whirlpool", "Kitchen");
         smartHomeService.connectToGadget("FAN", "Bajaj", "Study Room");
 
-        // Show devices
         List<Gadget> devices = smartHomeService.viewGadgets();
-        System.out.println("📱 Added " + devices.size() + " demo devices:");
+        System.out.println("Added " + devices.size() + " demo devices:");
         for (int i = 0; i < devices.size(); i++) {
             Gadget device = devices.get(i);
             System.out.printf("   %d. %s (%s) in %s - Energy: %.2f kWh\n",
@@ -66,10 +59,9 @@ public class AlertsLiveDemo {
                 device.getTotalEnergyConsumedKWh());
         }
 
-        System.out.println("\n📋 STEP 2: Creating Time-Based Alerts");
+        System.out.println("\nSTEP 2: Creating Time-Based Alerts");
         System.out.println("=" + "=".repeat(45));
 
-        // Create time-based alerts for near future (so we can see them trigger)
         LocalDateTime alert1Time = LocalDateTime.now().plusMinutes(1);
         LocalDateTime alert2Time = LocalDateTime.now().plusMinutes(2);
 
@@ -89,53 +81,50 @@ public class AlertsLiveDemo {
             "Check AC energy consumption - it might be getting high"
         );
 
-        System.out.println("⏰ Created time-based alerts:");
+        System.out.println(" Created time-based alerts:");
         System.out.println("   1. TV Reminder - triggers at " + alert1Time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         System.out.println("   2. AC Energy Check - triggers at " + alert2Time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
 
-        System.out.println("\n📋 STEP 3: Creating Energy Usage Alerts");
+        System.out.println("\nSTEP 3: Creating Energy Usage Alerts");
         System.out.println("=" + "=".repeat(45));
 
-        // Turn on microwave to generate some energy usage
         Gadget microwave = devices.stream()
             .filter(d -> d.getType().equals("MICROWAVE"))
             .findFirst().orElse(null);
 
         if (microwave != null) {
             smartHomeService.changeSpecificGadgetStatus("MICROWAVE", "Kitchen");
-            System.out.println("🔥 Turned ON microwave to generate energy usage");
+            System.out.println("Turned ON microwave to generate energy usage");
         }
 
-        // Create energy usage alert with low threshold so it triggers
         boolean energyAlertCreated = smartHomeService.createEnergyUsageAlert(
             "High Microwave Usage",
             "MICROWAVE",
             "Kitchen",
-            0.01, // Very low threshold so it will trigger
+            0.01,
             "GREATER_THAN",
             "Microwave energy usage is higher than expected!"
         );
 
-        System.out.println("⚡ Created energy usage alert:");
+        System.out.println(" Created energy usage alert:");
         System.out.println("   - Microwave energy alert (threshold: 0.01 kWh)");
 
-        System.out.println("\n📋 STEP 4: Viewing All Created Alerts");
+        System.out.println("\nSTEP 4: Viewing All Created Alerts");
         System.out.println("=" + "=".repeat(45));
 
-        // Display all alerts
         smartHomeService.displayUserAlerts();
 
-        System.out.println("\n📋 STEP 5: Testing Alert Monitoring");
+        System.out.println("\nSTEP 5: Testing Alert Monitoring");
         System.out.println("=" + "=".repeat(45));
 
-        System.out.println("🔍 Forcing alert check to see if any alerts should trigger...");
+        System.out.println("Forcing alert check to see if any alerts should trigger...");
         smartHomeService.forceAlertCheck();
 
-        System.out.println("\n📋 STEP 6: Alert Management Demo");
+        System.out.println("\nSTEP 6: Alert Management Demo");
         System.out.println("=" + "=".repeat(45));
 
         List<AlertService.Alert> allAlerts = smartHomeService.getUserAlerts();
-        System.out.println("🛠️ Managing alerts:");
+        System.out.println("Managing alerts:");
         System.out.println("   Total alerts created: " + allAlerts.size());
 
         if (!allAlerts.isEmpty()) {
@@ -144,48 +133,45 @@ public class AlertsLiveDemo {
             System.out.println("   Status: " + (firstAlert.isActive() ? "ACTIVE" : "INACTIVE"));
             System.out.println("   Trigger count: " + firstAlert.getTriggerCount());
 
-            // Toggle the alert
             boolean toggleResult = smartHomeService.toggleAlert(firstAlert.getAlertId());
             System.out.println("   Toggle result: " + (toggleResult ? "SUCCESS" : "FAILED"));
         }
 
-        System.out.println("\n📋 STEP 7: Simulating Time Passage");
+        System.out.println("\nSTEP 7: Simulating Time Passage");
         System.out.println("=" + "=".repeat(45));
 
-        System.out.println("⏳ Waiting a moment and checking alerts again...");
+        System.out.println("Waiting a moment and checking alerts again...");
         try {
             Thread.sleep(3000); // Wait 3 seconds
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
-        System.out.println("🔄 Checking alerts after time passage...");
+        System.out.println("Checking alerts after time passage...");
         smartHomeService.forceAlertCheck();
 
-        System.out.println("\n📋 STEP 8: Final Alert Status");
+        System.out.println("\nSTEP 8: Final Alert Status");
         System.out.println("=" + "=".repeat(45));
 
-        // Show final alert status
         smartHomeService.displayUserAlerts();
 
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("        ✅ ALERTS DEMO COMPLETED SUCCESSFULLY!");
+        System.out.println("         ALERTS DEMO COMPLETED SUCCESSFULLY!");
         System.out.println("=".repeat(60));
         System.out.println();
-        System.out.println("📊 DEMO SUMMARY:");
-        System.out.println("• ✅ Created multiple devices");
-        System.out.println("• ✅ Created time-based alerts");
-        System.out.println("• ✅ Created energy usage alerts");
-        System.out.println("• ✅ Displayed alert management interface");
-        System.out.println("• ✅ Tested alert monitoring/triggering");
-        System.out.println("• ✅ Demonstrated alert toggle functionality");
+        System.out.println("DEMO SUMMARY:");
+        System.out.println("-  Created multiple devices");
+        System.out.println("-  Created time-based alerts");
+        System.out.println("-  Created energy usage alerts");
+        System.out.println("-  Displayed alert management interface");
+        System.out.println("-  Tested alert monitoring/triggering");
+        System.out.println("-  Demonstrated alert toggle functionality");
         System.out.println();
-        System.out.println("🎯 HOW TO ACCESS IN REAL APP:");
+        System.out.println("HOW TO ACCESS IN REAL APP:");
         System.out.println("   Main Menu → 6. Device Control Panel → Options 11-15");
         System.out.println();
-        System.out.println("🚨 ALERTS ARE NOW WORKING AND READY TO USE!");
+        System.out.println("ALERTS ARE NOW WORKING AND READY TO USE!");
 
-        // Verify basic functionality worked
         assertTrue(alert1Created, "Time-based alert creation should work");
         assertTrue(alert2Created, "Second time-based alert creation should work");
         assertTrue(energyAlertCreated, "Energy usage alert creation should work");
@@ -193,36 +179,36 @@ public class AlertsLiveDemo {
     }
 
     @Test
-    @DisplayName("🔬 Demo: Alert Help System")
+    @DisplayName("Demo: Alert Help System")
     void demonstrateAlertHelpSystem() {
-        System.out.println("\n📚 ALERT HELP SYSTEM DEMO");
+        System.out.println("\nALERT HELP SYSTEM DEMO");
         System.out.println("=" + "=".repeat(45));
 
         String helpText = smartHomeService.getAlertHelp();
-        System.out.println("📖 Alert Help Content:");
+        System.out.println("Alert Help Content:");
         System.out.println(helpText);
 
-        System.out.println("\n💡 PRACTICAL EXAMPLES:");
-        System.out.println("1. ⏰ Time Alert: 'Turn off AC at 11 PM'");
+        System.out.println("\nPRACTICAL EXAMPLES:");
+        System.out.println("1.  Time Alert: 'Turn off AC at 11 PM'");
         System.out.println("   → Device: AC in Master Bedroom");
         System.out.println("   → Time: 23:00 daily");
         System.out.println("   → Action: Just notifies, you decide what to do");
 
-        System.out.println("\n2. ⚡ Energy Alert: 'High TV usage warning'");
+        System.out.println("\n2.  Energy Alert: 'High TV usage warning'");
         System.out.println("   → Device: TV in Living Room");
         System.out.println("   → Threshold: > 5.0 kWh");
         System.out.println("   → Action: Alert when TV uses too much energy");
 
-        System.out.println("\n✅ Help system is fully functional!");
+        System.out.println("\n Help system is fully functional!");
     }
 
     @Test
-    @DisplayName("🎮 Demo: Device Control Panel Integration")
+    @DisplayName("Demo: Device Control Panel Integration")
     void demonstrateDeviceControlPanelIntegration() {
-        System.out.println("\n🎛️ DEVICE CONTROL PANEL INTEGRATION DEMO");
+        System.out.println("\nDEVICE CONTROL PANEL INTEGRATION DEMO");
         System.out.println("=" + "=".repeat(50));
 
-        System.out.println("📍 WHERE TO FIND ALERTS IN THE REAL APP:");
+        System.out.println("WHERE TO FIND ALERTS IN THE REAL APP:");
         System.out.println();
         System.out.println("   [MAIN MENU]");
         System.out.println("   ├── 1. Register New Account");
@@ -243,9 +229,9 @@ public class AlertsLiveDemo {
         System.out.println("   ├── 15. Alert Help & Information    ← NEW!");
         System.out.println("   └── 0. Return to Main Menu");
 
-        System.out.println("\n🎯 NAVIGATION PATH:");
+        System.out.println("\nNAVIGATION PATH:");
         System.out.println("   Main Menu → Option 6 → Options 11-15");
 
-        System.out.println("\n✅ Perfect integration with existing menu structure!");
+        System.out.println("\n Perfect integration with existing menu structure!");
     }
 }

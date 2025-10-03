@@ -99,24 +99,40 @@ public class GadgetService {
         "Morphy Richards", "Haier", "Bosch", "Onida", "BPL", "Videocon"
     );
     public boolean isValidRoom(String roomName) {
-        return roomName != null && VALID_ROOMS.stream()
-                .anyMatch(room -> room.equalsIgnoreCase(roomName));
+        if (roomName == null || roomName.trim().isEmpty()) {
+            return false;
+        }
+        String normalizedRoomName = roomName.trim();
+        return VALID_ROOMS.stream()
+                .anyMatch(room -> room.equalsIgnoreCase(normalizedRoomName));
     }
     public boolean isValidTVModel(String model) {
-        return model != null && VALID_TV_MODELS.stream()
-                .anyMatch(validModel -> validModel.equalsIgnoreCase(model));
+        if (model == null || model.trim().isEmpty()) {
+            return false;
+        }
+        String normalizedModel = model.trim();
+        return VALID_TV_MODELS.stream()
+                .anyMatch(validModel -> validModel.equalsIgnoreCase(normalizedModel));
     }
     public boolean isValidACModel(String model) {
-        return model != null && VALID_AC_MODELS.stream()
-                .anyMatch(validModel -> validModel.equalsIgnoreCase(model));
+        if (model == null || model.trim().isEmpty()) {
+            return false;
+        }
+        String normalizedModel = model.trim();
+        return VALID_AC_MODELS.stream()
+                .anyMatch(validModel -> validModel.equalsIgnoreCase(normalizedModel));
     }
     public boolean isValidFanModel(String model) {
         return model != null && VALID_FAN_MODELS.stream()
                 .anyMatch(validModel -> validModel.equalsIgnoreCase(model));
     }
     public boolean isValidLightModel(String model) {
-        return model != null && VALID_LIGHT_MODELS.stream()
-                .anyMatch(validModel -> validModel.equalsIgnoreCase(model));
+        if (model == null || model.trim().isEmpty()) {
+            return false;
+        }
+        String normalizedModel = model.trim();
+        return VALID_LIGHT_MODELS.stream()
+                .anyMatch(validModel -> validModel.equalsIgnoreCase(normalizedModel));
     }
     public boolean isValidSwitchModel(String model) {
         return model != null && VALID_SWITCH_MODELS.stream()
@@ -171,58 +187,60 @@ public class GadgetService {
                 .anyMatch(validModel -> validModel.equalsIgnoreCase(model));
     }
     public boolean isValidModel(String type, String model) {
-        if (type == null || model == null) {
+        if (type == null || type.trim().isEmpty() || model == null || model.trim().isEmpty()) {
             return false;
         }
-        switch (type.toUpperCase()) {
+        String normalizedType = type.trim().toUpperCase();
+        String normalizedModel = model.trim();
+        switch (normalizedType) {
             case "TV":
-                return isValidTVModel(model);
+                return isValidTVModel(normalizedModel);
             case "AC":
             case "AIR_CONDITIONER":
-                return isValidACModel(model);
+                return isValidACModel(normalizedModel);
             case "FAN":
-                return isValidFanModel(model);
+                return isValidFanModel(normalizedModel);
             case "LIGHT":
             case "SMART_LIGHT":
-                return isValidLightModel(model);
+                return isValidLightModel(normalizedModel);
             case "SWITCH":
             case "SMART_SWITCH":
-                return isValidSwitchModel(model);
+                return isValidSwitchModel(normalizedModel);
             case "CAMERA":
             case "SECURITY_CAMERA":
-                return isValidCameraModel(model);
+                return isValidCameraModel(normalizedModel);
             case "DOOR_LOCK":
             case "SMART_LOCK":
-                return isValidLockModel(model);
+                return isValidLockModel(normalizedModel);
             case "GEYSER":
             case "WATER_HEATER":
-                return isValidGeyserModel(model);
+                return isValidGeyserModel(normalizedModel);
             case "DOORBELL":
             case "SMART_DOORBELL":
-                return isValidDoorbellModel(model);
+                return isValidDoorbellModel(normalizedModel);
             case "VACUUM":
             case "ROBOTIC_VACUUM":
             case "ROBO_VAC_MOP":
-                return isValidVacuumModel(model);
+                return isValidVacuumModel(normalizedModel);
             case "AIR_PURIFIER":
             case "PURIFIER":
-                return isValidPurifierModel(model);
+                return isValidPurifierModel(normalizedModel);
             case "SPEAKER":
             case "SMART_SPEAKER":
-                return isValidSpeakerModel(model);
+                return isValidSpeakerModel(normalizedModel);
             case "WATER_PURIFIER":
-                return isValidWaterPurifierModel(model);
+                return isValidWaterPurifierModel(normalizedModel);
             case "THERMOSTAT":
             case "SMART_THERMOSTAT":
-                return isValidThermostatModel(model);
+                return isValidThermostatModel(normalizedModel);
             case "WASHING_MACHINE":
-                return isValidWashingMachineModel(model);
+                return isValidWashingMachineModel(normalizedModel);
             case "REFRIGERATOR":
             case "FRIDGE":
-                return isValidRefrigeratorModel(model);
+                return isValidRefrigeratorModel(normalizedModel);
             case "MICROWAVE":
             case "MICROWAVE_OVEN":
-                return isValidMicrowaveModel(model);
+                return isValidMicrowaveModel(normalizedModel);
             default:
                 return false;
         }

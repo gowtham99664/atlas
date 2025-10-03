@@ -7,7 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +21,11 @@ public class TimerService {
     private final CalendarEventService calendarEventService;
     private final AlertService alertService;
     private static TimerService instance;
+    private static volatile boolean suppressNotifications = false;
+    private static final List<String> bufferedNotifications = new ArrayList<>();
+    private final Map<String, Set<String>> executedAutomations = new HashMap<>();
+    private final Map<String, Map<String, String>> originalDeviceStates = new HashMap<>();
+    private final Map<String, Set<String>> restoredEvents = new HashMap<>();
     private TimerService(CustomerService customerService) {
         this.scheduler = Executors.newScheduledThreadPool(5);
         this.customerService = customerService;
@@ -184,7 +193,7 @@ public class TimerService {
             }
             boolean updated = customerService.updateCustomer(customer);
             if (updated) {
-                System.out.println("[SUCCESS] Timer cancelled for " + device.getType() + " " + device.getModel() + 
+                System.out.println("[SUCCESS] Timer cancelled for " + device.getType() + " " + device.getModel() +
                                  " in " + device.getRoomName() + " (" + action.toUpperCase() + " timer)");
                 return true;
             } else {
@@ -193,6 +202,55 @@ public class TimerService {
             }
         } catch (Exception e) {
             System.out.println("[ERROR] Error cancelling timer: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean editTimer(Customer customer, String deviceType, String roomName,
+                           String action, LocalDateTime newScheduledTime) {
+        try {
+            Gadget device = customer.findGadget(deviceType, roomName);
+            if (device == null) {
+                System.out.println("[ERROR] Device not found: " + deviceType + " in " + roomName);
+                return false;
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            if (newScheduledTime.isBefore(now)) {
+                System.out.printf("[ERROR] Cannot schedule timer for past time!\n");
+                System.out.printf("Current time: %s\n", now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+                System.out.printf("Requested time: %s\n", newScheduledTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+                return false;
+            }
+
+            if (newScheduledTime.isBefore(now.plusMinutes(1))) {
+                System.out.printf("[ERROR] Timer must be scheduled at least 1 minute in the future!\n");
+                System.out.printf("Minimum allowed time: %s\n", now.plusMinutes(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+                return false;
+            }
+
+            if (action.equalsIgnoreCase("ON")) {
+                device.setScheduledOnTime(newScheduledTime);
+            } else if (action.equalsIgnoreCase("OFF")) {
+                device.setScheduledOffTime(newScheduledTime);
+            } else {
+                System.out.println("[ERROR] Invalid action! Use 'ON' or 'OFF'");
+                return false;
+            }
+
+            device.setTimerEnabled(true);
+            boolean updated = customerService.updateCustomer(customer);
+            if (updated) {
+                System.out.println("[SUCCESS] Timer updated for " + device.getType() + " " + device.getModel() +
+                                 " in " + device.getRoomName() + " to turn " + action.toUpperCase() +
+                                 " at " + newScheduledTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+                return true;
+            } else {
+                System.out.println("[ERROR] Failed to save timer update!");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] Error editing timer: " + e.getMessage());
             return false;
         }
     }
@@ -282,10 +340,10 @@ public class TimerService {
                 }
             }
 
-            // Check and execute calendar event automation
             checkAndExecuteCalendarEventAutomation(now);
 
-            // Check and execute alert monitoring
+            checkCalendarDeviceAutomation(now);
+
             checkAndExecuteAlerts(now);
 
         } catch (Exception e) {
@@ -343,31 +401,57 @@ public class TimerService {
         }
     }
 
+    public static void suppressNotifications(boolean suppress) {
+        suppressNotifications = suppress;
+    }
+
+    public static void displayBufferedNotifications() {
+        synchronized (bufferedNotifications) {
+            if (!bufferedNotifications.isEmpty()) {
+                System.out.println("\n" + "=".repeat(60));
+                System.out.println("PENDING NOTIFICATIONS:");
+                System.out.println("=".repeat(60));
+                for (String notification : bufferedNotifications) {
+                    System.out.println(notification);
+                }
+                System.out.println("=".repeat(60));
+                bufferedNotifications.clear();
+            }
+        }
+    }
+
+    public static boolean hasBufferedNotifications() {
+        synchronized (bufferedNotifications) {
+            return !bufferedNotifications.isEmpty();
+        }
+    }
+
     private void checkAndExecuteCalendarEventAutomation(LocalDateTime now) {
         try {
-            // Get current user
             SessionManager sessionManager = SessionManager.getInstance();
             Customer currentUser = sessionManager.getCurrentUser();
             if (currentUser == null) {
-                return; // No user logged in
+                return;
             }
 
-            // Get all upcoming events
-            List<CalendarEventService.CalendarEvent> upcomingEvents =
-                calendarEventService.getUpcomingEvents(currentUser.getEmail());
+            List<CalendarEventService.CalendarEvent> eventsForAutomation =
+                calendarEventService.getEventsForAutomation(currentUser.getEmail(), now);
 
-            for (CalendarEventService.CalendarEvent event : upcomingEvents) {
+            for (CalendarEventService.CalendarEvent event : eventsForAutomation) {
                 List<CalendarEventService.AutomationAction> actions = event.getAutomationActions();
 
                 for (CalendarEventService.AutomationAction action : actions) {
-                    // Calculate when this automation should execute
                     LocalDateTime executionTime = event.getStartTime().plusMinutes(action.getMinutesOffset());
 
-                    // Check if it's time to execute this automation (within 1 minute window)
-                    long minutesDiff = ChronoUnit.MINUTES.between(executionTime, now);
-                    if (Math.abs(minutesDiff) <= 1) {
-                        // Execute the automation action
+                    String automationKey = currentUser.getEmail() + ":" + event.getEventId() + ":" + action.getDeviceType() + ":" + action.getRoomName() + ":" + action.getMinutesOffset();
+
+                    executedAutomations.computeIfAbsent(currentUser.getEmail(), k -> new HashSet<>());
+                    Set<String> userExecutedAutomations = executedAutomations.get(currentUser.getEmail());
+
+                    long secondsDiff = ChronoUnit.SECONDS.between(executionTime, now);
+                    if (secondsDiff >= 0 && secondsDiff <= 30 && !userExecutedAutomations.contains(automationKey)) {
                         executeCalendarEventAutomation(currentUser, action, event.getTitle());
+                        userExecutedAutomations.add(automationKey);
                     }
                 }
             }
@@ -378,7 +462,6 @@ public class TimerService {
 
     private void executeCalendarEventAutomation(Customer customer, CalendarEventService.AutomationAction action, String eventTitle) {
         try {
-            // Find the device to control
             Gadget targetDevice = null;
             for (Gadget device : customer.getGadgets()) {
                 if (device.getType().equalsIgnoreCase(action.getDeviceType()) &&
@@ -391,53 +474,298 @@ public class TimerService {
             if (targetDevice != null) {
                 String previousStatus = targetDevice.getStatus();
 
-                // Execute the action
-                if ("ON".equalsIgnoreCase(action.getAction())) {
-                    targetDevice.turnOn();
-                } else if ("OFF".equalsIgnoreCase(action.getAction())) {
-                    targetDevice.turnOff();
+                String deviceKey = action.getDeviceType() + ":" + action.getRoomName();
+                String eventDeviceKey = eventTitle + ":" + deviceKey;
+
+                originalDeviceStates.computeIfAbsent(customer.getEmail(), k -> new HashMap<>());
+                Map<String, String> userOriginalStates = originalDeviceStates.get(customer.getEmail());
+
+                if (!userOriginalStates.containsKey(eventDeviceKey)) {
+                    userOriginalStates.put(eventDeviceKey, previousStatus);
                 }
 
-                String newStatus = targetDevice.getStatus();
+                boolean needsChange = false;
+                if ("ON".equalsIgnoreCase(action.getAction()) && !targetDevice.isOn()) {
+                    targetDevice.turnOn();
+                    needsChange = true;
+                } else if ("OFF".equalsIgnoreCase(action.getAction()) && targetDevice.isOn()) {
+                    targetDevice.turnOff();
+                    needsChange = true;
+                }
 
-                // Save the updated device state
-                boolean saveSuccess = customerService.updateCustomer(customer);
+                if (needsChange) {
+                    String newStatus = targetDevice.getStatus();
+                    boolean saveSuccess = customerService.updateCustomer(customer);
 
-                if (saveSuccess) {
-                    System.out.println("\n[CALENDAR AUTOMATION EXECUTED] " + eventTitle);
-                    System.out.println("  Device: " + targetDevice.getType() + " " + targetDevice.getModel() +
-                                     " in " + targetDevice.getRoomName());
-                    System.out.println("  Action: Turned " + action.getAction());
-                    System.out.println("  Status: " + previousStatus + " -> " + newStatus);
-                    System.out.println("  Time: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-                    System.out.print("\nPress Enter to continue or enter your choice: ");
-                } else {
-                    System.err.println("[ERROR] Failed to save device state after calendar automation");
+                    if (saveSuccess) {
+                        StringBuilder deviceMsg = new StringBuilder();
+                        deviceMsg.append("\n").append("=".repeat(50)).append("\n");
+                        deviceMsg.append("DEVICE STATUS CHANGED\n");
+                        deviceMsg.append("=".repeat(50)).append("\n");
+                        deviceMsg.append("Device: ").append(targetDevice.getType()).append(" ").append(targetDevice.getModel())
+                                .append(" (").append(targetDevice.getRoomName()).append(")\n");
+                        deviceMsg.append("Status: ").append(previousStatus).append(" -> ").append(newStatus).append("\n");
+                        deviceMsg.append("Reason: Calendar event '").append(eventTitle).append("'\n");
+                        deviceMsg.append("Time: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))).append("\n");
+                        deviceMsg.append("=".repeat(50));
+
+                        if (suppressNotifications) {
+                            synchronized (bufferedNotifications) {
+                                bufferedNotifications.add(deviceMsg.toString());
+                            }
+                        } else {
+                            System.out.println(deviceMsg.toString());
+                            System.out.print("\nPress Enter to continue or enter your choice: ");
+                        }
+                    } else {
+                        System.err.println("[ERROR] Failed to save device state after automation");
+                    }
                 }
             } else {
-                System.out.println("[CALENDAR AUTOMATION SKIPPED] Device not found: " +
-                                 action.getDeviceType() + " in " + action.getRoomName() + " for event: " + eventTitle);
+                if (!suppressNotifications) {
+                    System.out.println("[DEVICE NOT FOUND] Cannot change status: " +
+                                     action.getDeviceType() + " in " + action.getRoomName() + " (Event: " + eventTitle + ")");
+                }
             }
         } catch (Exception e) {
             System.err.println("Error executing calendar automation: " + e.getMessage());
         }
     }
 
-    private void checkAndExecuteAlerts(LocalDateTime now) {
+    private void checkCalendarDeviceAutomation(LocalDateTime now) {
         try {
-            // Get current user
             SessionManager sessionManager = SessionManager.getInstance();
             Customer currentUser = sessionManager.getCurrentUser();
             if (currentUser == null) {
-                return; // No user logged in
+                return;
+            }
+
+            checkAndRestoreDeviceStates(currentUser, now);
+
+            cleanupOldExecutedAutomations(currentUser.getEmail(), now);
+
+        } catch (Exception e) {
+            System.err.println("Error checking calendar device automation: " + e.getMessage());
+        }
+    }
+
+    private void checkAndRestoreDeviceStates(Customer customer, LocalDateTime now) {
+        try {
+            String userEmail = customer.getEmail();
+            if (!originalDeviceStates.containsKey(userEmail)) {
+                return;
+            }
+
+            List<CalendarEventService.CalendarEvent> recentlyEndedEvents = calendarEventService.getRecentlyEndedEvents(userEmail);
+            restoredEvents.computeIfAbsent(userEmail, k -> new HashSet<>());
+            Set<String> userRestoredEvents = restoredEvents.get(userEmail);
+
+            for (CalendarEventService.CalendarEvent event : recentlyEndedEvents) {
+                if (!userRestoredEvents.contains(event.getTitle())) {
+                    List<String> restorationMessages = restoreDeviceStatesForEvent(customer, event.getTitle());
+                    userRestoredEvents.add(event.getTitle());
+                    showEventCompletionNotification(event, customer, restorationMessages);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error checking device state restoration: " + e.getMessage());
+        }
+    }
+
+    private List<String> restoreDeviceStatesForEvent(Customer customer, String eventTitle) {
+        List<String> restorationMessages = new ArrayList<>();
+        try {
+            String userEmail = customer.getEmail();
+            Map<String, String> userOriginalStates = originalDeviceStates.get(userEmail);
+            if (userOriginalStates == null) {
+                return restorationMessages;
+            }
+
+            boolean customerUpdated = false;
+
+            for (Map.Entry<String, String> entry : userOriginalStates.entrySet()) {
+                String eventDeviceKey = entry.getKey();
+                String originalState = entry.getValue();
+
+                if (eventDeviceKey.startsWith(eventTitle + ":")) {
+                    String deviceKey = eventDeviceKey.substring((eventTitle + ":").length());
+                    String[] parts = deviceKey.split(":");
+                    if (parts.length == 2) {
+                        String deviceType = parts[0];
+                        String roomName = parts[1];
+
+                        Gadget targetDevice = customer.findGadget(deviceType, roomName);
+                        if (targetDevice != null) {
+                            String currentStatus = targetDevice.getStatus();
+
+                            if ("ON".equals(originalState) && !targetDevice.isOn()) {
+                                targetDevice.turnOn();
+                                customerUpdated = true;
+                                restorationMessages.add(targetDevice.getType() + " " + targetDevice.getModel() +
+                                                      " (" + targetDevice.getRoomName() + "): " +
+                                                      currentStatus + " -> " + originalState);
+                            } else if ("OFF".equals(originalState) && targetDevice.isOn()) {
+                                targetDevice.turnOff();
+                                customerUpdated = true;
+                                restorationMessages.add(targetDevice.getType() + " " + targetDevice.getModel() +
+                                                      " (" + targetDevice.getRoomName() + "): " +
+                                                      currentStatus + " -> " + originalState);
+                            } else {
+                                restorationMessages.add(targetDevice.getType() + " " + targetDevice.getModel() +
+                                                      " (" + targetDevice.getRoomName() + "): " +
+                                                      currentStatus + " (unchanged)");
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (customerUpdated) {
+                customerService.updateCustomer(customer);
+            }
+        } catch (Exception e) {
+            System.err.println("Error restoring device states for event: " + e.getMessage());
+        }
+        return restorationMessages;
+    }
+
+    private void showEventCompletionNotification(CalendarEventService.CalendarEvent event, Customer customer, List<String> restorationMessages) {
+        try {
+            StringBuilder eventMsg = new StringBuilder();
+            eventMsg.append("\n").append("=".repeat(60)).append("\n");
+            eventMsg.append("CALENDAR EVENT COMPLETED\n");
+            eventMsg.append("=".repeat(60)).append("\n");
+            eventMsg.append("Event: ").append(event.getTitle()).append("\n");
+            eventMsg.append("Status: COMPLETED\n");
+            eventMsg.append("End Time: ").append(event.getEndTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))).append("\n");
+            eventMsg.append("Completed At: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))).append("\n");
+
+            if (!event.getDescription().isEmpty()) {
+                eventMsg.append("Description: ").append(event.getDescription()).append("\n");
+            }
+
+            if (!restorationMessages.isEmpty()) {
+                eventMsg.append("\nDevice Status After Event:\n");
+                for (String message : restorationMessages) {
+                    eventMsg.append("- ").append(message).append("\n");
+                }
+            }
+
+            eventMsg.append("=".repeat(60));
+
+            if (suppressNotifications) {
+                synchronized (bufferedNotifications) {
+                    bufferedNotifications.add(eventMsg.toString());
+                }
+            } else {
+                System.out.println(eventMsg.toString());
+                System.out.print("\nPress Enter to continue or enter your choice: ");
+            }
+        } catch (Exception e) {
+            System.err.println("Error showing event completion notification: " + e.getMessage());
+        }
+    }
+
+    private void cleanupOldExecutedAutomations(String userEmail, LocalDateTime now) {
+        try {
+            if (executedAutomations.containsKey(userEmail)) {
+                Set<String> userAutomations = executedAutomations.get(userEmail);
+
+                List<CalendarEventService.CalendarEvent> activeEvents = calendarEventService.getActiveAndUpcomingEvents(userEmail);
+                List<CalendarEventService.CalendarEvent> recentlyEndedEvents = calendarEventService.getRecentlyEndedEvents(userEmail);
+
+                Set<String> validAutomationPrefixes = new HashSet<>();
+
+                for (CalendarEventService.CalendarEvent event : activeEvents) {
+                    validAutomationPrefixes.add(userEmail + ":" + event.getEventId() + ":");
+                }
+
+                for (CalendarEventService.CalendarEvent event : recentlyEndedEvents) {
+                    validAutomationPrefixes.add(userEmail + ":" + event.getEventId() + ":");
+                }
+
+                userAutomations.removeIf(automationKey -> {
+                    return validAutomationPrefixes.stream().noneMatch(automationKey::startsWith);
+                });
+
+                if (userAutomations.isEmpty()) {
+                    executedAutomations.remove(userEmail);
+                }
+            }
+
+            cleanupOldDeviceStates(userEmail, now);
+        } catch (Exception e) {
+            System.err.println("Error cleaning up executed automations: " + e.getMessage());
+        }
+    }
+
+    private void cleanupOldDeviceStates(String userEmail, LocalDateTime now) {
+        try {
+            if (originalDeviceStates.containsKey(userEmail)) {
+                Map<String, String> userStates = originalDeviceStates.get(userEmail);
+
+                List<CalendarEventService.CalendarEvent> activeEvents = calendarEventService.getActiveAndUpcomingEvents(userEmail);
+                List<CalendarEventService.CalendarEvent> recentlyEndedEvents = calendarEventService.getRecentlyEndedEvents(userEmail);
+
+                Set<String> relevantEventTitles = new HashSet<>();
+
+                for (CalendarEventService.CalendarEvent event : activeEvents) {
+                    relevantEventTitles.add(event.getTitle());
+                }
+
+                for (CalendarEventService.CalendarEvent event : recentlyEndedEvents) {
+                    relevantEventTitles.add(event.getTitle());
+                }
+
+                userStates.entrySet().removeIf(entry -> {
+                    String eventTitle = entry.getKey().split(":")[0];
+                    return !relevantEventTitles.contains(eventTitle);
+                });
+
+                if (userStates.isEmpty()) {
+                    originalDeviceStates.remove(userEmail);
+                }
+            }
+
+            if (restoredEvents.containsKey(userEmail)) {
+                Set<String> userRestoredEvents = restoredEvents.get(userEmail);
+
+                List<CalendarEventService.CalendarEvent> activeEvents = calendarEventService.getActiveAndUpcomingEvents(userEmail);
+                List<CalendarEventService.CalendarEvent> recentlyEndedEvents = calendarEventService.getRecentlyEndedEvents(userEmail);
+
+                Set<String> relevantEventTitles = new HashSet<>();
+
+                for (CalendarEventService.CalendarEvent event : activeEvents) {
+                    relevantEventTitles.add(event.getTitle());
+                }
+
+                for (CalendarEventService.CalendarEvent event : recentlyEndedEvents) {
+                    relevantEventTitles.add(event.getTitle());
+                }
+
+                userRestoredEvents.retainAll(relevantEventTitles);
+
+                if (userRestoredEvents.isEmpty()) {
+                    restoredEvents.remove(userEmail);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error cleaning up old device states: " + e.getMessage());
+        }
+    }
+
+    private void checkAndExecuteAlerts(LocalDateTime now) {
+        try {
+            SessionManager sessionManager = SessionManager.getInstance();
+            Customer currentUser = sessionManager.getCurrentUser();
+            if (currentUser == null) {
+                return;
             }
 
             String userEmail = currentUser.getEmail();
 
-            // Check time-based alerts
             alertService.checkTimeBasedAlerts(userEmail, now);
 
-            // Check energy usage alerts
             alertService.checkEnergyUsageAlerts(userEmail, currentUser);
 
         } catch (Exception e) {

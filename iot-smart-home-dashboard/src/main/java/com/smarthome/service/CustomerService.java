@@ -151,6 +151,12 @@ public class CustomerService {
             return false;
         }
         email = email.trim().toLowerCase();
+        if (email.contains("..")) {
+            return false;
+        }
+        if (email.contains(" ")) {
+            return false;
+        }
         return email.matches("^[a-z0-9+_.-]+@[a-z0-9.-]+\\.[a-z]{2,}$");
     }
     public boolean isValidPassword(String password) {
@@ -178,7 +184,7 @@ public class CustomerService {
         if (COMMON_PASSWORDS.contains(password.toLowerCase())) {
             return false;
         }
-        if (password.matches("(.)\\1{2,}")) {
+        if (password.matches(".*(.)\\1{2,}.*")) {
             return false;
         }
         return true;
