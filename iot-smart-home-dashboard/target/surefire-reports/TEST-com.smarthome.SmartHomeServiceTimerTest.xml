@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.smarthome.SmartHomeServiceTimerTest" time="5.922" tests="24" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Calcutta"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="24"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-24\bin"/>
+    <property name="sun.java.command" value="C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661\surefirebooter-20251003120046674_3.jar C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661 2025-10-03T12-00-46_409-jvmRun1 surefire-20251003120046674_1tmp surefire_0-20251003120046674_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\gochendr"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-24"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661\surefirebooter-20251003120046674_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="24.0.2+12-54"/>
+    <property name="user.name" value="gochendr"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\gochendr\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\gochendr\AppData\Local\Temp\"/>
+    <property name="java.version" value="24.0.2"/>
+    <property name="user.dir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\PowerShell\7;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\gochendr\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\gochendr\AppData\Local\Programs\Python\Python311;C:\Program Files\Git\cmd;C:\tools;C:\Program Files\nodejs\;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\GitHub CLI\;C:\Program Files\Java\jdk-24\bin;C:\Program Files\apache-maven-3.9.11\bin;C:\Program Files\PowerShell\7\;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.4\bin;;C:\tools;C:\Users\gochendr\AppData\Local\Programs\Lens\resources\cli\bin;C:\Users\gochendr\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Roaming\npm;C:\Users\gochendr\duo-sso;C:\Users\gochendr\claude_setup;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="24.0.2+12-54"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="68.0"/>
+  </properties>
+  <testcase name="testScheduleTimerPastTime" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.272">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] Cannot schedule timer for past time!
+Current time: 03-10-2025 12:01
+Requested time: 03-10-2025 11:01
+ Schedule timer for past time test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473109110@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleTimerDeviceDifferentRoom" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.273">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] Device not found: TV in Bedroom
+ Schedule timer for device in different room test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473109382@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowScheduledTimersNoTimers" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.243">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+
+=== Scheduled Timers ===
+No timers scheduled.
+ Show scheduled timers with no timers test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473109656@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCreateCalendarEventInvalidDateFormat" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.247">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[ERROR] Invalid date format! Use DD-MM-YYYY HH:MM
+ Create calendar event with invalid date format test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473109899@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleValidDeviceTimer" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.266">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+ Schedule valid device timer test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 13:01 (59m) |          |           |             |             |
++----+-------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473110148@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testTimerServiceInitialization" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.25">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+ Timer service initialization test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473110414@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleTimerInvalidAction" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.267">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] Invalid action! Use 'ON' or 'OFF'
+ Schedule timer with invalid action test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473110664@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCancelTimerInvalidAction" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.281">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+[ERROR] Invalid action! Use 'ON' or 'OFF'
+ Cancel timer with invalid action test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 13:01 (59m) |          |           |             |             |
++----+-------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473110932@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testOverlappingTimerSchedules" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.291">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn OFF at 03-10-2025 13:01
+ Overlapping timer schedules test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                                                | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)                              |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 13:01 (59m) | OFF 03-10 13:01 (59m) |          |           |             |             |
++----+-------------------------------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473111214@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleTimerMinimalFutureTime" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.291">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 12:03
+ Schedule timer with minimal future time test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                       | Power    | Status    | Usage Time  | Energy(kWh) |
++----+------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)     |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 12:03 (1m) |          |           |             |             |
++----+------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473111507@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCreateValidCalendarEvent" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.248">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Calendar event created: Test Meeting
+Event Date: 04-10-2025 12:01 to 14:01
+ Create valid calendar event test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473111797@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleTimerNonExistentDevice" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.243">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[ERROR] Device not found: TV in Living Room
+ Schedule timer for non-existent device test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473112046@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCancelTimerNonExistentDevice" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.227">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[ERROR] Device not found: TV in Living Room
+ Cancel timer for non-existent device test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473112288@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testTimerOperationsWithoutLogin" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.234">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Logged out successfully from account: timer1759473112516@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+[ERROR] Please login first!
+[ERROR] Please login first!
+[ERROR] Please login first!
+ Timer operations without login test passed
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleMultipleTimersSameDevice" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.24">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn OFF at 03-10-2025 14:01
+ Schedule multiple timers for same device test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+----------------------------------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                                                   | Power    | Status    | Usage Time  | Energy(kWh) |
++----+----------------------------------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)                                 |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 13:01 (59m) | OFF 03-10 14:01 (1h 59m) |          |           |             |             |
++----+----------------------------------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473112750@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testGetScheduledTimersWithDevices" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.232">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+Error: Invalid room name. Valid rooms: [Living Room, Hall, Drawing Room, Family Room, Sitting Room, Master Bedroom, Bedroom 1, Bedroom 2, Bedroom 3, Guest Room, Kids Room, Parents Room, Childrens Room, Kitchen, Dining Room, Breakfast Area, Pantry, Store Room, Master Bathroom, Common Bathroom, Guest Bathroom, Powder Room, Balcony, Terrace, Garden, Courtyard, Entrance, Porch, Garage, Parking, Utility Room, Laundry Room, Study Room, Office Room, Library, Home Office, Home Theater, Entertainment Room, Prayer Room, Pooja Room, Servant Room, Driver Room, Security Room, Storage Room, Verandah, Chowk, Angan, Baithak, Otla]
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+[ERROR] Device not found: AC in Bedroom
+ Get scheduled timers with devices test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 13:01 (59m) |          |           |             |             |
++----+-------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473112989@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCreateMultipleCalendarEvents" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.197">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Calendar event created: Morning Meeting
+Event Date: 04-10-2025 09:01 to 10:01
+[SUCCESS] Calendar event created: Lunch Break
+Event Date: 04-10-2025 12:01 to 13:01
+[SUCCESS] Calendar event created: Movie Night
+Event Date: 04-10-2025 20:01 to 22:01
+ Create multiple calendar events test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473113222@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowScheduledTimersWithActiveTimers" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.246">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+
+=== Scheduled Timers ===
++----+-------------------------+--------+-------------------+----------------------+
+| #  | Device                  | Action | Scheduled Time    | Status               |
++----+-------------------------+--------+-------------------+----------------------+
+| 1  | TV Samsung (Living R... | ON     | 03-10 13:01       | [59m remaining]      |
++----+-------------------------+--------+-------------------+----------------------+
+ Show scheduled timers with active timers test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+-------------------------------+----------+-----------+-------------+-------------+
+| #  | Device                        | Power    | Status    | Usage Time  | Energy(kWh) |
++----+-------------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)      |     150W | OFF       |      0h 00m |       0.000 |
+|    |   Timer: ON 03-10 13:01 (59m) |          |           |             |             |
++----+-------------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473113419@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleTimerInvalidDateFormat" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.237">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] Invalid date format! 
+=== Timer Scheduling Help ===
+Date Format: DD-MM-YYYY HH:MM (24-hour format)
+Examples:
+- 25-12-2024 18:30 (Christmas evening 6:30 PM)
+- 01-01-2025 00:00 (New Year midnight)
+- 15-03-2024 07:00 (March 15, 7:00 AM)
+
+Actions: ON or OFF
+
+Usage Tips:
+- Schedule AC to turn ON before you arrive home
+- Set Geyser timers for morning hot water
+- Auto-turn OFF lights late at night
+- Schedule devices during off-peak electricity hours
+
+ Schedule timer with invalid date format test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473113667@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowUpcomingEvents" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.221">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Calendar event created: Future Event
+Event Date: 04-10-2025 12:01 to 13:01
+
+=== Upcoming Calendar Events ===
+1. Future Event (meeting)
+   [DATE] 04-10-2025 12:01 - 13:01
+   [AUTO] 3 automation actions configured
+   [INFO] Future event description
+
+ Show upcoming events test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473113904@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCancelValidDeviceTimer" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.253">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Timer scheduled for TV Samsung in Living Room to turn ON at 03-10-2025 13:01
+[SUCCESS] Timer cancelled for TV Samsung in Living Room (ON timer)
+ Cancel valid device timer test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473114128@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowEventAutomation" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.213">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Calendar event created: Automated Meeting
+Event Date: 04-10-2025 12:01 to 13:01
+
+=== Event Automation Details ===
+Event: Automated Meeting (meeting)
+Time: 04-10-2025 12:01 to 13:01
+
+Automation Actions:
+- LIGHT ON in Study Room -> 5 min before (ON)
+- AC ON in Study Room -> 10 min before (ON)
+- LIGHT OFF in Study Room -> 15 min after (OFF)
+ Show event automation test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473114381@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testScheduleTimerVeryCloseToCurrentTime" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.228">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] Timer must be scheduled at least 1 minute in the future!
+Minimum allowed time: 03-10-2025 12:02
+ Schedule timer very close to current time test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: timer1759473114594@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testForceTimerCheck" classname="com.smarthome.SmartHomeServiceTimerTest" time="0.209">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Login successful! Welcome back, Timer Test User!
+Setting up timer test environment...
+[INFO] Manual timer check completed. Any due timers have been executed.
+ Force timer check test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: timer1759473114822@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up timer test environment
+]]></system-out>
+  </testcase>
+</testsuite>

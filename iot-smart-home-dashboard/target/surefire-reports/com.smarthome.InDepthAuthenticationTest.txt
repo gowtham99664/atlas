@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.smarthome.InDepthAuthenticationTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.438 s -- in com.smarthome.InDepthAuthenticationTest

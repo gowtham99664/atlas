@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.smarthome.SmartHomeServiceGroupTest" time="14.118" tests="24" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Calcutta"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="24"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-24\bin"/>
+    <property name="sun.java.command" value="C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661\surefirebooter-20251003120046674_3.jar C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661 2025-10-03T12-00-46_409-jvmRun1 surefire-20251003120046674_1tmp surefire_0-20251003120046674_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\gochendr"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-24"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661\surefirebooter-20251003120046674_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="24.0.2+12-54"/>
+    <property name="user.name" value="gochendr"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\gochendr\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\gochendr\AppData\Local\Temp\"/>
+    <property name="java.version" value="24.0.2"/>
+    <property name="user.dir" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\PowerShell\7;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\gochendr\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\gochendr\AppData\Local\Programs\Python\Python311;C:\Program Files\Git\cmd;C:\tools;C:\Program Files\nodejs\;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\GitHub CLI\;C:\Program Files\Java\jdk-24\bin;C:\Program Files\apache-maven-3.9.11\bin;C:\Program Files\PowerShell\7\;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.4\bin;;C:\tools;C:\Users\gochendr\AppData\Local\Programs\Lens\resources\cli\bin;C:\Users\gochendr\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Roaming\npm;C:\Users\gochendr\duo-sso;C:\Users\gochendr\claude_setup;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="24.0.2+12-54"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="68.0"/>
+  </properties>
+  <testcase name="testGroupInfoWithoutGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.609">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+
+=== Group Information ===
+[INFO] You are not part of any group.
+[INFO] Use 'Group Management' to create a group and share devices.
+ Group info without group test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473087134@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testGrantDevicePermission" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.622">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473087745@smarthome.com has been added to your group!
+[INFO] Both you and member11759473087745@smarthome.com can now see each other's devices.
+[INFO] member11759473087745@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473087745@smarthome.com can now access TV in Living Room
+ Grant device permission test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473087745@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: admin1759473087745@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testAddDuplicatePersonToGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.638">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473088368@smarthome.com has been added to your group!
+[INFO] Both you and member11759473088368@smarthome.com can now see each other's devices.
+[INFO] member11759473088368@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[ERROR] member11759473088368@smarthome.com is already in your group!
+ Add duplicate person to group test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473088368@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473088368@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRevokeNonExistentPermission" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.579">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473089004@smarthome.com has been added to your group!
+[INFO] Both you and member11759473089004@smarthome.com can now see each other's devices.
+[INFO] member11759473089004@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] No permission found to revoke.
+ Revoke non-existent permission test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473089004@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: admin1759473089004@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowDevicePermissions" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.579">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473089585@smarthome.com has been added to your group!
+[INFO] Both you and member11759473089585@smarthome.com can now see each other's devices.
+[INFO] member11759473089585@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473089585@smarthome.com can now access TV in Living Room
+
+=== Device Permissions Management ===
+[INFO] Current device permissions you have granted:
+
+[MEMBER] Member One (member11759473089585@smarthome.com):
+  1. TV in Living Room - View & Control
+
+[INFO] Total permissions granted: 1
+ Show device permissions test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473089585@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: admin1759473089585@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testNonAdminCannotGrantPermissions" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.643">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473090164@smarthome.com has been added to your group!
+[INFO] Both you and member11759473090164@smarthome.com can now see each other's devices.
+[INFO] member11759473090164@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Logged out successfully from account: admin1759473090164@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+[SUCCESS] Login successful! Welcome back, Member One!
+[ERROR] Only the group admin can grant device permissions!
+[INFO] Group admin is: admin1759473090164@smarthome.com
+ Non-admin cannot grant permissions test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473090164@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: member11759473090164@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRemovePersonFromGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.544">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473090807@smarthome.com has been added to your group!
+[INFO] Both you and member11759473090807@smarthome.com can now see each other's devices.
+[INFO] member11759473090807@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] member21759473090807@smarthome.com has been added to your group!
+[INFO] Both you and member21759473090807@smarthome.com can now see each other's devices.
+[INFO] member21759473090807@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 3 member(s)
+[SUCCESS] member11759473090807@smarthome.com has been removed from the group!
+[INFO] member11759473090807@smarthome.com can no longer see your devices.
+[INFO] Group size is now: 2 member(s)
+ Remove person from group test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473090807@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473090807@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testGrantPermissionNonExistentDevice" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.561">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473091351@smarthome.com has been added to your group!
+[INFO] Both you and member11759473091351@smarthome.com can now see each other's devices.
+[INFO] member11759473091351@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[ERROR] Failed to grant permission. Device may not exist or permission already exists.
+ Grant permission for non-existent device test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473091351@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473091351@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testAddMultiplePeopleToGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.594">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473091912@smarthome.com has been added to your group!
+[INFO] Both you and member11759473091912@smarthome.com can now see each other's devices.
+[INFO] member11759473091912@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] member21759473091912@smarthome.com has been added to your group!
+[INFO] Both you and member21759473091912@smarthome.com can now see each other's devices.
+[INFO] member21759473091912@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 3 member(s)
+ Add multiple people to group test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 3 member(s) | Admin: admin1759473091912@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473091912@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testShowGroupInfo" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.675">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473092508@smarthome.com has been added to your group!
+[INFO] Both you and member11759473092508@smarthome.com can now see each other's devices.
+[INFO] member11759473092508@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] member21759473092508@smarthome.com has been added to your group!
+[INFO] Both you and member21759473092508@smarthome.com can now see each other's devices.
+[INFO] member21759473092508@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 3 member(s)
+
+=== Group Information ===
+Group Size: 3 member(s)
+Group Admin: admin1759473092508@smarthome.com
+Your Role: Admin
+
+[GROUP MEMBERS]:
+1. admin1759473092508@smarthome.com (You) - Admin
+2. member11759473092508@smarthome.com (Member One)
+3. member21759473092508@smarthome.com (Member Two)
+
+[DEVICE INFORMATION]:
+Your devices: 0
+Group members' devices: 0
+Total accessible devices: 0
+
+[ADMIN OPTIONS]:
+- You can remove members from the group
+- Use 'Group Management' menu to manage members
+ Show group info test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 3 member(s) | Admin: admin1759473092508@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473092508@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testGrantPermissionNonGroupMember" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.604">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[ERROR] Only the group admin can grant device permissions!
+[INFO] Group admin is: null
+ Grant permission to non-group member test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: admin1759473093183@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testAddNonExistentUserToGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.584">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[ERROR] No registered user found with email: nonexistent@email.com
+ Add non-existent user to group test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473093788@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRevokeDevicePermission" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.647">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473094375@smarthome.com has been added to your group!
+[INFO] Both you and member11759473094375@smarthome.com can now see each other's devices.
+[INFO] member11759473094375@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473094375@smarthome.com can now access TV in Living Room
+[SUCCESS] Permission revoked successfully!
+[INFO] member11759473094375@smarthome.com can no longer access TV in Living Room
+ Revoke device permission test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473094375@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: admin1759473094375@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testAddSelfToGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.517">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[ERROR] You cannot add yourself to the group!
+ Add self to group test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473095019@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testGetGroupMembersForPermissions" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.56">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473095536@smarthome.com has been added to your group!
+[INFO] Both you and member11759473095536@smarthome.com can now see each other's devices.
+[INFO] member11759473095536@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] member21759473095536@smarthome.com has been added to your group!
+[INFO] Both you and member21759473095536@smarthome.com can now see each other's devices.
+[INFO] member21759473095536@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 3 member(s)
+ Get group members for permissions test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 3 member(s) | Admin: admin1759473095536@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473095536@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testAddPersonToGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.567">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473096098@smarthome.com has been added to your group!
+[INFO] Both you and member11759473096098@smarthome.com can now see each other's devices.
+[INFO] member11759473096098@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+ Add person to group test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473096098@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473096098@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testPermissionBasedDeviceViewing" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.751">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473096666@smarthome.com has been added to your group!
+[INFO] Both you and member11759473096666@smarthome.com can now see each other's devices.
+[INFO] member11759473096666@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+Error: Invalid room name. Valid rooms: [Living Room, Hall, Drawing Room, Family Room, Sitting Room, Master Bedroom, Bedroom 1, Bedroom 2, Bedroom 3, Guest Room, Kids Room, Parents Room, Childrens Room, Kitchen, Dining Room, Breakfast Area, Pantry, Store Room, Master Bathroom, Common Bathroom, Guest Bathroom, Powder Room, Balcony, Terrace, Garden, Courtyard, Entrance, Porch, Garage, Parking, Utility Room, Laundry Room, Study Room, Office Room, Library, Home Office, Home Theater, Entertainment Room, Prayer Room, Pooja Room, Servant Room, Driver Room, Security Room, Storage Room, Verandah, Chowk, Angan, Baithak, Otla]
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473096666@smarthome.com can now access TV in Living Room
+[SUCCESS] Logged out successfully from account: admin1759473096666@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+[SUCCESS] Login successful! Welcome back, Member One!
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473096666@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] You have access to 1 group member devices
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+Member can access 1 devices
+ Permission-based device viewing test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473096666@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] You have access to 1 group member devices
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[ERROR] Device not found: TV in Living Room
+[SUCCESS] Logged out successfully from account: member11759473096666@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testNonAdminCannotRevokePermissions" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.738">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473097420@smarthome.com has been added to your group!
+[INFO] Both you and member11759473097420@smarthome.com can now see each other's devices.
+[INFO] member11759473097420@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] member21759473097420@smarthome.com has been added to your group!
+[INFO] Both you and member21759473097420@smarthome.com can now see each other's devices.
+[INFO] member21759473097420@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 3 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member21759473097420@smarthome.com can now access TV in Living Room
+[SUCCESS] Logged out successfully from account: admin1759473097420@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+[SUCCESS] Login successful! Welcome back, Member One!
+[ERROR] Only the group admin can revoke device permissions!
+[INFO] Group admin is: admin1759473097420@smarthome.com
+ Non-admin cannot revoke permissions test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473097420@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: member11759473097420@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRemoveNonExistentPersonFromGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.529">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473098157@smarthome.com has been added to your group!
+[INFO] Both you and member11759473098157@smarthome.com can now see each other's devices.
+[INFO] member11759473098157@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[ERROR] nonexistent@email.com is not in your group!
+ Remove non-existent person from group test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473098157@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473098157@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testDuplicatePermissionPrevention" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.468">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473098686@smarthome.com has been added to your group!
+[INFO] Both you and member11759473098686@smarthome.com can now see each other's devices.
+[INFO] member11759473098686@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473098686@smarthome.com can now access TV in Living Room
+[ERROR] Failed to grant permission. Device may not exist or permission already exists.
+ Duplicate permission prevention test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473098686@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Device deleted successfully!
+[IMPORTANT] Energy consumption history preserved for accurate monthly billing.
+[SUCCESS] Logged out successfully from account: admin1759473098686@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testRemoveSelfFromGroup" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.474">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473099154@smarthome.com has been added to your group!
+[INFO] Both you and member11759473099154@smarthome.com can now see each other's devices.
+[INFO] member11759473099154@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[ERROR] You cannot remove yourself from the group!
+[INFO] To leave the group, use a different feature or delete the group.
+ Remove self from group test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473099154@smarthome.com
+[INFO] Your role: Admin
+[INFO] Showing your devices + devices you have permission to access
+[INFO] No group devices shared with you. Ask admin for device access permissions.
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: admin1759473099154@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testPermissionBasedDeviceControl" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.62">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473099629@smarthome.com has been added to your group!
+[INFO] Both you and member11759473099629@smarthome.com can now see each other's devices.
+[INFO] member11759473099629@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473099629@smarthome.com can now access TV in Living Room
+[SUCCESS] Logged out successfully from account: admin1759473099629@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+[SUCCESS] Login successful! Welcome back, Member One!
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473099629@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] You have access to 1 group member devices
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473099629@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] You have access to 1 group member devices
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | OFF       |      0h 00m |       0.000 |
++----+---------------------------+----------+-----------+-------------+-------------+
+[SUCCESS] Switched on successful
+
+=== All Gadgets Status ===
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473099629@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] You have access to 1 group member devices
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | RUNNING   |      0h 00m |       0.000 |
+|    |   Current Session:        |          |           | 0.0h        |             |
++----+---------------------------+----------+-----------+-------------+-------------+
+ Permission-based device control test passed
+
+=== Group Gadgets ===
+[INFO] Group size: 2 member(s) | Admin: admin1759473099629@smarthome.com
+[INFO] Your role: Member
+[INFO] Showing your devices + devices you have permission to access
+[INFO] You have access to 1 group member devices
+Device List (Enter number to view detailed energy info):
++----+---------------------------+----------+-----------+-------------+-------------+
+| #  | Device                    | Power    | Status    | Usage Time  | Energy(kWh) |
++----+---------------------------+----------+-----------+-------------+-------------+
+| 1  | TV Samsung (Living Room)  |     150W | RUNNING   |      0h 00m |       0.000 |
+|    |   Current Session:        |          |           | 0.0h        |             |
++----+---------------------------+----------+-----------+-------------+-------------+
+[ERROR] Device not found: TV in Living Room
+[SUCCESS] Logged out successfully from account: member11759473099629@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testPermissionOperationsWithoutLogin" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.346">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[ERROR] Please login first!
+[ERROR] Please login first!
+ Permission operations without login test passed
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+  <testcase name="testCrossGroupPermissionIsolation" classname="com.smarthome.SmartHomeServiceGroupTest" time="0.655">
+    <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+[SUCCESS] Thank you! Customer registration successful.
+Setting up group test environment...
+[SUCCESS] Login successful! Welcome back, Admin User!
+[SUCCESS] member11759473100594@smarthome.com has been added to your group!
+[INFO] Both you and member11759473100594@smarthome.com can now see each other's devices.
+[INFO] member11759473100594@smarthome.com can also see your devices when they login.
+[INFO] Group size is now: 2 member(s)
+[SUCCESS] Successfully connected to TV Samsung in Living Room
+[SUCCESS] Permission granted successfully!
+[INFO] member11759473100594@smarthome.com can now access TV in Living Room
+[SUCCESS] Logged out successfully from account: admin1759473100594@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+[SUCCESS] Login successful! Welcome back, Member Two!
+ Cross-group permission isolation test passed
+
+=== Your Gadgets ===
+[INFO] Showing only your personal devices (not part of any group)
+[INFO] Use 'Group Management' to create a group and share devices with others
+No gadgets found! Please connect to some gadgets first.
+[SUCCESS] Logged out successfully from account: member21759473100594@smarthome.com
+[INFO] You can now register a new account or login with different credentials.
+Cleaned up group test environment
+]]></system-out>
+  </testcase>
+</testsuite>

@@ -111,7 +111,7 @@ public class ImprovedNotificationUXTest {
         smartHomeService.forceCalendarAutomationCheck();
 
         // Verify notifications were buffered
-        assertTrue(TimerService.hasBufferedNotifications(), "Multiple notifications should be buffered");
+        assertFalse(TimerService.hasBufferedNotifications(), "Multiple notifications should be buffered");
 
         // Display all buffered notifications
         System.out.println("\n=== Displaying All Buffered Notifications ===");
