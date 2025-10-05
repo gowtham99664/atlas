@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smarthome.CalendarAutomationFixTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.276 s -- in com.smarthome.CalendarAutomationFixTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.277 s -- in com.smarthome.CalendarAutomationFixTest

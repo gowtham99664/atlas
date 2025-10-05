@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smarthome.ComprehensiveSystemTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.823 s -- in com.smarthome.ComprehensiveSystemTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.529 s -- in com.smarthome.ComprehensiveSystemTest

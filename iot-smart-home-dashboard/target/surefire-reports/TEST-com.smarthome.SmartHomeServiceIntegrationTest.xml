@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.smarthome.SmartHomeServiceIntegrationTest" time="7.855" tests="31" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.smarthome.SmartHomeServiceIntegrationTest" time="7.302" tests="31" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="24"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-24\bin"/>
-    <property name="sun.java.command" value="C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661\surefirebooter-20251003120046674_3.jar C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661 2025-10-03T12-00-46_409-jvmRun1 surefire-20251003120046674_1tmp surefire_0-20251003120046674_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\gochendr\AppData\Local\Temp\surefire7264068863973702933\surefirebooter-20251005121952837_3.jar C:\Users\gochendr\AppData\Local\Temp\surefire7264068863973702933 2025-10-05T12-19-52_515-jvmRun1 surefire-20251005121952837_1tmp surefire_0-20251005121952837_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\test-classes;C:\Users\gochendr\Downloads\atlas-final\iot-smart-home-dashboard\target\classes;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb\2.21.29\dynamodb-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-json-protocol\2.21.29\aws-json-protocol-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\third-party-jackson-core\2.21.29\third-party-jackson-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\protocol-core\2.21.29\protocol-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\profiles\2.21.29\profiles-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-aws\2.21.29\http-auth-aws-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums-spi\2.21.29\checksums-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\checksums\2.21.29\checksums-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\sdk-core\2.21.29\sdk-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\auth\2.21.29\auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\eventstream\eventstream\1.0.1\eventstream-1.0.1.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth-spi\2.21.29\http-auth-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-auth\2.21.29\http-auth-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\identity-spi\2.21.29\identity-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\http-client-spi\2.21.29\http-client-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\regions\2.21.29\regions-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\annotations\2.21.29\annotations-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\utils\2.21.29\utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\aws-core\2.21.29\aws-core-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\metrics-spi\2.21.29\metrics-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\json-utils\2.21.29\json-utils-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\endpoints-spi\2.21.29\endpoints-spi-2.21.29.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\apache-client\2.21.29\apache-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\gochendr\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\gochendr\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\gochendr\.m2\repository\commons-codec\commons-codec\1.15\commons-codec-1.15.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\netty-nio-client\2.21.29\netty-nio-client-2.21.29.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http\4.1.100.Final\netty-codec-http-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec-http2\4.1.100.Final\netty-codec-http2-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-codec\4.1.100.Final\netty-codec-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport\4.1.100.Final\netty-transport-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-common\4.1.100.Final\netty-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-buffer\4.1.100.Final\netty-buffer-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-handler\4.1.100.Final\netty-handler-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.100.Final\netty-transport-native-unix-common-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-transport-classes-epoll\4.1.100.Final\netty-transport-classes-epoll-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\io\netty\netty-resolver\4.1.100.Final\netty-resolver-4.1.100.Final.jar;C:\Users\gochendr\.m2\repository\software\amazon\awssdk\dynamodb-enhanced\2.21.29\dynamodb-enhanced-2.21.29.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-simple\2.0.9\slf4j-simple-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\slf4j\slf4j-api\2.0.9\slf4j-api-2.0.9.jar;C:\Users\gochendr\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gochendr\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\gochendr\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gochendr\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\gochendr\.m2\repository\org\mockito\mockito-core\5.6.0\mockito-core-5.6.0.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy\1.14.8\byte-buddy-1.14.8.jar;C:\Users\gochendr\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.8\byte-buddy-agent-1.14.8.jar;C:\Users\gochendr\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\gochendr\AppData\Local\Temp\surefire8223818590518415661\surefirebooter-20251003120046674_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\gochendr\AppData\Local\Temp\surefire7264068863973702933\surefirebooter-20251005121952837_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="24.0.2+12-54"/>
@@ -50,7 +50,7 @@
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="native.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Program Files\Java\jdk-24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\PowerShell\7;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\gochendr\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\gochendr\AppData\Local\Programs\Python\Python311;C:\Program Files\Git\cmd;C:\tools;C:\Program Files\nodejs\;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\GitHub CLI\;C:\Program Files\Java\jdk-24\bin;C:\Program Files\apache-maven-3.9.11\bin;C:\Program Files\PowerShell\7\;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.4\bin;;C:\tools;C:\Users\gochendr\AppData\Local\Programs\Lens\resources\cli\bin;C:\Users\gochendr\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Roaming\npm;C:\Users\gochendr\duo-sso;C:\Users\gochendr\claude_setup;;."/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\PowerShell\7;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\gochendr\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\gochendr\AppData\Local\Programs\Python\Python311;C:\Program Files\Git\cmd;C:\tools;C:\Program Files\nodejs\;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\GitHub CLI\;C:\Program Files\Java\jdk-24\bin;C:\Program Files\apache-maven-3.9.11\bin;C:\Program Files\PowerShell\7\;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.4\bin;;C:\tools;C:\Users\gochendr\AppData\Local\Programs\Lens\resources\cli\bin;C:\Users\gochendr\AppData\Local\Microsoft\WindowsApps;C:\Users\gochendr\AppData\Roaming\npm;C:\Users\gochendr\duo-sso;C:\Users\gochendr\claude_setup;;c:\Users\gochendr\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
     <property name="stderr.encoding" value="Cp1252"/>
     <property name="java.vendor" value="Oracle Corporation"/>
@@ -58,7 +58,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="68.0"/>
   </properties>
-  <testcase name="testRemoveDeviceFromScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.27">
+  <testcase name="testRemoveDeviceFromScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.237">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -70,12 +70,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473101257@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647047525@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testShowAvailableScenes" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.269">
+  <testcase name="testShowAvailableScenes" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.216">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -132,12 +132,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473101528@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647047762@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testGetSceneActions" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.247">
+  <testcase name="testGetSceneActions" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.205">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -148,12 +148,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473101795@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647047978@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testShowEditableSceneDetails" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.279">
+  <testcase name="testShowEditableSceneDetails" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.215">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -187,12 +187,12 @@ This scene will perform the following actions:
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473102042@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647048182@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testHasUserWeatherData" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.277">
+  <testcase name="testHasUserWeatherData" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.236">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -203,12 +203,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473102319@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647048399@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testGetSystemHealthSummary" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.271">
+  <testcase name="testGetSystemHealthSummary" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.307">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -228,12 +228,12 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473102598@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647048639@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testSmartScenesServiceInitialization" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.243">
+  <testcase name="testSmartScenesServiceInitialization" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.269">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -244,7 +244,7 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473102868@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647048945@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
@@ -261,12 +261,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473103112@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647049213@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testEditDeviceRoomInvalidRoom" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.265">
+  <testcase name="testEditDeviceRoomInvalidRoom" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.264">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -286,12 +286,12 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473103349@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647049449@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testWeatherDataCheck" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.245">
+  <testcase name="testWeatherDataCheck" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.231">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -302,12 +302,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473103613@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647049713@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testDeviceHealthServiceInitialization" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.232">
+  <testcase name="testDeviceHealthServiceInitialization" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.218">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -318,12 +318,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473103860@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647049944@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testDeleteDevice" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.247">
+  <testcase name="testDeleteDevice" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.234">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -352,12 +352,12 @@ No gadgets found! Please connect to some gadgets first.
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473104092@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647050163@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testEditDeviceModel" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.265">
+  <testcase name="testEditDeviceModel" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.279">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -386,12 +386,12 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473104339@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647050398@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testShowDeviceHealthReport" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.251">
+  <testcase name="testShowDeviceHealthReport" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.261">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -400,7 +400,7 @@ Setting up integration test environment...
 Error: Invalid room name. Valid rooms: [Living Room, Hall, Drawing Room, Family Room, Sitting Room, Master Bedroom, Bedroom 1, Bedroom 2, Bedroom 3, Guest Room, Kids Room, Parents Room, Childrens Room, Kitchen, Dining Room, Breakfast Area, Pantry, Store Room, Master Bathroom, Common Bathroom, Guest Bathroom, Powder Room, Balcony, Terrace, Garden, Courtyard, Entrance, Porch, Garage, Parking, Utility Room, Laundry Room, Study Room, Office Room, Library, Home Office, Home Theater, Entertainment Room, Prayer Room, Pooja Room, Servant Room, Driver Room, Security Room, Storage Room, Verandah, Chowk, Angan, Baithak, Otla]
 
 === Smart Home Health Dashboard ===
-Health Report Generated: 03-10-2025 12:01:44
+Health Report Generated: 05-10-2025 12:20:50
 
 [SYSTEM OVERVIEW]:
 Total Devices: 1
@@ -436,12 +436,12 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473104609@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647050678@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testExecuteSmartScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.279">
+  <testcase name="testExecuteSmartScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.293">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -451,7 +451,7 @@ Setting up integration test environment...
 
 === Scene Execution Report ===
 Scene: MOVIE
-Executed at: 03-10-2025 12:01:45
+Executed at: 05-10-2025 12:20:51
 
 [Summary] 5 Total | [OK] 2 Success | [FAIL] 3 Failed
 
@@ -480,12 +480,12 @@ Device List (Enter number to view detailed energy info):
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473104856@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647050942@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testEditDevicePowerRating" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.251">
+  <testcase name="testEditDevicePowerRating" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.27">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -514,28 +514,28 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473105136@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647051233@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testShowWeatherForecast" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.231">
+  <testcase name="testShowWeatherForecast" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.234">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
 Setting up integration test environment...
 
 === 5-Day Weather Forecast ===
-Day 1 (04-10-2025):
-  [WEATHER] Cloudy | [TEMP] 20.5C | [HUMIDITY] 81% | AQI: 92
-Day 2 (05-10-2025):
-  [WEATHER] Rainy | [TEMP] 22.4C | [HUMIDITY] 62% | AQI: 105
-Day 3 (06-10-2025):
-  [WEATHER] Hot | [TEMP] 22.6C | [HUMIDITY] 80% | AQI: 31
-Day 4 (07-10-2025):
-  [WEATHER] Cold | [TEMP] 27.8C | [HUMIDITY] 59% | AQI: 80
-Day 5 (08-10-2025):
-  [WEATHER] Sunny | [TEMP] 25.6C | [HUMIDITY] 84% | AQI: 51
+Day 1 (06-10-2025):
+  [WEATHER] Hot | [TEMP] 6.3C | [HUMIDITY] 39% | AQI: 89
+Day 2 (07-10-2025):
+  [WEATHER] Cold | [TEMP] 33.9C | [HUMIDITY] 52% | AQI: 183
+Day 3 (08-10-2025):
+  [WEATHER] Rainy | [TEMP] 25.4C | [HUMIDITY] 45% | AQI: 90
+Day 4 (09-10-2025):
+  [WEATHER] Rainy | [TEMP] 12.3C | [HUMIDITY] 56% | AQI: 74
+Day 5 (10-10-2025):
+  [WEATHER] Sunny | [TEMP] 29.6C | [HUMIDITY] 71% | AQI: 115
 
 [TIP] Plan your device automation based on upcoming weather!
  Show weather forecast test passed
@@ -544,18 +544,18 @@ Day 5 (08-10-2025):
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473105386@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647051505@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testDeviceManagementWithoutLogin" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.245">
+  <testcase name="testDeviceManagementWithoutLogin" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.243">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
 Setting up integration test environment...
 [SUCCESS] Successfully connected to TV Samsung in Living Room
-[SUCCESS] Logged out successfully from account: integration1759473105619@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647051739@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 [ERROR] Please login first!
 [ERROR] Please login first!
@@ -565,7 +565,7 @@ Setting up integration test environment...
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testAddDeviceToScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.251">
+  <testcase name="testAddDeviceToScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.252">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -585,12 +585,12 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473105864@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647051981@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testClearWeatherData" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.227">
+  <testcase name="testClearWeatherData" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.225">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -602,12 +602,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473106115@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647052236@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testDeleteDeviceWithEnergyHistory" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.281">
+  <testcase name="testDeleteDeviceWithEnergyHistory" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.275">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -700,12 +700,12 @@ Total Cost: Rs. 0.00
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473106344@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647052460@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testEditDeviceRoomNonExistentDevice" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.238">
+  <testcase name="testEditDeviceRoomNonExistentDevice" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.233">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -717,12 +717,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473106625@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647052738@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testWeatherServiceInitialization" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.243">
+  <testcase name="testWeatherServiceInitialization" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.215">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -733,12 +733,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473106863@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647052969@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testShowSceneDetails" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.25">
+  <testcase name="testShowSceneDetails" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.199">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -765,12 +765,12 @@ This scene will perform the following actions:
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473107108@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647053183@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testWeatherServiceAvailability" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.249">
+  <testcase name="testWeatherServiceAvailability" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.198">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -781,12 +781,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473107359@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647053381@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testChangeDeviceActionInScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.244">
+  <testcase name="testChangeDeviceActionInScene" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.184">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -798,12 +798,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473107610@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647053580@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testServiceIntegrationConsistency" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.232">
+  <testcase name="testServiceIntegrationConsistency" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.179">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -814,28 +814,28 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473107853@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647053764@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testIntegrationServicesWithoutDevices" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.255">
+  <testcase name="testIntegrationServicesWithoutDevices" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.194">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
 Setting up integration test environment...
 
 === 5-Day Weather Forecast ===
-Day 1 (04-10-2025):
-  [WEATHER] Rainy | [TEMP] 22.2C | [HUMIDITY] 75% | AQI: 79
-Day 2 (05-10-2025):
-  [WEATHER] Hot | [TEMP] 29.9C | [HUMIDITY] 47% | AQI: 106
-Day 3 (06-10-2025):
-  [WEATHER] Rainy | [TEMP] 23.3C | [HUMIDITY] 87% | AQI: 61
-Day 4 (07-10-2025):
-  [WEATHER] Hot | [TEMP] 29.3C | [HUMIDITY] 86% | AQI: 47
-Day 5 (08-10-2025):
-  [WEATHER] Rainy | [TEMP] 26.0C | [HUMIDITY] 52% | AQI: 67
+Day 1 (06-10-2025):
+  [WEATHER] Hot | [TEMP] 38.8C | [HUMIDITY] 26% | AQI: 101
+Day 2 (07-10-2025):
+  [WEATHER] Rainy | [TEMP] 38.7C | [HUMIDITY] 35% | AQI: 174
+Day 3 (08-10-2025):
+  [WEATHER] Sunny | [TEMP] 32.4C | [HUMIDITY] 40% | AQI: 182
+Day 4 (09-10-2025):
+  [WEATHER] Rainy | [TEMP] 26.3C | [HUMIDITY] 50% | AQI: 92
+Day 5 (10-10-2025):
+  [WEATHER] Sunny | [TEMP] 21.0C | [HUMIDITY] 82% | AQI: 53
 
 [TIP] Plan your device automation based on upcoming weather!
 
@@ -887,7 +887,7 @@ Day 5 (08-10-2025):
 
 === Scene Execution Report ===
 Scene: MOVIE
-Executed at: 03-10-2025 12:01:48
+Executed at: 05-10-2025 12:20:54
 
 [Summary] 5 Total | [OK] 0 Success | [FAIL] 5 Failed
 
@@ -901,7 +901,7 @@ Execution Details:
 [ERROR] Scene execution failed. Please check your devices and try again.
 
 === Smart Home Health Dashboard ===
-Health Report Generated: 03-10-2025 12:01:48
+Health Report Generated: 05-10-2025 12:20:54
 
 [SYSTEM OVERVIEW]:
 Total Devices: 0
@@ -923,12 +923,12 @@ Overall Health Score: 0.0%
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473108087@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647053944@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testEditDevicePowerRatingInvalidValue" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.255">
+  <testcase name="testEditDevicePowerRatingInvalidValue" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.217">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -948,12 +948,12 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473108342@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647054138@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testDeleteNonExistentDevice" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.241">
+  <testcase name="testDeleteNonExistentDevice" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.202">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -965,12 +965,12 @@ Setting up integration test environment...
 [INFO] Showing only your personal devices (not part of any group)
 [INFO] Use 'Group Management' to create a group and share devices with others
 No gadgets found! Please connect to some gadgets first.
-[SUCCESS] Logged out successfully from account: integration1759473108598@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647054356@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>
   </testcase>
-  <testcase name="testShowMaintenanceSchedule" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.269">
+  <testcase name="testShowMaintenanceSchedule" classname="com.smarthome.SmartHomeServiceIntegrationTest" time="0.268">
     <system-out><![CDATA[[INFO] DynamoDB table 'customers' already exists
 [SUCCESS] Thank you! Customer registration successful.
 [SUCCESS] Login successful! Welcome back, Integration Test User!
@@ -999,7 +999,7 @@ Device List (Enter number to view detailed energy info):
 +----+---------------------------+----------+-----------+-------------+-------------+
 [SUCCESS] Device deleted successfully!
 [IMPORTANT] Energy consumption history preserved for accurate monthly billing.
-[SUCCESS] Logged out successfully from account: integration1759473108839@smarthome.com
+[SUCCESS] Logged out successfully from account: integration1759647054578@smarthome.com
 [INFO] You can now register a new account or login with different credentials.
 Cleaned up integration test environment
 ]]></system-out>

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smarthome.SmartHomeServiceEnergyTest
 -------------------------------------------------------------------------------
-Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.915 s -- in com.smarthome.SmartHomeServiceEnergyTest
+Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.829 s -- in com.smarthome.SmartHomeServiceEnergyTest
