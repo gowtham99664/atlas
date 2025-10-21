@@ -1,0 +1,173 @@
+@startuml OptimizedIoTDiagram
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 16
+skinparam classFontSize 18
+skinparam packageFontSize 22
+skinparam titleFontSize 26
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #2C3E50
+skinparam classBorderThickness 3
+skinparam packageBackgroundColor #F8F9FA
+skinparam packageBorderColor #495057
+skinparam packageBorderThickness 3
+skinparam arrowThickness 4
+skinparam noteBackgroundColor #FFF3CD
+skinparam noteBorderColor #856404
+skinparam noteBorderThickness 2
+
+title <size:30><b>🏠 IoT Smart Home Dashboard - System Overview</b></size>
+
+package "<size:24><color:#2980B9><b>📱 USER INTERFACE</b></color></size>" as ui #E3F2FD {
+    class "<size:20><b>SmartHomeDashboard</b></size>" as menu <<Main App>> #BBDEFB {
+        <size:16><b>🎮 User Menus & Controls</b></size>
+        ====
+        <size:15>+ showMainMenu()</size>
+        <size:15>+ showDeviceMenu()</size>
+        <size:15>+ showEnergyMenu()</size>
+        <size:15>+ showTimerMenu()</size>
+        <size:15>+ showGroupMenu()</size>
+    }
+}
+
+package "<size:24><color:#27AE60><b>🧠 BUSINESS LOGIC</b></color></size>" as business #E8F8F5 {
+
+    class "<size:20><b>SmartHomeService</b></size>" as facade <<🏛️ FACADE>> #C8E6C9 {
+        <size:16><b>🤖 Central Controller (Facade Pattern)</b></size>
+        ====
+        <size:15><b>User Management:</b></size>
+        <size:14>+ registerCustomer()</size>
+        <size:14>+ loginCustomer()</size>
+        <size:14>+ logout()</size>
+        ====
+        <size:15><b>Device Control:</b></size>
+        <size:14>+ connectToGadget()</size>
+        <size:14>+ viewGadgets()</size>
+        <size:14>+ changeDeviceStatus()</size>
+        ====
+        <size:15><b>Smart Features:</b></size>
+        <size:14>+ scheduleDeviceTimer()</size>
+        <size:14>+ showEnergyReport()</size>
+        <size:14>+ addPersonToGroup()</size>
+    }
+
+    class "<size:18><b>CustomerService</b></size>" as userService <<👤 User Manager>> #C8E6C9 {
+        <size:14>+ authenticateUser()</size>
+        <size:14>+ saveUserData()</size>
+        <size:14>+ validateCredentials()</size>
+    }
+
+    class "<size:18><b>GadgetService</b></size>" as deviceService <<📱 Device Factory>> #C8E6C9 {
+        <size:14>+ createGadget()</size>
+        <size:14>+ validateDevice()</size>
+        <size:14>+ getValidRooms()</size>
+    }
+
+    class "<size:18><b>TimerService</b></size>" as timerService <<⏰ Scheduler>> #C8E6C9 {
+        <size:14>+ scheduleTask()</size>
+        <size:14>+ executeScheduled()</size>
+        <size:14>+ cancelTimer()</size>
+    }
+}
+
+package "<size:24><color:#8E44AD><b>💾 DATA MODELS</b></color></size>" as data #F4ECF7 {
+
+    class "<size:18><b>Customer</b></size>" as user <<👨‍👩‍👧‍👦 Family Profile>> #E1BEE7 {
+        <size:15><b>👤 User Information</b></size>
+        ====
+        <size:14>- email: String</size>
+        <size:14>- fullName: String</size>
+        <size:14>- devices: List<Gadget></size>
+        <size:14>- groupMembers: List<String></size>
+        ====
+        <size:14>+ addGadget()</size>
+        <size:14>+ findGadget()</size>
+        <size:14>+ isGroupAdmin()</size>
+        <size:14>+ grantPermission()</size>
+    }
+
+    class "<size:18><b>Gadget</b></size>" as device <<🔌 Smart Device>> #E1BEE7 {
+        <size:15><b>📱 Device Properties</b></size>
+        ====
+        <size:14>- type: String (TV, AC, Light)</size>
+        <size:14>- model: String</size>
+        <size:14>- roomName: String</size>
+        <size:14>- status: String (ON/OFF)</size>
+        <size:14>- powerWatts: double</size>
+        ====
+        <size:14>+ turnOn()</size>
+        <size:14>+ turnOff()</size>
+        <size:14>+ getEnergyUsage()</size>
+    }
+
+    class "<size:18><b>DevicePermission</b></size>" as permission <<🔐 Access Control>> #E1BEE7 {
+        <size:14>- memberEmail: String</size>
+        <size:14>- deviceType: String</size>
+        <size:14>- canView: boolean</size>
+        <size:14>- canControl: boolean</size>
+    }
+}
+
+package "<size:24><color:#E67E22><b>⚙️ SYSTEM SUPPORT</b></color></size>" as support #FDF2E9 {
+
+    class "<size:18><b>SessionManager</b></size>" as session <<🎫 Login Tracker>> #F39C12 {
+        <size:15><b>🔑 Session Control</b></size>
+        ====
+        <size:14>- currentUser: Customer</size>
+        ====
+        <size:14>+ login(Customer)</size>
+        <size:14>+ logout()</size>
+        <size:14>+ isLoggedIn()</size>
+        <size:14>+ getCurrentUser()</size>
+    }
+
+    class "<size:18><b>DynamoDBConfig</b></size>" as database <<☁️ Cloud Storage>> #F39C12 {
+        <size:15><b>💾 Data Storage</b></size>
+        ====
+        <size:14>+ saveData()</size>
+        <size:14>+ loadData()</size>
+        <size:14>+ testConnection()</size>
+    }
+}
+
+' === MAIN RELATIONSHIPS WITH THICK, COLORED ARROWS ===
+menu =[#2980B9,thickness=5]=> facade : <size:16><color:#2980B9><b>📞 All Menu Calls Go Here</b></color></size>
+
+facade =[#27AE60,thickness=4]-> userService : <size:14><color:#27AE60><b>👤 User Operations</b></color></size>
+facade =[#27AE60,thickness=4]-> deviceService : <size:14><color:#27AE60><b>📱 Device Operations</b></color></size>
+facade =[#27AE60,thickness=4]-> timerService : <size:14><color:#27AE60><b>⏰ Timer Operations</b></color></size>
+facade =[#E67E22,thickness=4]-> session : <size:14><color:#E67E22><b>🎫 Session Tracking</b></color></size>
+
+userService =[#8E44AD,thickness=4]-> user : <size:14><color:#8E44AD><b>💾 Creates/Updates</b></color></size>
+deviceService =[#8E44AD,thickness=4]-> device : <size:14><color:#8E44AD><b>🏭 Creates Devices</b></color></size>
+userService =[#E67E22,thickness=3]-> database : <size:12><color:#E67E22><b>☁️ Saves Data</b></color></size>
+session =[#8E44AD,thickness=3]-> user : <size:12><color:#8E44AD><b>🔗 Current User</b></color></size>
+
+user ||=[#E74C3C,thickness=5]o{ device : <size:16><color:#E74C3C><b>🏠 Owns Devices</b></color></size>
+user ||=[#9B59B6,thickness=3]o{ permission : <size:12><color:#9B59B6><b>🔐 Grants Access</b></color></size>
+
+' === DESIGN PATTERN HIGHLIGHTS ===
+note top of facade : <size:18><color:#C0392B><b>🏛️ FACADE PATTERN</b></color>\n<size:16><b>Single Entry Point</b></size>\n<size:14>• All menus call this service\n• Hides complexity from UI\n• Coordinates all operations</size>
+
+note right of session : <size:18><color:#8E44AD><b>👑 SINGLETON</b></color>\n<size:14>One session manager\nfor entire application</size>
+
+note right of timerService : <size:18><color:#16A085><b>⏰ SINGLETON</b></color>\n<size:14>One scheduler for\nall timed tasks</size>
+
+note bottom of deviceService : <size:18><color:#2980B9><b>🏭 FACTORY</b></color>\n<size:14>Creates different\ntypes of devices</size>
+
+' === WORKFLOW EXAMPLE ===
+note as workflow
+<size:20><color:#C0392B><b>🔄 Example: "Turn On Living Room TV"</b></color>
+<size:16>
+1️⃣ <b>User:</b> Selects "Device Control" menu
+2️⃣ <b>Menu:</b> Calls facade.changeDeviceStatus("TV")
+3️⃣ <b>Facade:</b> Coordinates all needed services
+4️⃣ <b>Session:</b> Checks if user is logged in
+5️⃣ <b>User Service:</b> Validates user permissions
+6️⃣ <b>Device:</b> Changes from OFF to ON
+7️⃣ <b>Database:</b> Saves the new status
+8️⃣ <b>User:</b> Sees "TV turned ON successfully!"
+</size>
+end note
+
+@enduml
